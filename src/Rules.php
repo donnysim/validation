@@ -17,7 +17,6 @@ use DonnySim\Validation\Rules\Casts\ToBoolean;
 use DonnySim\Validation\Rules\Confirmed;
 use DonnySim\Validation\Rules\DateFormat;
 use DonnySim\Validation\Rules\Email;
-use DonnySim\Validation\Rules\Exists;
 use DonnySim\Validation\Rules\Filled;
 use DonnySim\Validation\Rules\In;
 use DonnySim\Validation\Rules\IpAddress;
@@ -149,13 +148,6 @@ class Rules
         return $this;
     }
 
-    public function exists($table, ?string $column = null): self
-    {
-        $this->rules[] = new Exists($table, $column);
-
-        return $this;
-    }
-
     public function filled(): self
     {
         $this->rules[] = new Filled();
@@ -239,9 +231,14 @@ class Rules
         return $this;
     }
 
-    public function same(string $field): self
+    /**
+     * @param \DonnySim\Validation\FieldReference|string $field
+     *
+     * @return $this
+     */
+    public function same($field): self
     {
-        $this->rules[] = new Same(new FieldReference($field));
+        $this->rules[] = new Same($this->toFieldRef($field));
 
         return $this;
     }

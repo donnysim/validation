@@ -14,6 +14,7 @@ The validator executes rules in the same order they were passed in.
 ```php
 <?php
 
+use DonnySim\Validation\Validator;
 use function DonnySim\Validation\rule;
 
 $validator = new Validator(
@@ -66,8 +67,9 @@ Translations are provided via `\DonnySim\Validation\Contracts\MessageResolver` c
 ```php
 <?php
 
-use Illuminate\Contracts\Translation\Translator as TranslatorContract;
+use DonnySim\Validation\Message;
 use DonnySim\Validation\Contracts\MessageResolver;
+use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 
 class TranslationResolver implements MessageResolver
 {
@@ -98,6 +100,10 @@ Thinking about also adding conditionals/passthroughs where it can tweak the flow
 
 ```php
 <?php
+
+use DonnySim\Validation\Entry;
+use DonnySim\Validation\EntryPipeline;
+use function DonnySim\Validation\rule;
 
 rule('roles.*')
     ->arrayType()
