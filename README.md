@@ -94,27 +94,31 @@ class TranslationResolver implements MessageResolver
 
 Thought the validation message keys might not match the ones provided by Laravel.
 
-## Ideas
+## Dynamic rule flow
 
-Thinking about also adding conditionals/passthroughs where it can tweak the flow per entry basis:
+Sometimes you could want to do tweak rules depending on entry value, you can achieve this via `pipe` rule:
 
 ```php
 <?php
 
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Rules;
 use function DonnySim\Validation\rule;
 
 rule('roles.*')
     ->arrayType()
     ->pipe(function (EntryPipeline $pipeline, Entry $entry) {
         if (isset($entry->getValue()['temp_id'])) {
-            $pipeline->addNext(new CreateRoleRule());
+            $pipeline->insertNext(fn(Rules $rules) => $rules->rule(new CreateRoleRule()));
         } else {
-            $pipeline->addNext(new UpdateRoleRule());
+            $pipeline->insertNext(fn(Rules $rules) => $rules->rule(new UpdateRoleRule()));
         }
     })
-    ->doSometingAfterCreateOrUpdateRule();
+    ->otherRulesAfterCreateOrUpdateRule();
 ```
 
-Also, ability to change attribute names in messages.
+## TODO
+
+- More rules;
+- Ability to change attribute names in messages;
