@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DonnySim\Validation;
 
 use Closure;
+use DonnySim\Validation\Rules\Pipe;
 use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
@@ -189,6 +190,13 @@ class Rules
         if ($value) {
             $this->rules[] = new OmitFromData();
         }
+
+        return $this;
+    }
+
+    public function pipe(Closure $callback): self
+    {
+        $this->rules[] = new Pipe($callback);
 
         return $this;
     }

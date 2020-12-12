@@ -6,6 +6,8 @@ namespace DonnySim\Validation\Tests;
 
 use Carbon\Carbon;
 use DateTime;
+use DonnySim\Validation\Entry;
+use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\Rules;
 use DonnySim\Validation\Tests\Stubs\RuleStub;
 use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
@@ -1135,6 +1137,35 @@ class ValidatorTest extends TestCase
         self::assertSame([
             'foo' => [['name' => 'test']],
         ], $v->getValidatedData());
+    }
+
+    /**
+     * @test
+     */
+    public function pipe_rule(): void
+    {
+        $v = $this->makeValidator(
+            ['foo' => [1, 2, 3]],
+            [
+                Rules::make('foo.*')
+                    ->pipe(static function (EntryPipeline $pipeline, Entry $entry) {
+                        switch ($entry->getValue()) {
+                            case 2:
+                                $pipeline->insertNext(fn(Rules $rules) => $rules->booleanType());
+                                break;
+                            case 3:
+                                $pipeline->insertNext(fn(Rules $rules) => $rules->min(4));
+                                break;
+                        }
+                    })
+                    ->min(2),
+            ]
+        );
+        self::assertFalse($v->passes());
+        self::assertSame(3, $v->getMessages()->count());
+        self::assertSame('foo.0 should be min 2', $v->getMessages()->first('foo.0'));
+        self::assertSame('foo.1 must be boolean', $v->getMessages()->first('foo.1'));
+        self::assertSame('foo.2 should be min 4', $v->getMessages()->first('foo.2'));
     }
 
     /**

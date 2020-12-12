@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use Closure;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
 use DonnySim\Validation\Contracts\SingleRule;
@@ -88,6 +89,18 @@ class EntryPipeline
         return true;
     }
 
+    /**
+     * Append rules after current one to be processed next.
+     *
+     * @param \Closure $callback
+     */
+    public function insertNext(Closure $callback): void
+    {
+        $rules = Rules::make($this->getEntry()->getPath());
+        $callback($rules);
+        $this->insertRulesAfter($rules);
+    }
+
     public function getEntry(): Entry
     {
         return $this->entry;
@@ -156,5 +169,10 @@ class EntryPipeline
         }
 
         $this->currentRuleIndex++;
+    }
+
+    protected function insertRulesAfter(Rules $rules)
+    {
+        $this->rules = \array_merge(\array_slice($this->rules, 0, $this->currentRuleIndex + 1), $rules->getRules(), \array_slice($this->rules, $this->currentRuleIndex + 1));
     }
 }
