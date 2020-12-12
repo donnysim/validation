@@ -94,6 +94,26 @@ class TranslationResolver implements MessageResolver
 
 Thought the validation message keys might not match the ones provided by Laravel.
 
+## Setting value when missing
+
+You can set the field value to anything you want if it's missing using `setValueIfMissing` rule.
+This should be the first rule in validation chain and no further rules will be processed if the entry is missing.
+
+## Omitting rule from data
+
+If you want to omit a rule from final result you can use:
+
+```php
+<?php
+
+use function DonnySim\Validation\rule;
+
+rule('roles', false)->required()->min(1);
+// OR
+rule('roles')->omitFromData()->required()->min(1);
+rule('roles.*.id')->required()->integerType();
+```
+
 ## Dynamic rule flow
 
 Sometimes you could want to do tweak rules depending on entry value, you can achieve this via `pipe` rule:
@@ -116,6 +136,20 @@ rule('roles.*')
         }
     })
     ->otherRulesAfterCreateOrUpdateRule();
+```
+
+For cases where rules don't depend on entry value you can utilize `when`:
+
+```php
+<?php
+
+use DonnySim\Validation\Rules;
+use function DonnySim\Validation\rule;
+
+rule('foo')
+    ->when($isCreating, static function (Rules $rules) {
+        $rules->required();
+    });
 ```
 
 ## TODO
