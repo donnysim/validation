@@ -12,6 +12,7 @@ use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
 use DonnySim\Validation\Validator;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use function DonnySim\Validation\rule;
 
 class ValidatorTest extends TestCase
 {
@@ -1168,6 +1169,32 @@ class ValidatorTest extends TestCase
             Rules::make('baz')->castToBoolean(),
         ]);
         $this->assertValidationFail($v, 'foo', 'foo and baz must match');
+    }
+
+    /**
+     * @test
+     */
+    public function when_rule(): void
+    {
+        $v = $this->makeValidator(
+            [],
+            [
+                rule('foo')->when(true, static function (Rules $rules) {
+                    $rules->required();
+                }),
+            ]
+        );
+        $this->assertValidationFail($v, 'foo', 'foo is required');
+
+        $v = $this->makeValidator(
+            [],
+            [
+                rule('foo')->when(false, static function (Rules $rules) {
+                    $rules->required();
+                }),
+            ]
+        );
+        self::assertTrue($v->passes());
     }
 
     /**

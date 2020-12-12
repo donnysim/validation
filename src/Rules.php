@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use Closure;
 use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
@@ -265,6 +266,15 @@ class Rules
     public function stringType(): self
     {
         $this->rules[] = new StringType();
+
+        return $this;
+    }
+
+    public function when(bool $condition, Closure $callback): self
+    {
+        if ($condition) {
+            $callback($this);
+        }
 
         return $this;
     }
