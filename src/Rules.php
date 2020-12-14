@@ -8,6 +8,7 @@ use Closure;
 use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Max;
 use DonnySim\Validation\Rules\Pipe;
+use DonnySim\Validation\Rules\Uuid;
 use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
@@ -290,6 +291,13 @@ class Rules
     public function stringType(): self
     {
         $this->rules[] = new StringType();
+
+        return $this;
+    }
+
+    public function uuid(): self
+    {
+        $this->rules[] = new Uuid();
 
         return $this;
     }
