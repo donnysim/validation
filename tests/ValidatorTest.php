@@ -1009,6 +1009,36 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function present_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->present()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be present');
+
+        $v = $this->makeValidator([], [Rules::make('foo')->present()->nullable()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be present');
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->present()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => ''], [Rules::make('foo')->present()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [['id' => 1], ['name' => 'a']]], [Rules::make('foo.*.id')->present()]);
+        $this->assertValidationFail($v, 'foo.1.id', 'foo.1.id must be present');
+
+        $v = $this->makeValidator(['foo' => [['id' => 1], []]], [Rules::make('foo.*.id')->present()]);
+        $this->assertValidationFail($v, 'foo.1.id', 'foo.1.id must be present');
+
+        $v = $this->makeValidator(['foo' => [['id' => 1], ['id' => '']]], [Rules::make('foo')->present()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [['id' => 1], ['id' => null]]], [Rules::make('foo')->present()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function required_rule(): void
     {
         $v = $this->makeValidator([], [Rules::make('foo')->required()]);
@@ -1436,6 +1466,7 @@ class ValidatorTest extends TestCase
             'min.string' => ':attribute should be min :min length',
             'numeric' => ':attribute must be numeric',
             'not_in' => ':attribute must not be in array',
+            'present' => ':attribute must be present',
             'required' => ':attribute is required',
             'same' => ':attribute and :other must match',
             'string_type' => ':attribute must be string',

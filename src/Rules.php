@@ -8,6 +8,7 @@ use Closure;
 use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Max;
 use DonnySim\Validation\Rules\Pipe;
+use DonnySim\Validation\Rules\Present;
 use DonnySim\Validation\Rules\Types\BooleanLike;
 use DonnySim\Validation\Rules\Uuid;
 use InvalidArgumentException;
@@ -208,6 +209,13 @@ class Rules
         if ($value) {
             $this->rules[] = new OmitFromData();
         }
+
+        return $this;
+    }
+
+    public function present(): self
+    {
+        $this->rules[] = new Present();
 
         return $this;
     }
