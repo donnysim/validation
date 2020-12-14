@@ -6,6 +6,7 @@ namespace DonnySim\Validation;
 
 use Closure;
 use DonnySim\Validation\Rules\ActiveUrl;
+use DonnySim\Validation\Rules\Max;
 use DonnySim\Validation\Rules\Pipe;
 use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
@@ -223,6 +224,13 @@ class Rules
         }
 
         $this->rules[] = $rule;
+
+        return $this;
+    }
+
+    public function max(int $max): self
+    {
+        $this->rules[] = new Max($max);
 
         return $this;
     }

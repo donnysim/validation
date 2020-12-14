@@ -1046,20 +1046,37 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function max_rule(): void
+    {
+        // TODO numeric
+
+        $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->max(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
+
+        $v = $this->makeValidator(['foo' => 'anc'], [Rules::make('foo')->max(3)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '211'], [Rules::make('foo')->max(3)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '22'], [Rules::make('foo')->max(3)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->max(3)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->max(2)]);
+        $this->assertValidationFail($v, 'foo', 'foo should contain max 2 items');
+    }
+
+    /**
+     * @test
+     */
     public function min_rule(): void
     {
         // TODO numeric
-//        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->min(3)]);
-//        self::assertTrue($v->passes());
-
-//        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->min(3)]);
-//        self::assertTrue($v->passes());
-
-//        $v = $this->makeValidator(['foo' => '2'], [Rules::make('foo')->min(3)]);
-//        $this->assertValidationFail($v, 'foo', 'foo should be min 3');
-
-//        $v = $this->makeValidator(['foo' => '5'], [Rules::make('foo')->min(3)]);
-//        self::assertTrue($v->passes());
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->min(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
 
         $v = $this->makeValidator(['foo' => 3], [Rules::make('foo')->min(3)]);
         self::assertTrue($v->passes());
@@ -1078,17 +1095,6 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => [1, 2]], [Rules::make('foo')->min(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should contain 3 items');
-
-        // TODO
-//        $file = $this->getMockBuilder(File::class)->onlyMethods(['getSize'])->setConstructorArgs([__FILE__, false])->getMock();
-//        $file->expects($this->any())->method('getSize')->willReturn(3072);
-//        $v = new Validator($trans, ['photo' => $file], ['photo' => 'Min:2']);
-//        $this->assertTrue($v->passes());
-//
-//        $file = $this->getMockBuilder(File::class)->onlyMethods(['getSize'])->setConstructorArgs([__FILE__, false])->getMock();
-//        $file->expects($this->any())->method('getSize')->willReturn(4072);
-//        $v = new Validator($trans, ['photo' => $file], ['photo' => 'Min:10']);
-//        $this->assertFalse($v->passes());
     }
 
     /**
@@ -1317,6 +1323,9 @@ class ValidatorTest extends TestCase
             'in' => ':attribute must be in array',
             'integer_type' => ':attribute must be integer',
             'ip_address' => ':attribute must be a valid ip address',
+            'max.array' => ':attribute should contain max :max items',
+            'max.numeric' => ':attribute should be max :max',
+            'max.string' => ':attribute should be max :max length',
             'min.array' => ':attribute should contain :min items',
             'min.numeric' => ':attribute should be min :min',
             'min.string' => ':attribute should be min :min length',
