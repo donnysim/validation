@@ -190,31 +190,31 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function before_and_after_rule(): void
+    public function date_before_and_after_rule(): void
     {
         \date_default_timezone_set('UTC');
-        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->before('2012-01-01')]);
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->dateBefore('2012-01-01')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->before('2000-01-01')]);
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->dateBefore('2000-01-01')]);
         $this->assertValidationFail($v, 'x', 'x must be before 2000-01-01');
 
-        $v = $this->makeValidator(['x' => new Carbon('2000-01-01')], [Rules::make('x')->before('2012-01-01')]);
+        $v = $this->makeValidator(['x' => new Carbon('2000-01-01')], [Rules::make('x')->dateBefore('2012-01-01')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['x' => [new Carbon('2000-01-01')]], [Rules::make('x')->before('2012-01-01')]);
+        $v = $this->makeValidator(['x' => [new Carbon('2000-01-01')]], [Rules::make('x')->dateBefore('2012-01-01')]);
         $this->assertValidationFail($v, 'x', 'x must be before 2012-01-01');
 
-        $v = $this->makeValidator(['x' => '2012-01-01'], [Rules::make('x')->after('2000-01-01')]);
+        $v = $this->makeValidator(['x' => '2012-01-01'], [Rules::make('x')->dateAfter('2000-01-01')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['x' => ['2012-01-01']], [Rules::make('x')->after('2000-01-01')]);
+        $v = $this->makeValidator(['x' => ['2012-01-01']], [Rules::make('x')->dateAfter('2000-01-01')]);
         $this->assertValidationFail($v, 'x', 'x must be after 2000-01-01');
 
-        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->after('2000-01-01')]);
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->dateAfter('2000-01-01')]);
         $this->assertValidationFail($v, 'x', 'x must be after 2000-01-01');
 
-        $v = $this->makeValidator(['x' => new Carbon('2012-01-01')], [Rules::make('x')->after('2000-01-01')]);
+        $v = $this->makeValidator(['x' => new Carbon('2012-01-01')], [Rules::make('x')->dateAfter('2000-01-01')]);
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
@@ -223,8 +223,8 @@ class ValidatorTest extends TestCase
                 'ends' => '2013-01-01',
             ],
             [
-                Rules::make('start')->after('2000-01-01'),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateAfter('2000-01-01'),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
@@ -235,8 +235,8 @@ class ValidatorTest extends TestCase
                 'ends' => '2000-01-01',
             ],
             [
-                Rules::make('start')->after('2000-01-01'),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateAfter('2000-01-01'),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         $this->assertValidationFail($v, 'ends', 'ends must be after 2012-01-01');
@@ -247,8 +247,8 @@ class ValidatorTest extends TestCase
                 'ends' => '2013-01-01',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
@@ -259,15 +259,15 @@ class ValidatorTest extends TestCase
                 'ends' => '2000-01-01',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertFalse($v->passes());
         self::assertSame('start must be before 2000-01-01', $v->getMessages()->first('start'));
         self::assertSame('ends must be after 2012-01-01', $v->getMessages()->first('ends'));
 
-        $v = $this->makeValidator(['x' => new DateTime('2000-01-01')], [Rules::make('x')->before('2012-01-01')]);
+        $v = $this->makeValidator(['x' => new DateTime('2000-01-01')], [Rules::make('x')->dateBefore('2012-01-01')]);
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
@@ -276,8 +276,8 @@ class ValidatorTest extends TestCase
                 'ends' => new Carbon('2013-01-01'),
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
@@ -288,8 +288,8 @@ class ValidatorTest extends TestCase
                 'ends' => new DateTime('2013-01-01'),
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
@@ -300,8 +300,8 @@ class ValidatorTest extends TestCase
                 'ends' => new DateTime('2000-01-01'),
             ],
             [
-                Rules::make('start')->after('2000-01-01'),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateAfter('2000-01-01'),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         $this->assertValidationFail($v, 'ends', 'ends must be after 2012-01-01 00:00:00');
@@ -312,57 +312,57 @@ class ValidatorTest extends TestCase
                 'ends' => 'tomorrow',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '2012-01-01 17:43:59'],
-            [Rules::make('x')->before('2012-01-01 17:44')->after('2012-01-01 17:43:58')]
+            [Rules::make('x')->dateBefore('2012-01-01 17:44')->dateAfter('2012-01-01 17:43:58')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '2012-01-01 17:44:01'],
-            [Rules::make('x')->before('2012-01-01 17:44:02')->after('2012-01-01 17:44')]
+            [Rules::make('x')->dateBefore('2012-01-01 17:44:02')->dateAfter('2012-01-01 17:44')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '2012-01-01 17:44'],
-            [Rules::make('x')->before('2012-01-01 17:44:00')]
+            [Rules::make('x')->dateBefore('2012-01-01 17:44:00')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before 2012-01-01 17:44:00');
 
         $v = $this->makeValidator(
             ['x' => '2012-01-01 17:44'],
-            [Rules::make('x')->after('2012-01-01 17:44:00')]
+            [Rules::make('x')->dateAfter('2012-01-01 17:44:00')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after 2012-01-01 17:44:00');
 
         $v = $this->makeValidator(
             ['x' => '17:43:59'],
-            [Rules::make('x')->before('17:44')->after('17:43:58')]
+            [Rules::make('x')->dateBefore('17:44')->dateAfter('17:43:58')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '17:44:01'],
-            [Rules::make('x')->before('17:44:02')->after('17:44')]
+            [Rules::make('x')->dateBefore('17:44:02')->dateAfter('17:44')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '17:44'],
-            [Rules::make('x')->before('17:44:00')]
+            [Rules::make('x')->dateBefore('17:44:00')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before 17:44:00');
 
         $v = $this->makeValidator(
             ['x' => '17:44'],
-            [Rules::make('x')->after('17:44:00')]
+            [Rules::make('x')->dateAfter('17:44:00')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after 17:44:00');
     }
@@ -370,25 +370,25 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function before_and_after_with_format_rule(): void
+    public function date_before_and_after_with_format_rule(): void
     {
         \date_default_timezone_set('UTC');
-        $v = $this->makeValidator(['x' => '31/12/2000'], [Rules::make('x')->before('31/02/2012')]);
+        $v = $this->makeValidator(['x' => '31/12/2000'], [Rules::make('x')->dateBefore('31/02/2012')]);
         $this->assertValidationFail($v, 'x', 'x must be before 31/02/2012');
 
-        $v = $this->makeValidator(['x' => ['31/12/2000']], [Rules::make('x')->before('31/02/2012')]);
+        $v = $this->makeValidator(['x' => ['31/12/2000']], [Rules::make('x')->dateBefore('31/02/2012')]);
         $this->assertValidationFail($v, 'x', 'x must be before 31/02/2012');
 
-        $v = $this->makeValidator(['x' => '31/12/2000'], [Rules::make('x')->before('31/02/2012', 'd/m/Y')]);
+        $v = $this->makeValidator(['x' => '31/12/2000'], [Rules::make('x')->dateBefore('31/02/2012', 'd/m/Y')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['x' => '31/12/2012'], [Rules::make('x')->after('31/12/2000')]);
+        $v = $this->makeValidator(['x' => '31/12/2012'], [Rules::make('x')->dateAfter('31/12/2000')]);
         $this->assertValidationFail($v, 'x', 'x must be after 31/12/2000');
 
-        $v = $this->makeValidator(['x' => ['31/12/2012']], [Rules::make('x')->after('31/12/2000')]);
+        $v = $this->makeValidator(['x' => ['31/12/2012']], [Rules::make('x')->dateAfter('31/12/2000')]);
         $this->assertValidationFail($v, 'x', 'x must be after 31/12/2000');
 
-        $v = $this->makeValidator(['x' => '31/12/2012'], [Rules::make('x')->after('31/12/2000', 'd/m/Y')]);
+        $v = $this->makeValidator(['x' => '31/12/2012'], [Rules::make('x')->dateAfter('31/12/2000', 'd/m/Y')]);
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
@@ -397,8 +397,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2013',
             ],
             [
-                Rules::make('start')->after('01/01/2000'),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateAfter('01/01/2000'),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertFalse($v->passes());
@@ -411,8 +411,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2013',
             ],
             [
-                Rules::make('start')->after('31/12/2000', 'd/m/Y'),
-                Rules::make('ends')->after(Rules::reference('start'), 'd/m/Y'),
+                Rules::make('start')->dateAfter('31/12/2000', 'd/m/Y'),
+                Rules::make('ends')->dateAfter(Rules::reference('start'), 'd/m/Y'),
             ]
         );
         self::assertTrue($v->passes());
@@ -423,8 +423,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2000',
             ],
             [
-                Rules::make('start')->after('31/12/2000'),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateAfter('31/12/2000'),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertFalse($v->passes());
@@ -437,8 +437,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2000',
             ],
             [
-                Rules::make('start')->after('31/12/2000', 'd/m/Y'),
-                Rules::make('ends')->after(Rules::reference('start'), 'd/m/Y'),
+                Rules::make('start')->dateAfter('31/12/2000', 'd/m/Y'),
+                Rules::make('ends')->dateAfter(Rules::reference('start'), 'd/m/Y'),
             ]
         );
         $this->assertValidationFail($v, 'ends', 'ends must be after 31/12/2012');
@@ -449,8 +449,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2013',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertFalse($v->passes());
@@ -463,8 +463,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2013',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends'), 'd/m/Y'),
-                Rules::make('ends')->after(Rules::reference('start'), 'd/m/Y'),
+                Rules::make('start')->dateBefore(Rules::reference('ends'), 'd/m/Y'),
+                Rules::make('ends')->dateAfter(Rules::reference('start'), 'd/m/Y'),
             ]
         );
         self::assertTrue($v->passes());
@@ -475,8 +475,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2000',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends')),
-                Rules::make('ends')->after(Rules::reference('start')),
+                Rules::make('start')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertFalse($v->passes());
@@ -489,8 +489,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2000',
             ],
             [
-                Rules::make('start')->before(Rules::reference('ends'), 'd/m/Y'),
-                Rules::make('ends')->after(Rules::reference('start'), 'd/m/Y'),
+                Rules::make('start')->dateBefore(Rules::reference('ends'), 'd/m/Y'),
+                Rules::make('ends')->dateAfter(Rules::reference('start'), 'd/m/Y'),
             ]
         );
         self::assertFalse($v->passes());
@@ -499,85 +499,85 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(
             ['x' => \date('d/m/Y')],
-            [Rules::make('x')->after('yesterday', 'd/m/Y')->before('tomorrow', 'd/m/Y')]
+            [Rules::make('x')->dateAfter('yesterday', 'd/m/Y')->dateBefore('tomorrow', 'd/m/Y')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => \date('d/m/Y')],
-            [Rules::make('x')->after('today')]
+            [Rules::make('x')->dateAfter('today')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after today');
 
         $v = $this->makeValidator(
             ['x' => \date('d/m/Y')],
-            [Rules::make('x')->before('today', 'd/m/Y')]
+            [Rules::make('x')->dateBefore('today', 'd/m/Y')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before today');
 
         $v = $this->makeValidator(
             ['x' => \date('Y-m-d')],
-            [Rules::make('x')->after('yesterday')->before('tomorrow')]
+            [Rules::make('x')->dateAfter('yesterday')->dateBefore('tomorrow')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => \date('Y-m-d')],
-            [Rules::make('x')->after('today')]
+            [Rules::make('x')->dateAfter('today')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after today');
 
         $v = $this->makeValidator(
             ['x' => \date('Y-m-d')],
-            [Rules::make('x')->before('today')]
+            [Rules::make('x')->dateBefore('today')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before today');
 
         $v = $this->makeValidator(
             ['x' => '2012-01-01 17:44:00'],
-            [Rules::make('x')->before('2012-01-01 17:44:01', 'Y-m-d H:i:s')->after('2012-01-01 17:43:59', 'Y-m-d H:i:s')]
+            [Rules::make('x')->dateBefore('2012-01-01 17:44:01', 'Y-m-d H:i:s')->dateAfter('2012-01-01 17:43:59', 'Y-m-d H:i:s')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '2012-01-01 17:44:00'],
-            [Rules::make('x')->before('2012-01-01 17:44:00', 'Y-m-d H:i:s')]
+            [Rules::make('x')->dateBefore('2012-01-01 17:44:00', 'Y-m-d H:i:s')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before 2012-01-01 17:44:00');
 
         $v = $this->makeValidator(
             ['x' => '17:44:00'],
-            [Rules::make('x')->before('17:44:01', 'H:i:s')->after('17:43:59')]
+            [Rules::make('x')->dateBefore('17:44:01', 'H:i:s')->dateAfter('17:43:59')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '17:44:00'],
-            [Rules::make('x')->before('17:44:00', 'H:i:s')]
+            [Rules::make('x')->dateBefore('17:44:00', 'H:i:s')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before 17:44:00');
 
         $v = $this->makeValidator(
             ['x' => '17:44:00'],
-            [Rules::make('x')->after('17:44:00', 'H:i:s')]
+            [Rules::make('x')->dateAfter('17:44:00', 'H:i:s')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after 17:44:00');
 
         $v = $this->makeValidator(
             ['x' => '17:44'],
-            [Rules::make('x')->before('17:45', 'H:i')->after('17:43')]
+            [Rules::make('x')->dateBefore('17:45', 'H:i')->dateAfter('17:43')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => '17:44'],
-            [Rules::make('x')->before('17:44', 'H:i')]
+            [Rules::make('x')->dateBefore('17:44', 'H:i')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before 17:44');
 
         $v = $this->makeValidator(
             ['x' => '17:44'],
-            [Rules::make('x')->after('17:44', 'H:i')]
+            [Rules::make('x')->dateAfter('17:44', 'H:i')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after 17:44');
     }
@@ -585,13 +585,13 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function before_and_after_with_format_from_date_format_rule(): void
+    public function date_before_and_after_with_format_from_date_format_rule(): void
     {
         \date_default_timezone_set('UTC');
-        $v = $this->makeValidator(['x' => '31/12/2000'], [Rules::make('x')->dateFormat('d/m/Y')->before('31/02/2012')]);
+        $v = $this->makeValidator(['x' => '31/12/2000'], [Rules::make('x')->dateFormat('d/m/Y')->dateBefore('31/02/2012')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['x' => '31/12/2012'], [Rules::make('x')->dateFormat('d/m/Y')->after('31/12/2000')]);
+        $v = $this->makeValidator(['x' => '31/12/2012'], [Rules::make('x')->dateFormat('d/m/Y')->dateAfter('31/12/2000')]);
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
@@ -600,8 +600,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2013',
             ],
             [
-                Rules::make('start')->dateFormat('d/m/Y')->after('31/12/2000'),
-                Rules::make('ends')->dateFormat('d/m/Y')->after(Rules::reference('start')),
+                Rules::make('start')->dateFormat('d/m/Y')->dateAfter('31/12/2000'),
+                Rules::make('ends')->dateFormat('d/m/Y')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
@@ -612,8 +612,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2000',
             ],
             [
-                Rules::make('start')->dateFormat('d/m/Y')->after('31/12/2000'),
-                Rules::make('ends')->dateFormat('d/m/Y')->after(Rules::reference('start')),
+                Rules::make('start')->dateFormat('d/m/Y')->dateAfter('31/12/2000'),
+                Rules::make('ends')->dateFormat('d/m/Y')->dateAfter(Rules::reference('start')),
             ]
         );
         $this->assertValidationFail($v, 'ends', 'ends must be after 31/12/2012');
@@ -624,8 +624,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2013',
             ],
             [
-                Rules::make('start')->dateFormat('d/m/Y')->before(Rules::reference('ends')),
-                Rules::make('ends')->dateFormat('d/m/Y')->after(Rules::reference('start')),
+                Rules::make('start')->dateFormat('d/m/Y')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateFormat('d/m/Y')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertTrue($v->passes());
@@ -636,8 +636,8 @@ class ValidatorTest extends TestCase
                 'ends' => '31/12/2000',
             ],
             [
-                Rules::make('start')->dateFormat('d/m/Y')->before(Rules::reference('ends')),
-                Rules::make('ends')->dateFormat('d/m/Y')->after(Rules::reference('start')),
+                Rules::make('start')->dateFormat('d/m/Y')->dateBefore(Rules::reference('ends')),
+                Rules::make('ends')->dateFormat('d/m/Y')->dateAfter(Rules::reference('start')),
             ]
         );
         self::assertFalse($v->passes());
@@ -646,13 +646,13 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(
             ['x' => \date('d/m/Y')],
-            [Rules::make('x')->dateFormat('d/m/Y')->after('yesterday')->before('tomorrow')]
+            [Rules::make('x')->dateFormat('d/m/Y')->dateAfter('yesterday')->dateBefore('tomorrow')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['x' => \date('d/m/Y')],
-            [Rules::make('x')->dateFormat('d/m/Y')->before('today')]
+            [Rules::make('x')->dateFormat('d/m/Y')->dateBefore('today')]
         );
         $this->assertValidationFail($v, 'x', 'x must be before today');
     }
@@ -1522,12 +1522,12 @@ class ValidatorTest extends TestCase
         return new Validator(new TestMessageResolver([
             'active_url' => ':attribute must be an active url',
             'accepted' => ':attribute must be accepted',
-            'after' => ':attribute must be after :other',
             'array_type' => ':attribute must be array',
             'alpha' => ':attribute must be alpha',
             'alpha_dash' => ':attribute must be alpha dash',
             'alpha_num' => ':attribute must be alpha num',
-            'before' => ':attribute must be before :other',
+            'date_after' => ':attribute must be after :other',
+            'date_before' => ':attribute must be before :other',
             'boolean_like' => ':attribute must be boolean like',
             'boolean_type' => ':attribute must be boolean',
             'confirmed' => ':attribute must be confirmed',

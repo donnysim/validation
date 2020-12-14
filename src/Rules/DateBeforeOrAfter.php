@@ -14,10 +14,10 @@ use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\FieldReference;
 
-class BeforeOrAfter implements SingleRule
+class DateBeforeOrAfter implements SingleRule
 {
-    public const NAME_BEFORE = 'before';
-    public const NAME_AFTER = 'after';
+    public const NAME_BEFORE = 'date_before';
+    public const NAME_AFTER = 'date_after';
 
     /**
      * @var mixed

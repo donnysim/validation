@@ -13,7 +13,7 @@ use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Alpha;
 use DonnySim\Validation\Rules\AlphaDash;
 use DonnySim\Validation\Rules\AlphaNum;
-use DonnySim\Validation\Rules\BeforeOrAfter;
+use DonnySim\Validation\Rules\DateBeforeOrAfter;
 use DonnySim\Validation\Rules\Casts\ToBoolean;
 use DonnySim\Validation\Rules\Confirmed;
 use DonnySim\Validation\Rules\DateFormat;
@@ -89,13 +89,6 @@ class Rules
         return $this;
     }
 
-    public function after($date, ?string $format = null): self
-    {
-        $this->rules[] = new BeforeOrAfter($date, '>', $format);
-
-        return $this;
-    }
-
     public function alpha(): self
     {
         $this->rules[] = new Alpha();
@@ -124,13 +117,6 @@ class Rules
         return $this;
     }
 
-    public function before($date, ?string $format = null): self
-    {
-        $this->rules[] = new BeforeOrAfter($date, '<', $format);
-
-        return $this;
-    }
-
     public function booleanLike(): self
     {
         $this->rules[] = new BooleanLike();
@@ -155,6 +141,20 @@ class Rules
     public function confirmed(): self
     {
         $this->rules[] = new Confirmed();
+
+        return $this;
+    }
+
+    public function dateAfter($date, ?string $format = null): self
+    {
+        $this->rules[] = new DateBeforeOrAfter($date, '>', $format);
+
+        return $this;
+    }
+
+    public function dateBefore($date, ?string $format = null): self
+    {
+        $this->rules[] = new DateBeforeOrAfter($date, '<', $format);
 
         return $this;
     }
