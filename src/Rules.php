@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DonnySim\Validation;
 
 use Closure;
+use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Pipe;
 use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
@@ -64,6 +65,13 @@ class Rules
     public static function reference(string $field): FieldReference
     {
         return new FieldReference($field);
+    }
+
+    public function activeUrl(): self
+    {
+        $this->rules[] = new ActiveUrl();
+
+        return $this;
     }
 
     public function accepted(): self

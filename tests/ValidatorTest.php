@@ -21,6 +21,27 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function active_url_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'aslsdlks'], [Rules::make('foo')->activeUrl()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be an active url');
+
+        $v = $this->makeValidator(['foo' => ['fdsfs', 'fdsfds']], [Rules::make('foo')->activeUrl()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be an active url');
+
+        $v = $this->makeValidator(['foo' => 'http://google.com'], [Rules::make('foo')->activeUrl()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'http://www.google.com'], [Rules::make('foo')->activeUrl()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'http://www.google.com/about'], [Rules::make('foo')->activeUrl()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function alpha_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'aslsdlks'], [Rules::make('foo')->alpha()]);
@@ -1281,6 +1302,7 @@ class ValidatorTest extends TestCase
     protected function makeValidator(array $data, array $rules): Validator
     {
         return new Validator(new TestMessageResolver([
+            'active_url' => ':attribute must be an active url',
             'accepted' => ':attribute must be accepted',
             'after' => ':attribute must be after :other',
             'array_type' => ':attribute must be array',
