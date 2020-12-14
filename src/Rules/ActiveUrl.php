@@ -20,12 +20,14 @@ class ActiveUrl implements SingleRule
         }
 
         $value = $entry->getValue();
-        if (! \is_string($value)) {
+        if (!\is_string($value)) {
             $pipeline->fail(static::NAME);
             return;
         }
 
-        if ($url = \parse_url($value, \PHP_URL_HOST)) {
+        $url = \parse_url($value, \PHP_URL_HOST);
+
+        if ($url) {
             try {
                 if (\count(\dns_get_record($url, \DNS_A | \DNS_AAAA)) > 0) {
                     return;

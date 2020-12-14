@@ -41,6 +41,7 @@ use DonnySim\Validation\Rules\Types\BooleanLike;
 use DonnySim\Validation\Rules\Types\BooleanType;
 use DonnySim\Validation\Rules\Types\IntegerType;
 use DonnySim\Validation\Rules\Types\StringType;
+use DonnySim\Validation\Rules\Url;
 use DonnySim\Validation\Rules\Uuid;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -349,6 +350,13 @@ class Rules
     public function stringType(): self
     {
         $this->rules[] = new StringType();
+
+        return $this;
+    }
+
+    public function url(): self
+    {
+        $this->rules[] = new Url();
 
         return $this;
     }
