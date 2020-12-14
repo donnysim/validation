@@ -660,7 +660,55 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function boolean_rule(): void
+    public function boolean_like_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'no'], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'yes'], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'false'], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'true'], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator([], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => false], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => true], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '1'], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '0'], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 0], [Rules::make('foo')->booleanLike()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'asd'], [Rules::make('foo')->booleanLike()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be boolean like');
+
+        $v = $this->makeValidator(['foo' => [true]], [Rules::make('foo')->booleanLike()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be boolean like');
+
+        $v = $this->makeValidator(['foo' => 2], [Rules::make('foo')->booleanLike()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be boolean like');
+    }
+
+    /**
+     * @test
+     */
+    public function boolean_type_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'no'], [Rules::make('foo')->booleanType()]);
         $this->assertValidationFail($v, 'foo', 'foo must be boolean');
@@ -1372,6 +1420,7 @@ class ValidatorTest extends TestCase
             'alpha_dash' => ':attribute must be alpha dash',
             'alpha_num' => ':attribute must be alpha num',
             'before' => ':attribute must be before :other',
+            'boolean_like' => ':attribute must be boolean like',
             'boolean_type' => ':attribute must be boolean',
             'confirmed' => ':attribute must be confirmed',
             'date_format' => ':attribute must match :format',

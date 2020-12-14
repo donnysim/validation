@@ -8,6 +8,7 @@ use Closure;
 use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Max;
 use DonnySim\Validation\Rules\Pipe;
+use DonnySim\Validation\Rules\Types\BooleanLike;
 use DonnySim\Validation\Rules\Uuid;
 use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
@@ -121,6 +122,13 @@ class Rules
     public function before($date, ?string $format = null): self
     {
         $this->rules[] = new BeforeOrAfter($date, '<', $format);
+
+        return $this;
+    }
+
+    public function booleanLike(): self
+    {
+        $this->rules[] = new BooleanLike();
 
         return $this;
     }
