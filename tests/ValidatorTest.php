@@ -901,6 +901,27 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function ends_with_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->endsWith('hello')]);
+        $this->assertValidationFail($v, 'foo', 'foo must end with hello');
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->endsWith('world')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->endsWith(['world', 'hello'])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->endsWith('http')]);
+        $this->assertValidationFail($v, 'foo', 'foo must end with http');
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->endsWith(['https', 'http'])]);
+        $this->assertValidationFail($v, 'foo', 'foo must end with https, http');
+    }
+
+    /**
+     * @test
+     */
     public function filled_rule(): void
     {
         $v = $this->makeValidator([], [Rules::make('foo')->filled()]);
@@ -1346,6 +1367,27 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function starts_with_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->startsWith('hello')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->startsWith('world')]);
+        $this->assertValidationFail($v, 'foo', 'foo must start with world');
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->startsWith(['world', 'hello'])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->startsWith('http')]);
+        $this->assertValidationFail($v, 'foo', 'foo must start with http');
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [Rules::make('foo')->startsWith(['https', 'http'])]);
+        $this->assertValidationFail($v, 'foo', 'foo must start with https, http');
+    }
+
+    /**
+     * @test
+     */
     public function when_rule(): void
     {
         $v = $this->makeValidator(
@@ -1490,6 +1532,7 @@ class ValidatorTest extends TestCase
             'boolean_type' => ':attribute must be boolean',
             'confirmed' => ':attribute must be confirmed',
             'date_format' => ':attribute must match :format',
+            'ends_with' => ':attribute must end with :values',
             'filled' => ':attribute must be filled',
             'in' => ':attribute must be in array',
             'integer_type' => ':attribute must be integer',
@@ -1507,6 +1550,7 @@ class ValidatorTest extends TestCase
             'required' => ':attribute is required',
             'regex' => ':attribute must match regex',
             'same' => ':attribute and :other must match',
+            'starts_with' => ':attribute must start with :values',
             'string_type' => ':attribute must be string',
             'uuid' => ':attribute must be uuid',
         ]), $data, $rules);

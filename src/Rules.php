@@ -18,6 +18,7 @@ use DonnySim\Validation\Rules\Casts\ToBoolean;
 use DonnySim\Validation\Rules\Confirmed;
 use DonnySim\Validation\Rules\DateFormat;
 use DonnySim\Validation\Rules\Email;
+use DonnySim\Validation\Rules\EndsWith;
 use DonnySim\Validation\Rules\Filled;
 use DonnySim\Validation\Rules\In;
 use DonnySim\Validation\Rules\IpAddress;
@@ -34,12 +35,14 @@ use DonnySim\Validation\Rules\Required;
 use DonnySim\Validation\Rules\Same;
 use DonnySim\Validation\Rules\SetValueIfMissing;
 use DonnySim\Validation\Rules\Sometimes;
+use DonnySim\Validation\Rules\StartsWith;
 use DonnySim\Validation\Rules\Types\ArrayType;
 use DonnySim\Validation\Rules\Types\BooleanLike;
 use DonnySim\Validation\Rules\Types\BooleanType;
 use DonnySim\Validation\Rules\Types\IntegerType;
 use DonnySim\Validation\Rules\Types\StringType;
 use DonnySim\Validation\Rules\Uuid;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
 class Rules
@@ -166,6 +169,18 @@ class Rules
     public function email(array $types = [Email::VALIDATE_RFC]): self
     {
         $this->rules[] = new Email($types);
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $needles
+     *
+     * @return static
+     */
+    public function endsWith($needles): self
+    {
+        $this->rules[] = new EndsWith(Arr::wrap($needles));
 
         return $this;
     }
@@ -315,6 +330,18 @@ class Rules
     public function sometimes(): self
     {
         $this->rules[] = new Sometimes();
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $needles
+     *
+     * @return static
+     */
+    public function startsWith($needles): self
+    {
+        $this->rules[] = new StartsWith(Arr::wrap($needles));
 
         return $this;
     }
