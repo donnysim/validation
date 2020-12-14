@@ -5,17 +5,11 @@ declare(strict_types=1);
 namespace DonnySim\Validation;
 
 use Closure;
-use DonnySim\Validation\Rules\ActiveUrl;
-use DonnySim\Validation\Rules\Max;
-use DonnySim\Validation\Rules\Pipe;
-use DonnySim\Validation\Rules\Present;
-use DonnySim\Validation\Rules\Types\BooleanLike;
-use DonnySim\Validation\Rules\Uuid;
-use InvalidArgumentException;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Rules\Accepted;
+use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Alpha;
 use DonnySim\Validation\Rules\AlphaDash;
 use DonnySim\Validation\Rules\AlphaNum;
@@ -27,19 +21,26 @@ use DonnySim\Validation\Rules\Email;
 use DonnySim\Validation\Rules\Filled;
 use DonnySim\Validation\Rules\In;
 use DonnySim\Validation\Rules\IpAddress;
+use DonnySim\Validation\Rules\Max;
 use DonnySim\Validation\Rules\Min;
 use DonnySim\Validation\Rules\NotIn;
 use DonnySim\Validation\Rules\Nullable;
 use DonnySim\Validation\Rules\Numeric;
 use DonnySim\Validation\Rules\OmitFromData;
+use DonnySim\Validation\Rules\Pipe;
+use DonnySim\Validation\Rules\Present;
+use DonnySim\Validation\Rules\Regex;
 use DonnySim\Validation\Rules\Required;
 use DonnySim\Validation\Rules\Same;
 use DonnySim\Validation\Rules\SetValueIfMissing;
 use DonnySim\Validation\Rules\Sometimes;
 use DonnySim\Validation\Rules\Types\ArrayType;
+use DonnySim\Validation\Rules\Types\BooleanLike;
 use DonnySim\Validation\Rules\Types\BooleanType;
 use DonnySim\Validation\Rules\Types\IntegerType;
 use DonnySim\Validation\Rules\Types\StringType;
+use DonnySim\Validation\Rules\Uuid;
+use InvalidArgumentException;
 
 class Rules
 {
@@ -204,6 +205,13 @@ class Rules
         return $this;
     }
 
+    public function notRegex(string $pattern): self
+    {
+        $this->rules[] = new Regex($pattern, false);
+
+        return $this;
+    }
+
     public function omitFromData(bool $value = true): self
     {
         if ($value) {
@@ -223,6 +231,13 @@ class Rules
     public function pipe(Closure $callback): self
     {
         $this->rules[] = new Pipe($callback);
+
+        return $this;
+    }
+
+    public function regex(string $pattern): self
+    {
+        $this->rules[] = new Regex($pattern, true);
 
         return $this;
     }

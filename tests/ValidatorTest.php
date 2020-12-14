@@ -988,6 +988,21 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function not_regex_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'foo bar'], [Rules::make('foo')->notRegex('/[xyz]/i')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'foo xxx bar'], [Rules::make('foo')->notRegex('/[xyz]/i')]);
+        $this->assertValidationFail($v, 'foo', 'foo must not match regex');
+
+        $v = $this->makeValidator(['foo' => 'foo bar'], [Rules::make('foo')->notRegex('/x{3,}/i')]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function not_in_rule(): void
     {
         $v = $this->makeValidator([], [Rules::make('foo')->notIn(['bar', 'baz'])]);
@@ -1034,6 +1049,27 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => [['id' => 1], ['id' => null]]], [Rules::make('foo')->present()]);
         self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function regex_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'asdasdf'], [Rules::make('foo')->regex('/^[a-z]+$/i')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'aasd234fsd1'], [Rules::make('foo')->regex('/^[a-z]+$/i')]);
+        $this->assertValidationFail($v, 'foo', 'foo must match regex');
+
+        $v = $this->makeValidator(['foo' => 'a,b'], [Rules::make('foo')->regex('/^a,b$/i')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '12'], [Rules::make('foo')->regex('/^12$/i')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 12], [Rules::make('foo')->regex('/^12$/i')]);
+        $this->assertValidationFail($v, 'foo', 'foo must match regex');
     }
 
     /**
@@ -1465,9 +1501,11 @@ class ValidatorTest extends TestCase
             'min.numeric' => ':attribute should be min :min',
             'min.string' => ':attribute should be min :min length',
             'numeric' => ':attribute must be numeric',
+            'not_regex' => ':attribute must not match regex',
             'not_in' => ':attribute must not be in array',
             'present' => ':attribute must be present',
             'required' => ':attribute is required',
+            'regex' => ':attribute must match regex',
             'same' => ':attribute and :other must match',
             'string_type' => ':attribute must be string',
             'uuid' => ':attribute must be uuid',
