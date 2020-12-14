@@ -10,6 +10,9 @@ use DonnySim\Validation\EntryPipeline;
 
 class SetValueIfMissing implements SingleRule
 {
+    /**
+     * @var mixed
+     */
     protected $value;
 
     public function __construct($value)
@@ -21,7 +24,6 @@ class SetValueIfMissing implements SingleRule
     {
         if ($entry->isMissing()) {
             $entry->setValue($this->value);
-            // TODO should we finish?
             $pipeline->finish();
         }
     }

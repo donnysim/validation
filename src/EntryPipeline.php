@@ -171,7 +171,7 @@ class EntryPipeline
         $this->currentRuleIndex++;
     }
 
-    protected function insertRulesAfter(Rules $rules)
+    protected function insertRulesAfter(Rules $rules): void
     {
         $this->rules = \array_merge(\array_slice($this->rules, 0, $this->currentRuleIndex + 1), $rules->getRules(), \array_slice($this->rules, $this->currentRuleIndex + 1));
     }

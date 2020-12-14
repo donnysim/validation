@@ -143,7 +143,7 @@ class Rules
         return $this;
     }
 
-    public function email(array $types = ['rfc']): self
+    public function email(array $types = [Email::VALIDATE_RFC]): self
     {
         $this->rules[] = new Email($types);
 

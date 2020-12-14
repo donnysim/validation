@@ -17,6 +17,12 @@ use DonnySim\Validation\EntryPipeline;
 
 class Email implements SingleRule
 {
+    public const VALIDATE_RFC = 'rfc';
+    public const VALIDATE_STRICT = 'strict';
+    public const VALIDATE_DNS = 'dns';
+    public const VALIDATE_SPOOF = 'spoof';
+    public const VALIDATE_FILTER = 'filter';
+    public const VALIDATE_FILTER_UNICODE = 'filter_unicode';
     public const NAME = 'email';
 
     /**
@@ -46,22 +52,22 @@ class Email implements SingleRule
 
         foreach ($this->types as $type) {
             switch ($type) {
-                case 'rfc':
+                case static::VALIDATE_RFC:
                     $rules[] = new RFCValidation();
                     break;
-                case 'strict':
+                case static::VALIDATE_STRICT:
                     $rules[] = new NoRFCWarningsValidation();
                     break;
-                case 'dns':
+                case static::VALIDATE_DNS:
                     $rules[] = new DNSCheckValidation();
                     break;
-                case 'spoof':
+                case static::VALIDATE_SPOOF:
                     $rules[] = new SpoofCheckValidation();
                     break;
-                case 'filter':
+                case static::VALIDATE_FILTER:
                     $rules[] = new FilterEmailValidation();
                     break;
-                case 'filter_unicode':
+                case static::VALIDATE_FILTER_UNICODE:
                     $rules[] = FilterEmailValidation::unicode();
                     break;
             }
