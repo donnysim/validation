@@ -33,13 +33,14 @@ class Validator
 
     protected bool $validated = false;
 
-    public function __construct(MessageResolver $resolver, array $data, array $rules)
+    public function __construct(MessageResolver $resolver, array $data, array $rules, array $attributeNames = [])
     {
         $this->resolver = $resolver;
         $this->data = $data;
         $this->rules = $rules;
         $this->messages = new MessageBag();
         $this->missingValue = 'missing' . Str::random(8);
+        $resolver->setAttributeNames($attributeNames);
 
         // TODO prevent adding multiple rules with same pattern?
     }
@@ -68,6 +69,11 @@ class Validator
         }
 
         return $this->validatedData;
+    }
+
+    public function getMessageResolver(): MessageResolver
+    {
+        return $this->resolver;
     }
 
     public function getValueEntry(string $field): Entry

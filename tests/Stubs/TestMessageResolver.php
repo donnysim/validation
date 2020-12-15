@@ -13,6 +13,8 @@ class TestMessageResolver implements MessageResolver
 {
     protected array $messages = [];
 
+    protected array $attributeNames = [];
+
     public function __construct(array $messages)
     {
         $this->messages = $messages;
@@ -21,12 +23,29 @@ class TestMessageResolver implements MessageResolver
     public function resolve(Message $message): string
     {
         $path = $message->getEntry()->getPath();
+        $key = $message->getKey();
 
-        if (!isset($this->messages[$message->getKey()])) {
+        if (!isset($this->messages[$key])) {
             return 'missing message';
         }
 
-        return $this->makeReplacements($this->messages[$message->getKey()], ['attribute' => $path] + $message->getParams());
+        $attribute = $path;
+
+        if (isset($this->attributeNames[$path])) {
+            $attribute = $this->attributeNames[$path];
+        } elseif (isset($this->attributeNames[$message->getEntry()->getPattern()])) {
+            $attribute = $this->attributeNames[$message->getEntry()->getPattern()];
+        }
+
+        return $this->makeReplacements(
+            $this->messages[$key],
+            \array_merge(\compact('path', 'attribute'), $message->getParams())
+        );
+    }
+
+    public function setAttributeNames(array $attributes): void
+    {
+        $this->attributeNames = $attributes;
     }
 
     protected function sortReplacements(array $replace): array

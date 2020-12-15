@@ -21,6 +21,29 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function it_replaces_paths_with_custom_attribute_names(): void
+    {
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->required()], ['foo' => 'FOO']);
+        $this->assertValidationFail($v, 'foo', 'FOO is required');
+
+        $v = $this->makeValidator(['foo' => [null]], [Rules::make('foo.*')->required()], ['foo' => 'FOO']);
+        $this->assertValidationFail($v, 'foo.0', 'foo.0 is required');
+
+        $v = $this->makeValidator(['foo' => [null]], [Rules::make('foo.*')->required()], ['foo.*' => 'FOO']);
+        $this->assertValidationFail($v, 'foo.0', 'FOO is required');
+
+        $v = $this->makeValidator(['foo' => [null, null]], [Rules::make('foo.*')->required()], ['foo.1' => 'FOO']);
+        $this->assertValidationFail($v, 'foo.0', 'foo.0 is required');
+        $this->assertValidationFail($v, 'foo.1', 'FOO is required');
+
+        $v = $this->makeValidator(['foo' => [null, null]], [Rules::make('foo.*')->required()], ['foo.*' => 'BAR', 'foo.1' => 'FOO']);
+        $this->assertValidationFail($v, 'foo.0', 'BAR is required');
+        $this->assertValidationFail($v, 'foo.1', 'FOO is required');
+    }
+
+    /**
+     * @test
+     */
     public function active_url_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'aslsdlks'], [Rules::make('foo')->activeUrl()]);
@@ -1801,11 +1824,10 @@ class ValidatorTest extends TestCase
     protected function assertValidationFail(Validator $validator, string $key, string $message): void
     {
         self::assertFalse($validator->passes());
-        self::assertSame(1, $validator->getMessages()->count());
         self::assertSame($message, $validator->getMessages()->first($key));
     }
 
-    protected function makeValidator(array $data, array $rules): Validator
+    protected function makeValidator(array $data, array $rules, array $attributesNames = []): Validator
     {
         return new Validator(new TestMessageResolver([
             'active_url' => ':attribute must be an active url',
@@ -1841,6 +1863,6 @@ class ValidatorTest extends TestCase
             'starts_with' => ':attribute must start with :values',
             'string_type' => ':attribute must be string',
             'uuid' => ':attribute must be uuid',
-        ]), $data, $rules);
+        ]), $data, $rules, $attributesNames);
     }
 }

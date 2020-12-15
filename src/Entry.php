@@ -31,6 +31,11 @@ class Entry
         $this->exists = $exists;
     }
 
+    public function getPattern(): string
+    {
+        return $this->pattern;
+    }
+
     public function getPath(): string
     {
         return $this->path;
