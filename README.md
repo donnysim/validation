@@ -155,4 +155,6 @@ rule('foo')
 ## TODO
 
 - More rules;
-- Ability to change attribute names in messages;
+- Decide if it's for Laravel or more general validator.
+
+    For laravel we could include service provider, validation message replacements, rules related to laravel like exists etc.
