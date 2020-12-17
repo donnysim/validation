@@ -17,7 +17,9 @@ use DonnySim\Validation\FieldReference;
 class DateBeforeOrAfter implements SingleRule
 {
     public const NAME_BEFORE = 'date_before';
+    public const NAME_BEFORE_OR_EQUAL = 'date_before_or_equal';
     public const NAME_AFTER = 'date_after';
+    public const NAME_AFTER_OR_EQUAL = 'date_after_or_equal';
 
     /**
      * @var mixed
@@ -89,7 +91,7 @@ class DateBeforeOrAfter implements SingleRule
         try {
             return Carbon::createFromFormat($format, $value);
         } catch (InvalidFormatException $e) {
-            return $this->getDateTime($value);
+            return $this->getDateTime($value, $format);
         }
     }
 
@@ -144,10 +146,10 @@ class DateBeforeOrAfter implements SingleRule
                 return static::NAME_BEFORE;
             case '>':
                 return static::NAME_AFTER;
-//            case '<=':
-//                return $first <= $second;
-//            case '>=':
-//                return $first >= $second;
+            case '<=':
+                return static::NAME_BEFORE_OR_EQUAL;
+            case '>=':
+                return static::NAME_AFTER_OR_EQUAL;
 //            case '=':
 //                return $first == $second;
             default:

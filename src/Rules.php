@@ -153,9 +153,23 @@ class Rules
         return $this;
     }
 
+    public function dateAfterOrEqual($date, ?string $format = null): self
+    {
+        $this->rules[] = new DateBeforeOrAfter($date, '>=', $format);
+
+        return $this;
+    }
+
     public function dateBefore($date, ?string $format = null): self
     {
         $this->rules[] = new DateBeforeOrAfter($date, '<', $format);
+
+        return $this;
+    }
+
+    public function dateBeforeOrEqual($date, ?string $format = null): self
+    {
+        $this->rules[] = new DateBeforeOrAfter($date, '<=', $format);
 
         return $this;
     }
