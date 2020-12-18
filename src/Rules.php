@@ -38,6 +38,7 @@ use DonnySim\Validation\Rules\Same;
 use DonnySim\Validation\Rules\SetValueIfMissing;
 use DonnySim\Validation\Rules\Sometimes;
 use DonnySim\Validation\Rules\StartsWith;
+use DonnySim\Validation\Rules\Timezone;
 use DonnySim\Validation\Rules\Types\ArrayType;
 use DonnySim\Validation\Rules\Types\BooleanLike;
 use DonnySim\Validation\Rules\Types\BooleanType;
@@ -387,6 +388,13 @@ class Rules
     public function stringType(): self
     {
         $this->rules[] = new StringType();
+
+        return $this;
+    }
+
+    public function timezone(): self
+    {
+        $this->rules[] = new Timezone();
 
         return $this;
     }

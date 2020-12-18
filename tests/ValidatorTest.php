@@ -1719,6 +1719,36 @@ class ValidatorTest extends TestCase
 
     /**
      * @test
+     */
+    public function timezone(): void
+    {
+        $v = $this->makeValidator(['foo' => 'India'], [Rules::make('foo')->timezone()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be a timezone');
+
+        $v = $this->makeValidator(['foo' => 'Cairo'], [Rules::make('foo')->timezone()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be a timezone');
+
+        $v = $this->makeValidator(['foo' => 'UTC'], [Rules::make('foo')->timezone()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'Africa/Windhoek'], [Rules::make('foo')->timezone()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'africa/windhoek'], [Rules::make('foo')->timezone()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be a timezone');
+
+        $v = $this->makeValidator(['foo' => 'GMT'], [Rules::make('foo')->timezone()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be a timezone');
+
+        $v = $this->makeValidator(['foo' => 'GB'], [Rules::make('foo')->timezone()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be a timezone');
+
+        $v = $this->makeValidator(['foo' => ['this_is_not_a_timezone']], [Rules::make('foo')->timezone()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be a timezone');
+    }
+
+    /**
+     * @test
      * @dataProvider validUrls
      *
      * @param string $url
@@ -2107,6 +2137,7 @@ class ValidatorTest extends TestCase
             'same' => ':attribute and :other must match',
             'starts_with' => ':attribute must start with :values',
             'string_type' => ':attribute must be string',
+            'timezone' => ':attribute must be a timezone',
             'uuid' => ':attribute must be uuid',
         ]), $data, $rules, $attributesNames);
     }
