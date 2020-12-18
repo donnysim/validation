@@ -366,7 +366,21 @@ class Rules
 
     public function numeric(): self
     {
-        $this->rules[] = new Numeric();
+        $this->rules[] = new Numeric(Numeric::TYPE_MIXED);
+
+        return $this;
+    }
+
+    public function numericFloat(): self
+    {
+        $this->rules[] = new Numeric(Numeric::TYPE_FLOAT);
+
+        return $this;
+    }
+
+    public function numericInteger(): self
+    {
+        $this->rules[] = new Numeric(Numeric::TYPE_INTEGER);
 
         return $this;
     }

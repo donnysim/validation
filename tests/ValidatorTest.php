@@ -1647,13 +1647,22 @@ class ValidatorTest extends TestCase
      */
     public function numeric_rule(): void
     {
-        $v = $this->makeValidator([], [Rules::make('foo')->nullable()]);
+        $v = $this->makeValidator([], [Rules::make('foo')->numeric()]);
         self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->numeric()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric');
+
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->numeric()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric');
 
         $v = $this->makeValidator(['foo' => 'asdad'], [Rules::make('foo')->numeric()]);
         $this->assertValidationFail($v, 'foo', 'foo must be numeric');
 
         $v = $this->makeValidator(['foo' => '1.23'], [Rules::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1.23'], [Rules::make('foo')->numeric()]);
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['foo' => '-1'], [Rules::make('foo')->numeric()]);
@@ -1667,6 +1676,96 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => 1], [Rules::make('foo')->numeric()]);
         self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1.1], [Rules::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1.1], [Rules::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function numeric_float_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => 'asdad'], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => '1.23'], [Rules::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1.23'], [Rules::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1'], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => '1'], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => -1], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => 1], [Rules::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric float');
+
+        $v = $this->makeValidator(['foo' => -1.1], [Rules::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1.1], [Rules::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function numeric_integer_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
+
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
+
+        $v = $this->makeValidator(['foo' => 'asdad'], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
+
+        $v = $this->makeValidator(['foo' => '1.23'], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
+
+        $v = $this->makeValidator(['foo' => '-1.23'], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
+
+        $v = $this->makeValidator(['foo' => '-1'], [Rules::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '1'], [Rules::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1], [Rules::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1], [Rules::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1.1], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
+
+        $v = $this->makeValidator(['foo' => 1.1], [Rules::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be numeric integer');
     }
 
     /**
@@ -2259,7 +2358,9 @@ class ValidatorTest extends TestCase
             'min.array' => ':attribute should contain :min items',
             'min.numeric' => ':attribute should be min :min',
             'min.string' => ':attribute should be min :min length',
-            'numeric' => ':attribute must be numeric',
+            'numeric.mixed' => ':attribute must be numeric',
+            'numeric.integer' => ':attribute must be numeric integer',
+            'numeric.float' => ':attribute must be numeric float',
             'not_regex' => ':attribute must not match regex',
             'not_in' => ':attribute must not be in array',
             'present' => ':attribute must be present',
