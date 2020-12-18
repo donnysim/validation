@@ -6,6 +6,7 @@ namespace DonnySim\Validation\Tests;
 
 use Carbon\Carbon;
 use DateTime;
+use DateTimeImmutable;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\Rules;
@@ -208,6 +209,34 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => ['bar' => 'baz']], [Rules::make('foo')->arrayType()]);
         self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function date_rule(): void
+    {
+        \date_default_timezone_set('UTC');
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->date()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '01/01/2000'], [Rules::make('x')->date()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->date()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => new DateTime()], [Rules::make('x')->date()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => new DateTimeImmutable()], [Rules::make('x')->date()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '1325376000'], [Rules::make('x')->date()]);
+        $this->assertValidationFail($v, 'x', 'x must be a date');
+
+        $v = $this->makeValidator(['x' => ['Not', 'a', 'date']], [Rules::make('x')->date()]);
+        $this->assertValidationFail($v, 'x', 'x must be a date');
     }
 
     /**
@@ -2033,6 +2062,7 @@ class ValidatorTest extends TestCase
             'alpha' => ':attribute must be alpha',
             'alpha_dash' => ':attribute must be alpha dash',
             'alpha_num' => ':attribute must be alpha num',
+            'date' => ':attribute must be a date',
             'date_after' => ':attribute must be after :other',
             'date_after_or_equal' => ':attribute must be after or equal :other',
             'date_before' => ':attribute must be before :other',

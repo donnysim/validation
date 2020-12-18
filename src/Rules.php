@@ -13,6 +13,7 @@ use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Alpha;
 use DonnySim\Validation\Rules\AlphaDash;
 use DonnySim\Validation\Rules\AlphaNum;
+use DonnySim\Validation\Rules\Date;
 use DonnySim\Validation\Rules\DateBeforeOrAfter;
 use DonnySim\Validation\Rules\Casts\ToBoolean;
 use DonnySim\Validation\Rules\Confirmed;
@@ -142,6 +143,13 @@ class Rules
     public function confirmed(): self
     {
         $this->rules[] = new Confirmed();
+
+        return $this;
+    }
+
+    public function date(): self
+    {
+        $this->rules[] = new Date();
 
         return $this;
     }
