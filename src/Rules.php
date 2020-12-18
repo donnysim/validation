@@ -174,6 +174,13 @@ class Rules
         return $this;
     }
 
+    public function dateEqual($date, ?string $format = null): self
+    {
+        $this->rules[] = new DateBeforeOrAfter($date, '=', $format);
+
+        return $this;
+    }
+
     public function dateFormat(string $format): self
     {
         $this->rules[] = new DateFormat($format);

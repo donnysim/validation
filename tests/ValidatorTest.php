@@ -808,6 +808,78 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function date_equal_rule(): void
+    {
+        \date_default_timezone_set('UTC');
+        $v = $this->makeValidator(['x' => new Carbon('2000-01-01')], [Rules::make('x')->dateEqual('2000-01-01')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->dateEqual('2000-01-01')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '2000-01-01'], [Rules::make('x')->dateEqual('2001-01-01')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 2001-01-01');
+
+        $v = $this->makeValidator(
+            [
+                'starts' => new DateTime('2000-01-01'),
+                'ends' => new DateTime('2000-01-01'),
+            ],
+            [
+                Rules::make('ends')->dateEqual(Rules::reference('starts')),
+            ]
+        );
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => \date('Y-m-d')], [Rules::make('x')->dateEqual('today')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => \date('Y-m-d')], [Rules::make('x')->dateEqual('yesterday')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal yesterday');
+
+        $v = $this->makeValidator(['x' => \date('Y-m-d')], [Rules::make('x')->dateEqual('tomorrow')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal tomorrow');
+
+        $v = $this->makeValidator(['x' => \date('d/m/Y')], [Rules::make('x')->dateEqual('today', 'd/m/Y')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => \date('d/m/Y')], [Rules::make('x')->dateEqual('yesterday', 'd/m/Y')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal yesterday');
+
+        $v = $this->makeValidator(['x' => \date('d/m/Y')], [Rules::make('x')->dateEqual('tomorrow', 'd/m/Y')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal tomorrow');
+
+        $v = $this->makeValidator(['x' => '2012-01-01 17:44:00'], [Rules::make('x')->dateFormat('Y-m-d H:i:s')->dateEqual('2012-01-01 17:44:00')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '2012-01-01 17:44:00'], [Rules::make('x')->dateFormat('Y-m-d H:i:s')->dateEqual('2012-01-01 17:43:59')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 2012-01-01 17:43:59');
+
+        $v = $this->makeValidator(['x' => '2012-01-01 17:44:00'], [Rules::make('x')->dateFormat('Y-m-d H:i:s')->dateEqual('2012-01-01 17:44:01')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 2012-01-01 17:44:01');
+
+        $v = $this->makeValidator(['x' => '17:44:00'], [Rules::make('x')->dateFormat('H:i:s')->dateEqual('17:44:00')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '17:44:00'], [Rules::make('x')->dateFormat('H:i:s')->dateEqual('17:43:59')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 17:43:59');
+
+        $v = $this->makeValidator(['x' => '17:44:00'], [Rules::make('x')->dateFormat('H:i:s')->dateEqual('17:44:01')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 17:44:01');
+
+        $v = $this->makeValidator(['x' => '17:44'], [Rules::make('x')->dateFormat('H:i')->dateEqual('17:44')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['x' => '17:44'], [Rules::make('x')->dateFormat('H:i')->dateEqual('17:43')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 17:43');
+
+        $v = $this->makeValidator(['x' => '17:44'], [Rules::make('x')->dateFormat('H:i')->dateEqual('17:45')]);
+        $this->assertValidationFail($v, 'x', 'x must be equal 17:45');
+    }
+
+    /**
+     * @test
+     */
     public function boolean_like_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'no'], [Rules::make('foo')->booleanLike()]);
@@ -1965,6 +2037,7 @@ class ValidatorTest extends TestCase
             'date_after_or_equal' => ':attribute must be after or equal :other',
             'date_before' => ':attribute must be before :other',
             'date_before_or_equal' => ':attribute must be before or equal :other',
+            'date_equal' => ':attribute must be equal :other',
             'boolean_like' => ':attribute must be boolean like',
             'boolean_type' => ':attribute must be boolean',
             'confirmed' => ':attribute must be confirmed',
