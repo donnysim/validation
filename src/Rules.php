@@ -13,6 +13,7 @@ use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Alpha;
 use DonnySim\Validation\Rules\AlphaDash;
 use DonnySim\Validation\Rules\AlphaNum;
+use DonnySim\Validation\Rules\Between;
 use DonnySim\Validation\Rules\Casts\ToBoolean;
 use DonnySim\Validation\Rules\Confirmed;
 use DonnySim\Validation\Rules\Date;
@@ -118,6 +119,19 @@ class Rules
     public function arrayType(): self
     {
         $this->rules[] = new ArrayType();
+
+        return $this;
+    }
+
+    /**
+     * @param int|float $min
+     * @param int|float $max
+     *
+     * @return static
+     */
+    public function between($min, $max): self
+    {
+        $this->rules[] = new Between($min, $max);
 
         return $this;
     }

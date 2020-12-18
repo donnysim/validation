@@ -908,6 +908,60 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function between_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'asdad'], [Rules::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 4 chars');
+
+        $v = $this->makeValidator(['foo' => 'anc'], [Rules::make('foo')->between(3, 4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'ancfs'], [Rules::make('foo')->between(3, 5)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '12345'], [Rules::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 4 chars');
+
+        $v = $this->makeValidator(['foo' => '4'], [Rules::make('foo')->between(3, 5)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 5 chars');
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->between(3, 5)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3, 4]], [Rules::make('foo')->between(3, 4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3, 4, 5, 6]], [Rules::make('foo')->between(3, 5)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 5 items');
+
+        $v = $this->makeValidator(['foo' => 3], [Rules::make('foo')->between(3, 4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 6], [Rules::make('foo')->between(3, 5)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 5');
+
+        // TODO
+//        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.4, 3.6)]);
+//        self::assertTrue($v->passes());
+//
+//        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.0, 3.4)]);
+//        $this->assertValidationFail($v, 'foo', 'foo must be between 3.0 and 3.4');
+
+        // TODO
+//        $file = $this->getMockBuilder(File::class)->onlyMethods(['getSize'])->setConstructorArgs([__FILE__, false])->getMock();
+//        $file->expects($this->any())->method('getSize')->willReturn(3072);
+//        $v = new Validator($trans, ['photo' => $file], ['photo' => 'Between:1,5']);
+//        $this->assertTrue($v->passes());
+//
+//        $file = $this->getMockBuilder(File::class)->onlyMethods(['getSize'])->setConstructorArgs([__FILE__, false])->getMock();
+//        $file->expects($this->any())->method('getSize')->willReturn(4072);
+//        $v = new Validator($trans, ['photo' => $file], ['photo' => 'Between:1,2']);
+//        $this->assertFalse($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function boolean_like_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'no'], [Rules::make('foo')->booleanLike()]);
@@ -2160,6 +2214,9 @@ class ValidatorTest extends TestCase
             'alpha' => ':attribute must be alpha',
             'alpha_dash' => ':attribute must be alpha dash',
             'alpha_num' => ':attribute must be alpha num',
+            'between.array' => ':attribute must be between :min and :max items',
+            'between.string' => ':attribute must be between :min and :max chars',
+            'between.numeric' => ':attribute must be between :min and :max',
             'date' => ':attribute must be a date',
             'date_after' => ':attribute must be after :other',
             'date_after_or_equal' => ':attribute must be after or equal :other',
