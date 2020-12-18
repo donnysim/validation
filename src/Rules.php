@@ -23,6 +23,7 @@ use DonnySim\Validation\Rules\EndsWith;
 use DonnySim\Validation\Rules\Filled;
 use DonnySim\Validation\Rules\In;
 use DonnySim\Validation\Rules\IpAddress;
+use DonnySim\Validation\Rules\Json;
 use DonnySim\Validation\Rules\Max;
 use DonnySim\Validation\Rules\Min;
 use DonnySim\Validation\Rules\NotIn;
@@ -239,6 +240,13 @@ class Rules
     public function ipAddress(?string $type = null): self
     {
         $this->rules[] = new IpAddress($type);
+
+        return $this;
+    }
+
+    public function json(): self
+    {
+        $this->rules[] = new Json();
 
         return $this;
     }

@@ -15,7 +15,6 @@ use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
 use DonnySim\Validation\Validator;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use function DonnySim\Validation\rule;
 
 class ValidatorTest extends TestCase
 {
@@ -1258,6 +1257,21 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function json_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->json()]);
+        $this->assertValidationFail($v, 'foo', 'foo must be json');
+
+        $v = $this->makeValidator(['foo' => '[]'], [Rules::make('foo')->json()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '{"name":"John","age":"34"}'], [Rules::make('foo')->json()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function not_regex_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'foo bar'], [Rules::make('foo')->notRegex('/[xyz]/i')]);
@@ -1642,7 +1656,7 @@ class ValidatorTest extends TestCase
         $v = $this->makeValidator(
             [],
             [
-                rule('foo')->when(true, static function (Rules $rules) {
+                Rules::make('foo')->when(true, static function (Rules $rules) {
                     $rules->required();
                 }),
             ]
@@ -1652,7 +1666,7 @@ class ValidatorTest extends TestCase
         $v = $this->makeValidator(
             [],
             [
-                rule('foo')->when(false, static function (Rules $rules) {
+                Rules::make('foo')->when(false, static function (Rules $rules) {
                     $rules->required();
                 }),
             ]
@@ -2077,6 +2091,7 @@ class ValidatorTest extends TestCase
             'in' => ':attribute must be in array',
             'integer_type' => ':attribute must be integer',
             'ip_address' => ':attribute must be a valid ip address',
+            'json' => ':attribute must be json',
             'max.array' => ':attribute should contain max :max items',
             'max.numeric' => ':attribute should be max :max',
             'max.string' => ':attribute should be max :max length',
