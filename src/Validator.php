@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use DonnySim\Validation\Contracts\MessageResolver;
 use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
-use DonnySim\Validation\Contracts\MessageResolver;
 
 class Validator
 {

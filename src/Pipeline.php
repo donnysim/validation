@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
-use Generator;
 use DonnySim\Validation\Contracts\Rule;
+use Generator;
 
 class Pipeline
 {
