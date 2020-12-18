@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Rules;
 
+use DonnySim\Validation\Contracts\SingleRule;
+use DonnySim\Validation\Entry;
+use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\Rules\Email\FilterEmailValidation;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\DNSCheckValidation;
@@ -11,9 +14,6 @@ use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
 use Egulias\EmailValidator\Validation\NoRFCWarningsValidation;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Egulias\EmailValidator\Validation\SpoofCheckValidation;
-use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
 
 class Email implements SingleRule
 {

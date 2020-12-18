@@ -18,6 +18,7 @@ use DonnySim\Validation\Rules\DateBeforeOrAfter;
 use DonnySim\Validation\Rules\Casts\ToBoolean;
 use DonnySim\Validation\Rules\Confirmed;
 use DonnySim\Validation\Rules\DateFormat;
+use DonnySim\Validation\Rules\Digits;
 use DonnySim\Validation\Rules\Email;
 use DonnySim\Validation\Rules\EndsWith;
 use DonnySim\Validation\Rules\Filled;
@@ -194,6 +195,20 @@ class Rules
     public function dateFormat(string $format): self
     {
         $this->rules[] = new DateFormat($format);
+
+        return $this;
+    }
+
+    public function digits(int $digits): self
+    {
+        $this->rules[] = new Digits('=', $digits);
+
+        return $this;
+    }
+
+    public function digitsBetween(int $from, int $to): self
+    {
+        $this->rules[] = new Digits('><', $from, $to);
 
         return $this;
     }

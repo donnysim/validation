@@ -1101,6 +1101,60 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function digits_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->digits(1)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '12345'], [Rules::make('foo')->digits(5)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 12345], [Rules::make('foo')->digits(5)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 12345.0], [Rules::make('foo')->digits(5)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have 5 digits');
+
+        $v = $this->makeValidator(['foo' => '123'], [Rules::make('foo')->digits(200)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have 200 digits');
+
+        $v = $this->makeValidator(['foo' => '+2.37'], [Rules::make('foo')->digits(200)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have 200 digits');
+
+        $v = $this->makeValidator(['foo' => '2e7'], [Rules::make('foo')->digits(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have 3 digits');
+    }
+
+    /**
+     * @test
+     */
+    public function digits_between_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->digitsBetween(1, 2)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '12345'], [Rules::make('foo')->digitsBetween(1, 6)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 12345], [Rules::make('foo')->digitsBetween(1, 6)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 12345.0], [Rules::make('foo')->digitsBetween(1, 6)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have digits between 1 and 6');
+
+        $v = $this->makeValidator(['foo' => 'bar'], [Rules::make('foo')->digitsBetween(1, 10)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have digits between 1 and 10');
+
+        $v = $this->makeValidator(['foo' => '123'], [Rules::make('foo')->digitsBetween(4, 5)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have digits between 4 and 5');
+
+        $v = $this->makeValidator(['foo' => '+12.3'], [Rules::make('foo')->digitsBetween(1, 6)]);
+        $this->assertValidationFail($v, 'foo', 'foo must have digits between 1 and 6');
+    }
+
+    /**
+     * @test
+     */
     public function email_rule(): void
     {
         $v = $this->makeValidator([], [Rules::make('email')->email()]);
@@ -2112,6 +2166,8 @@ class ValidatorTest extends TestCase
             'date_before' => ':attribute must be before :other',
             'date_before_or_equal' => ':attribute must be before or equal :other',
             'date_equal' => ':attribute must be equal :other',
+            'digits' => ':attribute must have :digits digits',
+            'digits_between' => ':attribute must have digits between :min and :max',
             'boolean_like' => ':attribute must be boolean like',
             'boolean_type' => ':attribute must be boolean',
             'confirmed' => ':attribute must be confirmed',

@@ -8,11 +8,11 @@ use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use DateTime;
 use DateTimeInterface;
-use InvalidArgumentException;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\FieldReference;
+use InvalidArgumentException;
 
 class DateBeforeOrAfter implements SingleRule
 {
