@@ -65,5 +65,7 @@ class Min implements SingleRule
 
             return;
         }
+
+        $pipeline->fail(static::NAME_STRING, ['min' => $this->min]);
     }
 }

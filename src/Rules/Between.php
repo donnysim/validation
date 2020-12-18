@@ -78,5 +78,7 @@ class Between implements SingleRule
 
             return;
         }
+
+        $pipeline->fail(static::NAME_STRING, ['min' => $this->min, 'max' => $this->max]);
     }
 }

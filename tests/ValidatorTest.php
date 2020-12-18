@@ -913,6 +913,9 @@ class ValidatorTest extends TestCase
         $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->between(3, 4)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 4 chars');
 
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 4 chars');
+
         $v = $this->makeValidator(['foo' => 'asdad'], [Rules::make('foo')->between(3, 4)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 4 chars');
 
@@ -1560,6 +1563,9 @@ class ValidatorTest extends TestCase
         $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->max(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
 
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->max(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
+
         // TODO numeric
 
         $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->max(3)]);
@@ -1587,6 +1593,9 @@ class ValidatorTest extends TestCase
     public function min_rule(): void
     {
         $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->min(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
+
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->min(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
 
         // TODO numeric

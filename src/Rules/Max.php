@@ -7,6 +7,7 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use UnexpectedValueException;
 
 class Max implements SingleRule
 {
@@ -65,5 +66,7 @@ class Max implements SingleRule
 
             return;
         }
+
+        $pipeline->fail(static::NAME_STRING, ['max' => $this->max]);
     }
 }
