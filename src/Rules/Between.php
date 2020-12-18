@@ -38,10 +38,10 @@ class Between implements SingleRule
 
         $value = $entry->getValue();
 
-//        if ($value === null) {
-//            $pipeline->fail(static::NAME, ['min' => $this->min, 'max' => $this->max]);
-//            return;
-//        }
+        if ($value === null) {
+            $pipeline->fail(static::NAME_STRING, ['min' => $this->min, 'max' => $this->max]);
+            return;
+        }
 
 //        if (\is_numeric($value)) {
 //            if ($value < $this->min) {

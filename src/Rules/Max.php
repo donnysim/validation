@@ -29,10 +29,10 @@ class Max implements SingleRule
 
         $value = $entry->getValue();
 
-//        if ($value === null) {
-//            $pipeline->fail(static::NAME, ['max' => $this->max]);
-//            return;
-//        }
+        if ($value === null) {
+            $pipeline->fail(static::NAME_STRING, ['max' => $this->max]);
+            return;
+        }
 
 //        if (\is_numeric($value)) {
 //            if ($value > $this->max) {
