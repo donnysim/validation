@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Rules;
 
+use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
@@ -14,20 +15,18 @@ class Between implements SingleRule
     public const NAME_ARRAY = 'between.array';
     public const NAME_NUMERIC = 'between.numeric';
 
-    /**
-     * @var int|float
-     */
-    protected $min;
+    protected BigDecimal $min;
+
+    protected BigDecimal $max;
 
     /**
-     * @var int|float
+     * @param int|float|string $min
+     * @param int|float|string $max
      */
-    protected $max;
-
     public function __construct($min, $max)
     {
-        $this->min = $min;
-        $this->max = $max;
+        $this->min = BigDecimal::of($min);
+        $this->max = BigDecimal::of($max);
     }
 
     public function handle(EntryPipeline $pipeline, Entry $entry): void
@@ -43,16 +42,16 @@ class Between implements SingleRule
             return;
         }
 
-//        if (\is_numeric($value)) {
-//            if ($value < $this->min) {
-//                $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min, 'max' => $this->max]);
-//            }
-//
-//            return;
-//        }
+        if ($pipeline->findPreviousRule(Numeric::class)) {
+            if ($this->min->isGreaterThan($value) || $this->max->isLessThan($value)) {
+                $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min, 'max' => $this->max]);
+            }
 
-        if (\is_int($value)) {
-            if ($value < $this->min || $value > $this->max) {
+            return;
+        }
+
+        if (\is_int($value) || \is_float($value)) {
+            if ($this->min->isGreaterThan($value) || $this->max->isLessThan($value)) {
                 $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min, 'max' => $this->max]);
             }
 
@@ -62,7 +61,7 @@ class Between implements SingleRule
         if (\is_string($value)) {
             $length = \mb_strlen($value);
 
-            if ($length < $this->min || $length > $this->max) {
+            if ($this->min->isGreaterThan($length) || $this->max->isLessThan($length)) {
                 $pipeline->fail(static::NAME_STRING, ['min' => $this->min, 'max' => $this->max]);
             }
 
@@ -72,7 +71,7 @@ class Between implements SingleRule
         if (\is_array($value)) {
             $size = \count($value);
 
-            if ($size < $this->min || $size > $this->max) {
+            if ($this->min->isGreaterThan($size) || $this->max->isLessThan($size)) {
                 $pipeline->fail(static::NAME_ARRAY, ['min' => $this->min, 'max' => $this->max]);
             }
 

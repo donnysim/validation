@@ -124,8 +124,11 @@ class Rules
     }
 
     /**
-     * @param int|float $min
-     * @param int|float $max
+     * When using with precision 17, use string instead of float
+     * otherwise it is received as 4.0999999999999996.
+     *
+     * @param int|float|string $min
+     * @param int|float|string $max
      *
      * @return static
      */
@@ -344,9 +347,10 @@ class Rules
     }
 
     /**
+     * When using with precision 17, use string instead of float
+     * otherwise it is received as 4.0999999999999996.
+     *
      * @param int|float|string $max
-     *   When using with precision 17, use string instead of float
-     *   otherwise it is received as 4.0999999999999996.
      *
      * @return static
      */
@@ -358,9 +362,10 @@ class Rules
     }
 
     /**
+     * When using with precision 17, use string instead of float
+     * otherwise it is received as 4.0999999999999996.
+     *
      * @param int|float|string $min
-     *   When using with precision 17, use string instead of float
-     *   otherwise it is received as 4.0999999999999996.
      *
      * @return static
      */

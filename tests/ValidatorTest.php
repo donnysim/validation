@@ -910,6 +910,8 @@ class ValidatorTest extends TestCase
      */
     public function between_rule(): void
     {
+        \ini_set('precision', '17');
+
         $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->between(3, 4)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 4 chars');
 
@@ -945,6 +947,30 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => 6], [Rules::make('foo')->between(3, 5)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 5');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min(3.1)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min('3.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->min('3.0')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 3.0');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between(4, 5)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 4 and 5');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between(4.1, 5.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 4.0999999999999996 and 5.0999999999999996');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between('4.1', '5.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 4.1 and 5.1');
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->between('4.1', '4.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->between('3.1', '4.1')]);
+        self::assertTrue($v->passes());
 
         // TODO
 //        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.4, 3.6)]);
