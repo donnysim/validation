@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests\Stubs;
 
+use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
 use DonnySim\Validation\Message;
 use Illuminate\Support\Collection;
@@ -13,15 +14,14 @@ class TestMessageResolver implements MessageResolver
 {
     protected array $messages = [];
 
-    protected array $attributeNames = [];
-
     public function __construct(array $messages)
     {
         $this->messages = $messages;
     }
 
-    public function resolve(Message $message): string
+    public function resolve(Message $message, MessageOverrideProvider $provider): string
     {
+        $overrides = $provider->getMessageOverrides();
         $path = $message->getEntry()->getPath();
         $key = $message->getKey();
 
@@ -31,21 +31,16 @@ class TestMessageResolver implements MessageResolver
 
         $attribute = $path;
 
-        if (isset($this->attributeNames[$path])) {
-            $attribute = $this->attributeNames[$path];
-        } elseif (isset($this->attributeNames[$message->getEntry()->getPattern()])) {
-            $attribute = $this->attributeNames[$message->getEntry()->getPattern()];
+        if (isset($overrides[$path])) {
+            $attribute = $overrides[$path];
+        } elseif (isset($overrides[$message->getEntry()->getPattern()])) {
+            $attribute = $overrides[$message->getEntry()->getPattern()];
         }
 
         return $this->makeReplacements(
             $this->messages[$key],
             \array_merge(\compact('path', 'attribute'), $message->getParams())
         );
-    }
-
-    public function setAttributeNames(array $attributes): void
-    {
-        $this->attributeNames = $attributes;
     }
 
     protected function sortReplacements(array $replace): array

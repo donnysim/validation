@@ -26,7 +26,7 @@ class ValidatorFactory
     public static function instance(): self
     {
         if (!static::$instance) {
-            throw new UnexpectedValueException('Global instance has not been set.');
+            throw new UnexpectedValueException('Global instance has not been set. Use setInstance to set global instance.');
         }
 
         return static::$instance;
@@ -34,6 +34,9 @@ class ValidatorFactory
 
     public function make(array $data, array $rules, array $attributeNames = []): Validator
     {
-        return new Validator($this->resolver, $data, $rules, $attributeNames);
+        $validator = new Validator($this->resolver, $data, $rules);
+        $validator->override($attributeNames);
+
+        return $validator;
     }
 }

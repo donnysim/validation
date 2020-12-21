@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
 use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
-class Validator
+class Validator implements MessageOverrideProvider
 {
     protected MessageResolver $resolver;
 
@@ -33,15 +34,15 @@ class Validator
 
     protected bool $validated = false;
 
-    public function __construct(MessageResolver $resolver, array $data, array $rules, array $attributeNames = [])
+    protected array $messageOverrides = [];
+
+    public function __construct(MessageResolver $resolver, array $data, array $rules)
     {
         $this->resolver = $resolver;
         $this->data = $data;
         $this->rules = $rules;
         $this->messages = new MessageBag();
         $this->missingValue = 'missing' . Str::random(8);
-        $resolver->setAttributeNames($attributeNames);
-
         // TODO prevent adding multiple rules with same pattern?
     }
 
@@ -74,6 +75,26 @@ class Validator
     public function getMessageResolver(): MessageResolver
     {
         return $this->resolver;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * Replace attributes with custom names.
+     * Format ['pattern' => 'name'].
+     *
+     * @return static
+     */
+    public function override(array $attributes): self
+    {
+        $this->messageOverrides = $attributes;
+
+        return $this;
+    }
+
+    public function getMessageOverrides(): array
+    {
+        return $this->messageOverrides;
     }
 
     public function getValueEntry(string $field): Entry
@@ -137,7 +158,7 @@ class Validator
                 }
             } else {
                 foreach ($messages as $message) {
-                    $this->messages->add($message->getEntry()->getPath(), $this->resolver->resolve($message));
+                    $this->messages->add($message->getEntry()->getPath(), $this->resolver->resolve($message, $this));
                 }
             }
         }

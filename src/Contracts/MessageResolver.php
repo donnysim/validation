@@ -8,13 +8,11 @@ use DonnySim\Validation\Message;
 
 interface MessageResolver
 {
-    public function resolve(Message $message): string;
-
     /**
-     * Replace attribute paths with custom names.
-     * Format ['pattern' => 'name'].
+     * @param \DonnySim\Validation\Message $message
+     * @param \DonnySim\Validation\Contracts\MessageOverrideProvider $provider
      *
-     * @param array $attributes
+     * @return string
      */
-    public function setAttributeNames(array $attributes): void;
+    public function resolve(Message $message, MessageOverrideProvider $provider): string;
 }

@@ -2322,9 +2322,9 @@ class ValidatorTest extends TestCase
         self::assertSame($message, $validator->getMessages()->first($key));
     }
 
-    protected function makeValidator(array $data, array $rules, array $attributesNames = []): Validator
+    protected function makeValidator(array $data, array $rules, array $overrides = []): Validator
     {
-        return new Validator(new TestMessageResolver([
+        $validator = new Validator(new TestMessageResolver([
             'active_url' => ':attribute must be an active url',
             'accepted' => ':attribute must be accepted',
             'array_type' => ':attribute must be array',
@@ -2371,6 +2371,8 @@ class ValidatorTest extends TestCase
             'string_type' => ':attribute must be string',
             'timezone' => ':attribute must be a timezone',
             'uuid' => ':attribute must be uuid',
-        ]), $data, $rules, $attributesNames);
+        ]), $data, $rules);
+
+        return $validator->override($overrides);
     }
 }
