@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Rules;
 
+use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
@@ -14,9 +15,15 @@ class Min implements SingleRule
     public const NAME_ARRAY = 'min.array';
     public const NAME_NUMERIC = 'min.numeric';
 
-    protected int $min;
+    /**
+     * @var int|float|string
+     */
+    protected $min;
 
-    public function __construct(int $min)
+    /**
+     * @param int|float $min
+     */
+    public function __construct($min)
     {
         $this->min = $min;
     }
@@ -34,17 +41,29 @@ class Min implements SingleRule
             return;
         }
 
-//        if (\is_numeric($value)) {
-//            if ($value < $this->min) {
-//                $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min]);
-//            }
-//
-//            return;
-//        }
+        if ($pipeline->findPreviousRule(Numeric::class)) {
+            $decimal = BigDecimal::of($this->min);
+
+            if ($decimal->isGreaterThan($value)) {
+                $pipeline->fail(static::NAME_NUMERIC, ['min' => $decimal]);
+            }
+
+            return;
+        }
 
         if (\is_int($value)) {
             if ($value < $this->min) {
                 $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min]);
+            }
+
+            return;
+        }
+
+        if (\is_float($value)) {
+            $decimal = BigDecimal::of($this->min);
+
+            if ($decimal->isGreaterThan($value)) {
+                $pipeline->fail(static::NAME_NUMERIC, ['min' => $decimal]);
             }
 
             return;

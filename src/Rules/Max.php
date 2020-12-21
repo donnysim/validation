@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Rules;
 
+use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
@@ -15,9 +16,15 @@ class Max implements SingleRule
     public const NAME_ARRAY = 'max.array';
     public const NAME_NUMERIC = 'max.numeric';
 
-    protected int $max;
+    /**
+     * @var int|float|string
+     */
+    protected $max;
 
-    public function __construct(int $max)
+    /**
+     * @param int|float $max
+     */
+    public function __construct($max)
     {
         $this->max = $max;
     }
@@ -35,17 +42,29 @@ class Max implements SingleRule
             return;
         }
 
-//        if (\is_numeric($value)) {
-//            if ($value > $this->max) {
-//                $pipeline->fail(static::NAME_NUMERIC, ['max' => $this->max]);
-//            }
-//
-//            return;
-//        }
+        if ($pipeline->findPreviousRule(Numeric::class)) {
+            $decimal = BigDecimal::of($this->max);
+
+            if ($decimal->isLessThan($value)) {
+                $pipeline->fail(static::NAME_NUMERIC, ['max' => $decimal]);
+            }
+
+            return;
+        }
 
         if (\is_int($value)) {
             if ($value > $this->max) {
                 $pipeline->fail(static::NAME_NUMERIC, ['max' => $this->max]);
+            }
+
+            return;
+        }
+
+        if (\is_float($value)) {
+            $decimal = BigDecimal::of($this->max);
+
+            if ($decimal->isGreaterThan($value)) {
+                $pipeline->fail(static::NAME_NUMERIC, ['max' => $decimal]);
             }
 
             return;

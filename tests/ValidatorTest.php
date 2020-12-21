@@ -1560,13 +1560,13 @@ class ValidatorTest extends TestCase
      */
     public function max_rule(): void
     {
+        \ini_set('precision', '17');
+
         $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->max(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
 
         $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->max(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
-
-        // TODO numeric
 
         $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->max(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
@@ -1585,6 +1585,27 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->max(2)]);
         $this->assertValidationFail($v, 'foo', 'foo should contain max 2 items');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->max(3.1)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->max('3.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->max('3.0')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be max 3.0');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max(2)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be max 2');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max(2.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be max 2.1000000000000001');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max('2.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be max 2.1');
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->max('4.1')]);
+        self::assertTrue($v->passes());
     }
 
     /**
@@ -1592,13 +1613,14 @@ class ValidatorTest extends TestCase
      */
     public function min_rule(): void
     {
+        \ini_set('precision', '17');
+
         $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->min(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
 
         $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->min(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
 
-        // TODO numeric
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->min(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
 
@@ -1619,6 +1641,27 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(['foo' => [1, 2]], [Rules::make('foo')->min(3)]);
         $this->assertValidationFail($v, 'foo', 'foo should contain 3 items');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min(3.1)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min('3.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->min('3.0')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 3.0');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min(4)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 4');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min(4.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 4.0999999999999996');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min('4.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be min 4.1');
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->min('4.1')]);
+        self::assertTrue($v->passes());
     }
 
     /**

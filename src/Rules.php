@@ -343,14 +343,28 @@ class Rules
         return $this;
     }
 
-    public function max(int $max): self
+    /**
+     * @param int|float|string $max
+     *   When using with precision 17, use string instead of float
+     *   otherwise it is received as 4.0999999999999996.
+     *
+     * @return static
+     */
+    public function max($max): self
     {
         $this->rules[] = new Max($max);
 
         return $this;
     }
 
-    public function min(int $min): self
+    /**
+     * @param int|float|string $min
+     *   When using with precision 17, use string instead of float
+     *   otherwise it is received as 4.0999999999999996.
+     *
+     * @return static
+     */
+    public function min($min): self
     {
         $this->rules[] = new Min($min);
 
