@@ -8,7 +8,6 @@ use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
-use UnexpectedValueException;
 
 class Max implements SingleRule
 {
