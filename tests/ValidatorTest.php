@@ -1584,6 +1584,18 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function rules_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->rules([new Rules\Nullable(), new Rules\Required()])]);
+        self::assertFalse($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->rules([new Rules\Nullable(), new Rules\Required()])]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function max_rule(): void
     {
         \ini_set('precision', '17');

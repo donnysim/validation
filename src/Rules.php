@@ -346,6 +346,15 @@ class Rules
         return $this;
     }
 
+    public function rules(array $rules): self
+    {
+        foreach ($rules as $rule) {
+            $this->rule($rule);
+        }
+
+        return $this;
+    }
+
     /**
      * When using with precision 17, use string instead of float
      * otherwise it is received as 4.0999999999999996.
