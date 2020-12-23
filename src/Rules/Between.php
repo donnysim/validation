@@ -8,16 +8,17 @@ use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Rules\Concerns\SizeValidation;
 
 class Between implements SingleRule
 {
-    public const NAME_STRING = 'between.string';
-    public const NAME_ARRAY = 'between.array';
-    public const NAME_NUMERIC = 'between.numeric';
+    use SizeValidation;
 
-    protected BigDecimal $min;
+    public const NAME = 'between';
 
-    protected BigDecimal $max;
+    protected ?BigDecimal $min;
+
+    protected ?BigDecimal $max;
 
     /**
      * @param int|float|string $min
@@ -25,8 +26,8 @@ class Between implements SingleRule
      */
     public function __construct($min, $max)
     {
-        $this->min = BigDecimal::of($min);
-        $this->max = BigDecimal::of($max);
+        $this->min = $this->getValueSize($min, true);
+        $this->max = $this->getValueSize($max, true);
     }
 
     public function handle(EntryPipeline $pipeline, Entry $entry): void
@@ -35,49 +36,17 @@ class Between implements SingleRule
             return;
         }
 
-        $value = $entry->getValue();
+        $numeric = $pipeline->findPreviousRule(Numeric::class) !== null;
+        $value = $this->getValueSize($entry->getValue(), $numeric);
 
-        if ($value === null) {
-            $pipeline->fail(static::NAME_STRING, ['min' => $this->min, 'max' => $this->max]);
+        if ($value === null || $this->min === null || $this->max === null || $this->min->isGreaterThan($value) || $this->max->isLessThan($value)) {
+            $pipeline->fail($this->messageKey($entry->getValue(), $numeric), ['min' => $this->valueForError($this->min), 'max' => $this->valueForError($this->max)]);
             return;
         }
+    }
 
-        if ($pipeline->findPreviousRule(Numeric::class)) {
-            if ($this->min->isGreaterThan($value) || $this->max->isLessThan($value)) {
-                $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min, 'max' => $this->max]);
-            }
-
-            return;
-        }
-
-        if (\is_int($value) || \is_float($value)) {
-            if ($this->min->isGreaterThan($value) || $this->max->isLessThan($value)) {
-                $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min, 'max' => $this->max]);
-            }
-
-            return;
-        }
-
-        if (\is_string($value)) {
-            $length = \mb_strlen($value);
-
-            if ($this->min->isGreaterThan($length) || $this->max->isLessThan($length)) {
-                $pipeline->fail(static::NAME_STRING, ['min' => $this->min, 'max' => $this->max]);
-            }
-
-            return;
-        }
-
-        if (\is_array($value)) {
-            $size = \count($value);
-
-            if ($this->min->isGreaterThan($size) || $this->max->isLessThan($size)) {
-                $pipeline->fail(static::NAME_ARRAY, ['min' => $this->min, 'max' => $this->max]);
-            }
-
-            return;
-        }
-
-        $pipeline->fail(static::NAME_STRING, ['min' => $this->min, 'max' => $this->max]);
+    protected function messageKey($value, bool $canBeNumeric): string
+    {
+        return static::NAME . '.' . $this->getValueType($value, $canBeNumeric);
     }
 }

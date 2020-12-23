@@ -1030,13 +1030,13 @@ class ValidatorTest extends TestCase
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->min('3.0')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3.0');
+        $this->assertValidationFail($v, 'foo', 'foo should be min 3');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between(4, 5)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 4 and 5');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between(4.1, 5.1)]);
-        $this->assertValidationFail($v, 'foo', 'foo must be between 4.0999999999999996 and 5.0999999999999996');
+        $this->assertValidationFail($v, 'foo', 'foo must be between 4.1 and 5.1');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between('4.1', '5.1')]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 4.1 and 5.1');
@@ -1730,13 +1730,13 @@ class ValidatorTest extends TestCase
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->max('3.0')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 3.0');
+        self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max(2)]);
         $this->assertValidationFail($v, 'foo', 'foo should be max 2');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max(2.1)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 2.1000000000000001');
+        $this->assertValidationFail($v, 'foo', 'foo should be max 2.1');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max('2.1')]);
         $this->assertValidationFail($v, 'foo', 'foo should be max 2.1');
@@ -1786,13 +1786,13 @@ class ValidatorTest extends TestCase
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->min('3.0')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3.0');
+        $this->assertValidationFail($v, 'foo', 'foo should be min 3');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min(4)]);
         $this->assertValidationFail($v, 'foo', 'foo should be min 4');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min(4.1)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 4.0999999999999996');
+        $this->assertValidationFail($v, 'foo', 'foo should be min 4.1');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min('4.1')]);
         $this->assertValidationFail($v, 'foo', 'foo should be min 4.1');

@@ -8,24 +8,22 @@ use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Rules\Concerns\SizeValidation;
 
 class Min implements SingleRule
 {
-    public const NAME_STRING = 'min.string';
-    public const NAME_ARRAY = 'min.array';
-    public const NAME_NUMERIC = 'min.numeric';
+    use SizeValidation;
+
+    public const NAME = 'min';
+
+    protected ?BigDecimal $min;
 
     /**
-     * @var int|float|string
-     */
-    protected $min;
-
-    /**
-     * @param int|float $min
+     * @param int|float|string $min
      */
     public function __construct($min)
     {
-        $this->min = $min;
+        $this->min = $this->getValueSize($min, true);
     }
 
     public function handle(EntryPipeline $pipeline, Entry $entry): void
@@ -34,57 +32,17 @@ class Min implements SingleRule
             return;
         }
 
-        $value = $entry->getValue();
+        $numeric = $pipeline->findPreviousRule(Numeric::class) !== null;
+        $value = $this->getValueSize($entry->getValue(), $numeric);
 
-        if ($value === null) {
-            $pipeline->fail(static::NAME_STRING, ['min' => $this->min]);
+        if ($value === null || $this->min === null || $this->min->isGreaterThan($value)) {
+            $pipeline->fail($this->messageKey($entry->getValue(), $numeric), ['min' => $this->valueForError($this->min)]);
             return;
         }
+    }
 
-        if ($pipeline->findPreviousRule(Numeric::class)) {
-            $decimal = BigDecimal::of($this->min);
-
-            if ($decimal->isGreaterThan($value)) {
-                $pipeline->fail(static::NAME_NUMERIC, ['min' => $decimal]);
-            }
-
-            return;
-        }
-
-        if (\is_int($value)) {
-            if ($value < $this->min) {
-                $pipeline->fail(static::NAME_NUMERIC, ['min' => $this->min]);
-            }
-
-            return;
-        }
-
-        if (\is_float($value)) {
-            $decimal = BigDecimal::of($this->min);
-
-            if ($decimal->isGreaterThan($value)) {
-                $pipeline->fail(static::NAME_NUMERIC, ['min' => $decimal]);
-            }
-
-            return;
-        }
-
-        if (\is_string($value)) {
-            if (\mb_strlen($value) < $this->min) {
-                $pipeline->fail(static::NAME_STRING, ['min' => $this->min]);
-            }
-
-            return;
-        }
-
-        if (\is_array($value)) {
-            if (\count($value) < $this->min) {
-                $pipeline->fail(static::NAME_ARRAY, ['min' => $this->min]);
-            }
-
-            return;
-        }
-
-        $pipeline->fail(static::NAME_STRING, ['min' => $this->min]);
+    protected function messageKey($value, bool $canBeNumeric): string
+    {
+        return static::NAME . '.' . $this->getValueType($value, $canBeNumeric);
     }
 }

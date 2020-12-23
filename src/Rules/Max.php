@@ -8,24 +8,22 @@ use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Rules\Concerns\SizeValidation;
 
 class Max implements SingleRule
 {
-    public const NAME_STRING = 'max.string';
-    public const NAME_ARRAY = 'max.array';
-    public const NAME_NUMERIC = 'max.numeric';
+    use SizeValidation;
+
+    public const NAME = 'max';
+
+    protected ?BigDecimal $max;
 
     /**
-     * @var int|float|string
-     */
-    protected $max;
-
-    /**
-     * @param int|float $max
+     * @param int|float|string $max
      */
     public function __construct($max)
     {
-        $this->max = $max;
+        $this->max = $this->getValueSize($max, true);
     }
 
     public function handle(EntryPipeline $pipeline, Entry $entry): void
@@ -34,57 +32,17 @@ class Max implements SingleRule
             return;
         }
 
-        $value = $entry->getValue();
+        $numeric = $pipeline->findPreviousRule(Numeric::class) !== null;
+        $value = $this->getValueSize($entry->getValue(), $numeric);
 
-        if ($value === null) {
-            $pipeline->fail(static::NAME_STRING, ['max' => $this->max]);
+        if ($value === null || $this->max === null || $this->max->isLessThan($value)) {
+            $pipeline->fail($this->messageKey($entry->getValue(), $numeric), ['max' => $this->valueForError($this->max)]);
             return;
         }
+    }
 
-        if ($pipeline->findPreviousRule(Numeric::class)) {
-            $decimal = BigDecimal::of($this->max);
-
-            if ($decimal->isLessThan($value)) {
-                $pipeline->fail(static::NAME_NUMERIC, ['max' => $decimal]);
-            }
-
-            return;
-        }
-
-        if (\is_int($value)) {
-            if ($value > $this->max) {
-                $pipeline->fail(static::NAME_NUMERIC, ['max' => $this->max]);
-            }
-
-            return;
-        }
-
-        if (\is_float($value)) {
-            $decimal = BigDecimal::of($this->max);
-
-            if ($decimal->isGreaterThan($value)) {
-                $pipeline->fail(static::NAME_NUMERIC, ['max' => $decimal]);
-            }
-
-            return;
-        }
-
-        if (\is_string($value)) {
-            if (\mb_strlen($value) > $this->max) {
-                $pipeline->fail(static::NAME_STRING, ['max' => $this->max]);
-            }
-
-            return;
-        }
-
-        if (\is_array($value)) {
-            if (\count($value) > $this->max) {
-                $pipeline->fail(static::NAME_ARRAY, ['max' => $this->max]);
-            }
-
-            return;
-        }
-
-        $pipeline->fail(static::NAME_STRING, ['max' => $this->max]);
+    protected function messageKey($value, bool $canBeNumeric): string
+    {
+        return static::NAME . '.' . $this->getValueType($value, $canBeNumeric);
     }
 }
