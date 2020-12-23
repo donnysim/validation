@@ -1262,6 +1262,30 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function different_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar', 'baz' => 'boom'], [Rules::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar', 'baz' => null], [Rules::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar'], [Rules::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar', 'baz' => 'bar'], [Rules::make('foo')->different('baz')]);
+        $this->assertValidationFail($v, 'foo', 'foo must be different from baz');
+
+        $v = $this->makeValidator(['foo' => '1e2', 'baz' => '100'], [Rules::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function digits_rule(): void
     {
         $v = $this->makeValidator([], [Rules::make('foo')->digits(1)]);
@@ -2497,6 +2521,7 @@ class ValidatorTest extends TestCase
             'date_before' => ':attribute must be before :other',
             'date_before_or_equal' => ':attribute must be before or equal :other',
             'date_equal' => ':attribute must be equal :other',
+            'different' => ':attribute must be different from :other',
             'digits' => ':attribute must have :digits digits',
             'digits_between' => ':attribute must have digits between :min and :max',
             'distinct' => ':attribute contains duplicate value',

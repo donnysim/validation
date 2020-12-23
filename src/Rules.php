@@ -19,6 +19,7 @@ use DonnySim\Validation\Rules\Confirmed;
 use DonnySim\Validation\Rules\Date;
 use DonnySim\Validation\Rules\DateBeforeOrAfter;
 use DonnySim\Validation\Rules\DateFormat;
+use DonnySim\Validation\Rules\Different;
 use DonnySim\Validation\Rules\Digits;
 use DonnySim\Validation\Rules\Distinct;
 use DonnySim\Validation\Rules\Email;
@@ -213,6 +214,18 @@ class Rules
     public function dateFormat(string $format): self
     {
         $this->rules[] = new DateFormat($format);
+
+        return $this;
+    }
+
+    /**
+     * @param \DonnySim\Validation\FieldReference|string $field
+     *
+     * @return static
+     */
+    public function different($field): self
+    {
+        $this->rules[] = new Different($this->toFieldRef($field));
 
         return $this;
     }
@@ -424,7 +437,7 @@ class Rules
     /**
      * @param \DonnySim\Validation\FieldReference|string $field
      *
-     * @return $this
+     * @return static
      */
     public function same($field): self
     {
