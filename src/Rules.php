@@ -20,6 +20,7 @@ use DonnySim\Validation\Rules\Date;
 use DonnySim\Validation\Rules\DateBeforeOrAfter;
 use DonnySim\Validation\Rules\DateFormat;
 use DonnySim\Validation\Rules\Digits;
+use DonnySim\Validation\Rules\Distinct;
 use DonnySim\Validation\Rules\Email;
 use DonnySim\Validation\Rules\EndsWith;
 use DonnySim\Validation\Rules\Filled;
@@ -226,6 +227,13 @@ class Rules
     public function digitsBetween(int $from, int $to): self
     {
         $this->rules[] = new Digits('><', $from, $to);
+
+        return $this;
+    }
+
+    public function distinct(): self
+    {
+        $this->rules[] = new Distinct();
 
         return $this;
     }

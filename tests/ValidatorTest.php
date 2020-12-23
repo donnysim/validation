@@ -33,12 +33,12 @@ class ValidatorTest extends TestCase
         $this->assertValidationFail($v, 'foo.0', 'FOO is required');
 
         $v = $this->makeValidator(['foo' => [null, null]], [Rules::make('foo.*')->required()], ['foo.1' => 'FOO']);
-        $this->assertValidationFail($v, 'foo.0', 'foo.0 is required');
-        $this->assertValidationFail($v, 'foo.1', 'FOO is required');
+        $this->assertValidationFail($v, 'foo.0', 'foo.0 is required', 2);
+        $this->assertValidationFail($v, 'foo.1', 'FOO is required', 2);
 
         $v = $this->makeValidator(['foo' => [null, null]], [Rules::make('foo.*')->required()], ['foo.*' => 'BAR', 'foo.1' => 'FOO']);
-        $this->assertValidationFail($v, 'foo.0', 'BAR is required');
-        $this->assertValidationFail($v, 'foo.1', 'FOO is required');
+        $this->assertValidationFail($v, 'foo.0', 'BAR is required', 2);
+        $this->assertValidationFail($v, 'foo.1', 'FOO is required', 2);
     }
 
     /**
@@ -908,6 +908,81 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function distinct_rule(): void
+    {
+        $v = $this->makeValidator([], [Rules::make('foo')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => ['foo', 'foo']], [Rules::make('foo.*')->distinct()]);
+        $this->assertValidationFail($v, 'foo.0', 'foo.0 contains duplicate value', 2);
+        $this->assertValidationFail($v, 'foo.1', 'foo.1 contains duplicate value', 2);
+
+        $v = $this->makeValidator(['foo' => ['foo', 'bar']], [Rules::make('foo.*')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => ['bar' => ['id' => 1], 'baz' => ['id' => 1]]], [Rules::make('foo.*.id')->distinct()]);
+        $this->assertValidationFail($v, 'foo.bar.id', 'foo.bar.id contains duplicate value', 2);
+        $this->assertValidationFail($v, 'foo.baz.id', 'foo.baz.id contains duplicate value', 2);
+
+        $v = $this->makeValidator(['foo' => ['bar' => ['id' => 'qux'], 'baz' => ['id' => 'QUX']]], [Rules::make('foo.*')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => ['bar' => ['id' => 1], 'baz' => ['id' => 2]]], [Rules::make('foo.*.id')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [['id' => 1, 'nested' => ['id' => 1]]]], [Rules::make('foo.*.id')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [['id' => 1], ['id' => 2]]], [Rules::make('foo.*.id')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['cat' => [['prod' => [['id' => 1]]], ['prod' => [['id' => 2]]]]], [Rules::make('cat.*.prod.*.id')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['cat' => ['sub' => [['prod' => [['id' => 1]]], ['prod' => [['id' => 2]]]]]], [Rules::make('cat.sub.*.prod.*.id')->distinct()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(
+            ['foo' => ['foo', 'bar'], 'bar' => ['foo', 'bar']],
+            [Rules::make('foo.*')->distinct(), Rules::make('bar.*')->distinct()]
+        );
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [['id' => 1], ['id' => 1]]], [Rules::make('foo.*.id')->distinct()]);
+        $this->assertValidationFail($v, 'foo.0.id', 'foo.0.id contains duplicate value', 2);
+        $this->assertValidationFail($v, 'foo.1.id', 'foo.1.id contains duplicate value', 2);
+
+        $v = $this->makeValidator(['cat' => [['prod' => [['id' => 1]]], ['prod' => [['id' => 1]]]]], [Rules::make('cat.*.prod.*.id')->distinct()]);
+        $this->assertValidationFail($v, 'cat.0.prod.0.id', 'cat.0.prod.0.id contains duplicate value', 2);
+        $this->assertValidationFail($v, 'cat.1.prod.0.id', 'cat.1.prod.0.id contains duplicate value', 2);
+
+        $v = $this->makeValidator(['cat' => ['sub' => [['prod' => [['id' => 2]]], ['prod' => [['id' => 2]]]]]], [Rules::make('cat.sub.*.prod.*.id')->distinct()]);
+        $this->assertValidationFail($v, 'cat.sub.0.prod.0.id', 'cat.sub.0.prod.0.id contains duplicate value', 2);
+        $this->assertValidationFail($v, 'cat.sub.1.prod.0.id', 'cat.sub.1.prod.0.id contains duplicate value', 2);
+
+        $v = $this->makeValidator(
+            ['foo' => ['foo', 'foo'], 'bar' => ['bar', 'baz']],
+            [Rules::make('foo.*')->distinct(), Rules::make('bar.*')->distinct()]
+        );
+        $this->assertValidationFail($v, 'foo.0', 'foo.0 contains duplicate value', 2);
+        $this->assertValidationFail($v, 'foo.1', 'foo.1 contains duplicate value', 2);
+
+        $v = $this->makeValidator(
+            ['foo' => ['foo', 'foo'], 'bar' => ['bar', 'bar']],
+            [Rules::make('foo.*')->distinct(), Rules::make('bar.*')->distinct()]
+        );
+        $this->assertValidationFail($v, 'foo.0', 'foo.0 contains duplicate value', 4);
+        $this->assertValidationFail($v, 'foo.1', 'foo.1 contains duplicate value', 4);
+        $this->assertValidationFail($v, 'bar.0', 'bar.0 contains duplicate value', 4);
+        $this->assertValidationFail($v, 'bar.1', 'bar.1 contains duplicate value', 4);
+    }
+
+    /**
+     * @test
+     */
     public function between_rule(): void
     {
         \ini_set('precision', '17');
@@ -1566,7 +1641,7 @@ class ValidatorTest extends TestCase
     public function it_throws_if_rule_is_not_single_or_batch_rule(): void
     {
         $this->makeValidator([], [Rules::make('foo')->rule(new Rules\Required())]);
-        // TODO batch
+        $this->makeValidator([], [Rules::make('foo')->rule(new Rules\Distinct())]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->makeValidator([], [Rules::make('foo')->rule(new RuleStub())]);
@@ -2397,9 +2472,10 @@ class ValidatorTest extends TestCase
         ];
     }
 
-    protected function assertValidationFail(Validator $validator, string $key, string $message): void
+    protected function assertValidationFail(Validator $validator, string $key, string $message, int $errors = 1): void
     {
         self::assertFalse($validator->passes());
+        self::assertSame($errors, $validator->getMessages()->count());
         self::assertSame($message, $validator->getMessages()->first($key));
     }
 
@@ -2423,6 +2499,7 @@ class ValidatorTest extends TestCase
             'date_equal' => ':attribute must be equal :other',
             'digits' => ':attribute must have :digits digits',
             'digits_between' => ':attribute must have digits between :min and :max',
+            'distinct' => ':attribute contains duplicate value',
             'boolean_like' => ':attribute must be boolean like',
             'boolean_type' => ':attribute must be boolean',
             'confirmed' => ':attribute must be confirmed',
