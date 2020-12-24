@@ -28,8 +28,6 @@ use DonnySim\Validation\Rules\Filled;
 use DonnySim\Validation\Rules\In;
 use DonnySim\Validation\Rules\IpAddress;
 use DonnySim\Validation\Rules\Json;
-use DonnySim\Validation\Rules\Max;
-use DonnySim\Validation\Rules\Min;
 use DonnySim\Validation\Rules\NotIn;
 use DonnySim\Validation\Rules\Nullable;
 use DonnySim\Validation\Rules\Numeric;
@@ -40,6 +38,7 @@ use DonnySim\Validation\Rules\Regex;
 use DonnySim\Validation\Rules\Required;
 use DonnySim\Validation\Rules\Same;
 use DonnySim\Validation\Rules\SetValueIfMissing;
+use DonnySim\Validation\Rules\SizeCompare;
 use DonnySim\Validation\Rules\Sometimes;
 use DonnySim\Validation\Rules\StartsWith;
 use DonnySim\Validation\Rules\Timezone;
@@ -374,27 +373,49 @@ class Rules
     }
 
     /**
-     * @param int|float|string $max Non string floats will be compared using 14 precision.
+     * @param int|float|string $value Non string floats will be compared using 14 precision.
+     * @param bool $allowEqual
      *
      * @return static
      */
-    public function max($max): self
+    public function lessThan($value, bool $allowEqual = false): self
     {
-        $this->rules[] = new Max($max);
+        $this->rules[] = new SizeCompare(SizeCompare::BOOL_LT, $value, $allowEqual);
 
         return $this;
     }
 
     /**
-     * @param int|float|string $min Non string floats will be compared using 14 precision.
+     * @param int|float|string $value Non string floats will be compared using 14 precision.
      *
      * @return static
      */
-    public function min($min): self
+    public function lessThanOrEqual($value): self
     {
-        $this->rules[] = new Min($min);
+        return $this->lessThan($value, true);
+    }
+
+    /**
+     * @param int|float|string $value Non string floats will be compared using 14 precision.
+     * @param bool $allowEqual
+     *
+     * @return static
+     */
+    public function greaterThan($value, bool $allowEqual = false): self
+    {
+        $this->rules[] = new SizeCompare(SizeCompare::BOOL_GT, $value, $allowEqual);
 
         return $this;
+    }
+
+    /**
+     * @param int|float|string $value Non string floats will be compared using 14 precision.
+     *
+     * @return static
+     */
+    public function greaterThanOrEqual($value): self
+    {
+        return $this->greaterThan($value, true);
     }
 
     public function nullable(): self

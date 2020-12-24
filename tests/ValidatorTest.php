@@ -1023,14 +1023,14 @@ class ValidatorTest extends TestCase
         $v = $this->makeValidator(['foo' => 6], [Rules::make('foo')->between(3, 5)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 5');
 
-        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min(3.1)]);
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->between(3.1, '3.1')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min('3.1')]);
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->between('3.1', 3.1)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->min('3.0')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3');
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->between('3.0', '3.5')]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 3.5');
 
         $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->between(4, 5)]);
         $this->assertValidationFail($v, 'foo', 'foo must be between 4 and 5');
@@ -1695,109 +1695,215 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function max_rule(): void
+    public function less_than_rule(): void
     {
         \ini_set('precision', '17');
 
-        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->max(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->lessThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
 
-        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->max(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->lessThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
 
-        $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->max(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 3 length');
+        $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->lessThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
 
-        $v = $this->makeValidator(['foo' => 'anc'], [Rules::make('foo')->max(3)]);
+        $v = $this->makeValidator(['foo' => 'anc'], [Rules::make('foo')->lessThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
+
+        $v = $this->makeValidator(['foo' => '211'], [Rules::make('foo')->lessThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
+
+        $v = $this->makeValidator(['foo' => '22'], [Rules::make('foo')->lessThan(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => '211'], [Rules::make('foo')->max(3)]);
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->lessThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should contain less than 3 items');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->lessThan(3.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3.1');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->lessThan('3.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3.1');
+
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->lessThan('3.0')]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => '22'], [Rules::make('foo')->max(3)]);
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->lessThan(2)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 2');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->lessThan(2.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 2.1');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->lessThan('2.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 2.1');
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->lessThan('4.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 4.1');
+    }
+
+    /**
+     * @test
+     */
+    public function less_than_or_equal_rule(): void
+    {
+        \ini_set('precision', '17');
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->lessThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
+
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->lessThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
+
+        $v = $this->makeValidator(['foo' => 'aslksd'], [Rules::make('foo')->lessThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 3 length');
+
+        $v = $this->makeValidator(['foo' => 'anc'], [Rules::make('foo')->lessThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->max(3)]);
+        $v = $this->makeValidator(['foo' => '211'], [Rules::make('foo')->lessThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->max(2)]);
-        $this->assertValidationFail($v, 'foo', 'foo should contain max 2 items');
-
-        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->max(3.1)]);
+        $v = $this->makeValidator(['foo' => '22'], [Rules::make('foo')->lessThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->max('3.1')]);
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->lessThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->max('3.0')]);
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [Rules::make('foo')->lessThanOrEqual(2)]);
+        $this->assertValidationFail($v, 'foo', 'foo should contain less than 2 items');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->lessThanOrEqual(3.1)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max(2)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 2');
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->lessThanOrEqual('3.1')]);
+        self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max(2.1)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 2.1');
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->lessThanOrEqual('3.0')]);
+        self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->max('2.1')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be max 2.1');
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->lessThanOrEqual(2)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 2');
 
-        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->max('4.1')]);
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->lessThanOrEqual(2.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 2.1');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->lessThanOrEqual('2.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be less than 2.1');
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->lessThanOrEqual('4.1')]);
         self::assertTrue($v->passes());
     }
 
     /**
      * @test
      */
-    public function min_rule(): void
+    public function greater_than_rule(): void
     {
         \ini_set('precision', '17');
 
-        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->min(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
 
-        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->min(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->min(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
 
-        $v = $this->makeValidator(['foo' => 3], [Rules::make('foo')->min(3)]);
+        $v = $this->makeValidator(['foo' => 3], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3');
+
+        $v = $this->makeValidator(['foo' => 2], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3');
+
+        $v = $this->makeValidator(['foo' => 'abc'], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
+
+        $v = $this->makeValidator(['foo' => 'ab'], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3, 4]], [Rules::make('foo')->greaterThan(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 2], [Rules::make('foo')->min(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3');
+        $v = $this->makeValidator(['foo' => [1, 2]], [Rules::make('foo')->greaterThan(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should contain more than 3 items');
 
-        $v = $this->makeValidator(['foo' => 'abc'], [Rules::make('foo')->min(3)]);
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->greaterThan(3.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3.1');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->greaterThan('3.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3.1');
+
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->greaterThan('3.0')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->greaterThan(4)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 4');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->greaterThan(4.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 4.1');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->greaterThan('4.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 4.1');
+
+        $v = $this->makeValidator(['foo' => '4.2'], [Rules::make('foo')->numeric()->greaterThan('4.1')]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function greater_than_or_equal_rule(): void
+    {
+        \ini_set('precision', '17');
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->greaterThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
+
+        $v = $this->makeValidator(['foo' => new \stdClass()], [Rules::make('foo')->greaterThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
+
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->greaterThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
+
+        $v = $this->makeValidator(['foo' => 3], [Rules::make('foo')->greaterThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 'ab'], [Rules::make('foo')->min(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3 length');
+        $v = $this->makeValidator(['foo' => 2], [Rules::make('foo')->greaterThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3');
 
-        $v = $this->makeValidator(['foo' => [1, 2, 3, 4]], [Rules::make('foo')->min(3)]);
+        $v = $this->makeValidator(['foo' => 'abc'], [Rules::make('foo')->greaterThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => [1, 2]], [Rules::make('foo')->min(3)]);
-        $this->assertValidationFail($v, 'foo', 'foo should contain 3 items');
+        $v = $this->makeValidator(['foo' => 'ab'], [Rules::make('foo')->greaterThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3 length');
 
-        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min(3.1)]);
+        $v = $this->makeValidator(['foo' => [1, 2, 3, 4]], [Rules::make('foo')->greaterThanOrEqual(3)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->min('3.1')]);
+        $v = $this->makeValidator(['foo' => [1, 2]], [Rules::make('foo')->greaterThanOrEqual(3)]);
+        $this->assertValidationFail($v, 'foo', 'foo should contain more than 3 items');
+
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->greaterThanOrEqual(3.1)]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->min('3.0')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 3');
+        $v = $this->makeValidator(['foo' => 3.1], [Rules::make('foo')->greaterThanOrEqual('3.1')]);
+        self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min(4)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 4');
+        $v = $this->makeValidator(['foo' => 2.9], [Rules::make('foo')->greaterThanOrEqual('3.0')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 3');
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min(4.1)]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 4.1');
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->greaterThanOrEqual(4)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 4');
 
-        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->min('4.1')]);
-        $this->assertValidationFail($v, 'foo', 'foo should be min 4.1');
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->greaterThanOrEqual(4.1)]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 4.1');
 
-        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->min('4.1')]);
+        $v = $this->makeValidator(['foo' => '3'], [Rules::make('foo')->numeric()->greaterThanOrEqual('4.1')]);
+        $this->assertValidationFail($v, 'foo', 'foo should be greater than 4.1');
+
+        $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->greaterThanOrEqual('4.1')]);
         self::assertTrue($v->passes());
     }
 
@@ -1984,18 +2090,18 @@ class ValidatorTest extends TestCase
                                 $pipeline->insertNext(fn(Rules $rules) => $rules->booleanType());
                                 break;
                             case 3:
-                                $pipeline->insertNext(fn(Rules $rules) => $rules->min(4));
+                                $pipeline->insertNext(fn(Rules $rules) => $rules->greaterThanOrEqual(4));
                                 break;
                         }
                     })
-                    ->min(2),
+                    ->greaterThanOrEqual(2),
             ]
         );
         self::assertFalse($v->passes());
         self::assertSame(3, $v->getMessages()->count());
-        self::assertSame('foo.0 should be min 2', $v->getMessages()->first('foo.0'));
+        self::assertSame('foo.0 should be greater than 2', $v->getMessages()->first('foo.0'));
         self::assertSame('foo.1 must be boolean', $v->getMessages()->first('foo.1'));
-        self::assertSame('foo.2 should be min 4', $v->getMessages()->first('foo.2'));
+        self::assertSame('foo.2 should be greater than 4', $v->getMessages()->first('foo.2'));
     }
 
     /**
@@ -2498,7 +2604,7 @@ class ValidatorTest extends TestCase
 
     protected function assertValidationFail(Validator $validator, string $key, string $message, int $errors = 1): void
     {
-        self::assertFalse($validator->passes());
+        self::assertFalse($validator->passes(), 'Validation should fail but passed.');
         self::assertSame($errors, $validator->getMessages()->count());
         self::assertSame($message, $validator->getMessages()->first($key));
     }
@@ -2535,12 +2641,18 @@ class ValidatorTest extends TestCase
             'integer_type' => ':attribute must be integer',
             'ip_address' => ':attribute must be a valid ip address',
             'json' => ':attribute must be json',
-            'max.array' => ':attribute should contain max :max items',
-            'max.numeric' => ':attribute should be max :max',
-            'max.string' => ':attribute should be max :max length',
-            'min.array' => ':attribute should contain :min items',
-            'min.numeric' => ':attribute should be min :min',
-            'min.string' => ':attribute should be min :min length',
+            'less_than.array' => ':attribute should contain less than :other items',
+            'less_than.numeric' => ':attribute should be less than :other',
+            'less_than.string' => ':attribute should be less than :other length',
+            'less_than_or_equal.array' => ':attribute should contain max :other items',
+            'less_than_or_equal.numeric' => ':attribute should be max :other',
+            'less_than_or_equal.string' => ':attribute should be max :other length',
+            'greater_than.array' => ':attribute should contain more than :other items',
+            'greater_than.numeric' => ':attribute should be greater than :other',
+            'greater_than.string' => ':attribute should be greater than :other length',
+            'greater_than_or_equal.array' => ':attribute should contain :other items',
+            'greater_than_or_equal.numeric' => ':attribute should be min :other',
+            'greater_than_or_equal.string' => ':attribute should be min :other length',
             'numeric.mixed' => ':attribute must be numeric',
             'numeric.integer' => ':attribute must be numeric integer',
             'numeric.float' => ':attribute must be numeric float',
