@@ -126,36 +126,36 @@ Below is a list of all available validation rules and their function:
 
 <!-- table-rule-start -->
 
-| A | B | C | D | E | F | G |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| [Accepted](#accepted) | [Between](#between) | [Cast To Boolean](#cast-to-boolean) | [Date](#date) | [Email](#email) | [Filled](#filled) | [Greater Than](#greater-than) |
-| [Active Url](#active-url) | [Boolean Like](#boolean-like) | [Confirmed](#confirmed) | [Date After](#date-after) | [Ends With](#ends-with) |  | [Greater Than Or Equal](#greater-than-or-equal) |
-| [Alpha](#alpha) | [Boolean Type](#boolean-type) |  | [Date After Or Equal](#date-after-or-equal) |  |  |  |
-| [Alpha Dash](#alpha-dash) |  |  | [Date Before](#date-before) |  |  |  |
-| [Alpha Num](#alpha-num) |  |  | [Date Before Or Equal](#date-before-or-equal) |  |  |  |
-| [Array Type](#array-type) |  |  | [Date Equal](#date-equal) |  |  |  |
-|  |  |  | [Date Format](#date-format) |  |  |  |
-|  |  |  | [Different](#different) |  |  |  |
-|  |  |  | [Digits](#digits) |  |  |  |
-|  |  |  | [Digits Between](#digits-between) |  |  |  |
-|  |  |  | [Distinct](#distinct) |  |  |  |
+| A | B | C | D | E | F |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| [Accepted](#accepted) | [Between](#between) | [Cast To Boolean](#cast-to-boolean) | [Date](#date) | [Email](#email) | [Filled](#filled) |
+| [Active Url](#active-url) | [Boolean Like](#boolean-like) | [Confirmed](#confirmed) | [Date After](#date-after) | [Ends With](#ends-with) |  |
+| [Alpha](#alpha) | [Boolean Type](#boolean-type) |  | [Date After Or Equal](#date-after-or-equal) |  |  |
+| [Alpha Dash](#alpha-dash) |  |  | [Date Before](#date-before) |  |  |
+| [Alpha Num](#alpha-num) |  |  | [Date Before Or Equal](#date-before-or-equal) |  |  |
+| [Array Type](#array-type) |  |  | [Date Equal](#date-equal) |  |  |
+|  |  |  | [Date Format](#date-format) |  |  |
+|  |  |  | [Different](#different) |  |  |
+|  |  |  | [Digits](#digits) |  |  |
+|  |  |  | [Digits Between](#digits-between) |  |  |
+|  |  |  | [Distinct](#distinct) |  |  |
 
-| I | J | L | N | O | P | R |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| [In](#in) | [Json](#json) | [Less Than](#less-than) | [Not In](#not-in) | [Omit From Data](#omit-from-data) | [Pipe](#pipe) | [Regex](#regex) |
-| [Integer Type](#integer-type) |  | [Less Than Or Equal](#less-than-or-equal) | [Not Regex](#not-regex) |  | [Present](#present) | [Required](#required) |
-| [Ip Address](#ip-address) |  |  | [Nullable](#nullable) |  |  | [Rule](#rule) |
-|  |  |  | [Numeric](#numeric) |  |  | [Rules](#rules) |
-|  |  |  | [Numeric Float](#numeric-float) |  |  |  |
-|  |  |  | [Numeric Integer](#numeric-integer) |  |  |  |
+| G | I | J | L | N | O |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| [Greater Than](#greater-than) | [In](#in) | [Json](#json) | [Less Than](#less-than) | [Not In](#not-in) | [Omit From Data](#omit-from-data) |
+| [Greater Than Or Equal](#greater-than-or-equal) | [Integer Type](#integer-type) |  | [Less Than Or Equal](#less-than-or-equal) | [Not Regex](#not-regex) |  |
+|  | [Ip Address](#ip-address) |  |  | [Nullable](#nullable) |  |
+|  |  |  |  | [Numeric](#numeric) |  |
+|  |  |  |  | [Numeric Float](#numeric-float) |  |
+|  |  |  |  | [Numeric Integer](#numeric-integer) |  |
 
-| S | T | U | W |
-| :--- | :--- | :--- | :--- |
-| [Same](#same) | [Timezone](#timezone) | [Url](#url) | [When](#when) |
-| [Set Value If Missing](#set-value-if-missing) |  | [Uuid](#uuid) |  |
-| [Sometimes](#sometimes) |  |  |  |
-| [Starts With](#starts-with) |  |  |  |
-| [String Type](#string-type) |  |  |  |
+| P | R | S | T | U | W |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| [Pipe](#pipe) | [Regex](#regex) | [Same](#same) | [Timezone](#timezone) | [Url](#url) | [When](#when) |
+| [Present](#present) | [Required](#required) | [Set Value If Missing](#set-value-if-missing) |  | [Uuid](#uuid) |  |
+|  | [Rule](#rule) | [Sometimes](#sometimes) |  |  |  |
+|  | [Rules](#rules) | [Starts With](#starts-with) |  |  |  |
+|  |  | [String Type](#string-type) |  |  |  |
 
 <!-- table-rule-end -->
 
