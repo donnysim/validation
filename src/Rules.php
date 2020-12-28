@@ -418,6 +418,26 @@ class Rules
         return $this->greaterThan($value, true);
     }
 
+    /**
+     * @param int|float|string $value Non string floats will be compared using 14 precision.
+     *
+     * @return static
+     */
+    public function max($value): self
+    {
+        return $this->lessThanOrEqual($value);
+    }
+
+    /**
+     * @param int|float|string $value Non string floats will be compared using 14 precision.
+     *
+     * @return static
+     */
+    public function min($value): self
+    {
+        return $this->greaterThanOrEqual($value);
+    }
+
     public function nullable(): self
     {
         $this->rules[] = new Nullable();
