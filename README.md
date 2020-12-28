@@ -105,36 +105,82 @@ Below is a list of all available validation rules and their function:
 
 <!-- table-rule-start -->
 
-| A | B | C | D | E | F |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| [Accepted](#accepted) | [Between](#between) | [Cast To Boolean](#cast-to-boolean) | [Date](#date) | [Email](#email) | [Filled](#filled) |
-| [Active Url](#active-url) | [Boolean Like](#boolean-like) | [Confirmed](#confirmed) | [Date After](#date-after) | [Ends With](#ends-with) |  |
-| [Alpha](#alpha) | [Boolean Type](#boolean-type) |  | [Date After Or Equal](#date-after-or-equal) |  |  |
-| [Alpha Dash](#alpha-dash) |  |  | [Date Before](#date-before) |  |  |
-| [Alpha Num](#alpha-num) |  |  | [Date Before Or Equal](#date-before-or-equal) |  |  |
-| [Array Type](#array-type) |  |  | [Date Equal](#date-equal) |  |  |
-|  |  |  | [Date Format](#date-format) |  |  |
-|  |  |  | [Different](#different) |  |  |
-|  |  |  | [Digits](#digits) |  |  |
-|  |  |  | [Digits Between](#digits-between) |  |  |
-|  |  |  | [Distinct](#distinct) |  |  |
-
-| G | I | J | L | N | O |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| [Greater Than](#greater-than) | [In](#in) | [Json](#json) | [Less Than](#less-than) | [Not In](#not-in) | [Omit From Data](#omit-from-data) |
-| [Greater Than Or Equal](#greater-than-or-equal) | [Integer Type](#integer-type) |  | [Less Than Or Equal](#less-than-or-equal) | [Not Regex](#not-regex) |  |
-|  | [Ip Address](#ip-address) |  |  | [Nullable](#nullable) |  |
-|  |  |  |  | [Numeric](#numeric) |  |
-|  |  |  |  | [Numeric Float](#numeric-float) |  |
-|  |  |  |  | [Numeric Integer](#numeric-integer) |  |
-
-| P | R | S | T | U | W |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| [Pipe](#pipe) | [Regex](#regex) | [Same](#same) | [Timezone](#timezone) | [Url](#url) | [When](#when) |
-| [Present](#present) | [Required](#required) | [Set Value If Missing](#set-value-if-missing) |  | [Uuid](#uuid) |  |
-|  | [Rule](#rule) | [Sometimes](#sometimes) |  |  |  |
-|  | [Rules](#rules) | [Starts With](#starts-with) |  |  |  |
-|  |  | [String Type](#string-type) |  |  |  |
+<table width="100">
+<tbody>
+<tr>
+<td align="center" valign="top"><strong>A</strong></td>
+<td width="1000"><a href="#accepted">Accepted</a></br><a href="#active-url">Active Url</a></br><a href="#alpha">Alpha</a></br><a href="#alpha-dash">Alpha Dash</a></br><a href="#alpha-num">Alpha Num</a></br><a href="#array-type">Array Type</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>B</strong></td>
+<td width="1000"><a href="#between">Between</a></br><a href="#boolean-like">Boolean Like</a></br><a href="#boolean-type">Boolean Type</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>C</strong></td>
+<td width="1000"><a href="#cast-to-boolean">Cast To Boolean</a></br><a href="#confirmed">Confirmed</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>D</strong></td>
+<td width="1000"><a href="#date">Date</a></br><a href="#date-after">Date After</a></br><a href="#date-after-or-equal">Date After Or Equal</a></br><a href="#date-before">Date Before</a></br><a href="#date-before-or-equal">Date Before Or Equal</a></br><a href="#date-equal">Date Equal</a></br><a href="#date-format">Date Format</a></br><a href="#different">Different</a></br><a href="#digits">Digits</a></br><a href="#digits-between">Digits Between</a></br><a href="#distinct">Distinct</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>E</strong></td>
+<td width="1000"><a href="#email">Email</a></br><a href="#ends-with">Ends With</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>F</strong></td>
+<td width="1000"><a href="#filled">Filled</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>G</strong></td>
+<td width="1000"><a href="#greater-than">Greater Than</a></br><a href="#greater-than-or-equal">Greater Than Or Equal</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>I</strong></td>
+<td width="1000"><a href="#in">In</a></br><a href="#integer-type">Integer Type</a></br><a href="#ip-address">Ip Address</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>J</strong></td>
+<td width="1000"><a href="#json">Json</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>L</strong></td>
+<td width="1000"><a href="#less-than">Less Than</a></br><a href="#less-than-or-equal">Less Than Or Equal</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>N</strong></td>
+<td width="1000"><a href="#not-in">Not In</a></br><a href="#not-regex">Not Regex</a></br><a href="#nullable">Nullable</a></br><a href="#numeric">Numeric</a></br><a href="#numeric-float">Numeric Float</a></br><a href="#numeric-integer">Numeric Integer</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>O</strong></td>
+<td width="1000"><a href="#omit-from-data">Omit From Data</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>P</strong></td>
+<td width="1000"><a href="#pipe">Pipe</a></br><a href="#present">Present</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>R</strong></td>
+<td width="1000"><a href="#regex">Regex</a></br><a href="#required">Required</a></br><a href="#rule">Rule</a></br><a href="#rules">Rules</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>S</strong></td>
+<td width="1000"><a href="#same">Same</a></br><a href="#set-value-if-missing">Set Value If Missing</a></br><a href="#sometimes">Sometimes</a></br><a href="#starts-with">Starts With</a></br><a href="#string-type">String Type</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>T</strong></td>
+<td width="1000"><a href="#timezone">Timezone</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>U</strong></td>
+<td width="1000"><a href="#url">Url</a></br><a href="#uuid">Uuid</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>W</strong></td>
+<td width="1000"><a href="#when">When</a></td>
+</tr>
+</tbody>
+</table>
 
 <!-- table-rule-end -->
 
