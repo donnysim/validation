@@ -105,7 +105,7 @@ Below is a list of all available validation rules and their function:
 
 <!-- table-rule-start -->
 
-<table width="100">
+<table>
 <tbody>
 <tr>
 <td align="center" valign="top"><strong>A</strong></td>
@@ -146,6 +146,10 @@ Below is a list of all available validation rules and their function:
 <tr>
 <td align="center" valign="top"><strong>L</strong></td>
 <td width="1000"><a href="#less-than">Less Than</a></br><a href="#less-than-or-equal">Less Than Or Equal</a></td>
+</tr>
+<tr>
+<td align="center" valign="top"><strong>M</strong></td>
+<td width="1000"><a href="#max">Max</a></br><a href="#min">Min</a></td>
 </tr>
 <tr>
 <td align="center" valign="top"><strong>N</strong></td>
@@ -350,6 +354,14 @@ Strings, numerics and arrays are supported.
 
 The field under validation must be less than or equal to the given *field* or *value*.
 Strings, numerics and arrays are supported.
+
+### Max
+
+Alis to [Greater Than Or Equal](#greater-than-or-equal) rule.
+
+### Min
+
+Alis to [Less Than Or Equal](#less-than-or-equal) rule.
 
 ### Not In
 
