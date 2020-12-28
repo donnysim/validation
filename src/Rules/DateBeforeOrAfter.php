@@ -55,7 +55,7 @@ class DateBeforeOrAfter implements SingleRule
 
         $value = $entry->getValue();
         if (!\is_string($value) && !\is_numeric($value) && !$value instanceof DateTimeInterface) {
-            $pipeline->fail($this->getMessageKey(), ['other' => $this->getDateString($referenceValue)]);
+            $pipeline->fail($this->getMessageKey(), ['date' => $this->getDateString($referenceValue)]);
             return;
         }
 
@@ -76,11 +76,11 @@ class DateBeforeOrAfter implements SingleRule
         }
 
         if (!$second && $this->date instanceof FieldReference) {
-            $pipeline->fail($this->getMessageKey(), ['other' => $this->date->getField(), 'format' => $format]);
+            $pipeline->fail($this->getMessageKey(), ['date' => $this->date->getField(), 'format' => $format]);
             return;
         }
 
-        $pipeline->fail($this->getMessageKey(), ['other' => $this->getDateString($referenceValue, $format), 'format' => $format]);
+        $pipeline->fail($this->getMessageKey(), ['date' => $this->getDateString($referenceValue, $format), 'format' => $format]);
     }
 
     protected function getDateTimeWithOptionalFormat($value, ?string $format = null): ?Carbon
