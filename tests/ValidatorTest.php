@@ -52,29 +52,6 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function it_replaces_paths_with_custom_attribute_names(): void
-    {
-        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->required()], ['foo' => 'FOO']);
-        $this->assertValidationFail($v, 'foo', 'FOO is required');
-
-        $v = $this->makeValidator(['foo' => [null]], [Rules::make('foo.*')->required()], ['foo' => 'FOO']);
-        $this->assertValidationFail($v, 'foo.0', 'foo.0 is required');
-
-        $v = $this->makeValidator(['foo' => [null]], [Rules::make('foo.*')->required()], ['foo.*' => 'FOO']);
-        $this->assertValidationFail($v, 'foo.0', 'FOO is required');
-
-        $v = $this->makeValidator(['foo' => [null, null]], [Rules::make('foo.*')->required()], ['foo.1' => 'FOO']);
-        $this->assertValidationFail($v, 'foo.0', 'foo.0 is required', 2);
-        $this->assertValidationFail($v, 'foo.1', 'FOO is required', 2);
-
-        $v = $this->makeValidator(['foo' => [null, null]], [Rules::make('foo.*')->required()], ['foo.*' => 'BAR', 'foo.1' => 'FOO']);
-        $this->assertValidationFail($v, 'foo.0', 'BAR is required', 2);
-        $this->assertValidationFail($v, 'foo.1', 'FOO is required', 2);
-    }
-
-    /**
-     * @test
-     */
     public function active_url_rule(): void
     {
         $v = $this->makeValidator(['foo' => 'aslsdlks'], [Rules::make('foo')->activeUrl()]);
