@@ -55,49 +55,15 @@ You can use your own rule via `->rule($myRule)`.
 The target is to have a validator with no unexpected behavior like a string '1' passes an integer rule. This is build for data integrity and flexibility not for
 performance/insanely fast validation.
 
-## Basics
-
 Each rule is a separate class, it implements either `\DonnySim\Validation\Contracts\SingleRule` or
 `\DonnySim\Validation\Contracts\BatchRule`, for examples you can just look up the `Rules` directory.
 (there are no `BatchRule` currently).
 
-Translations are provided via `\DonnySim\Validation\Contracts\MessageResolver` contract, e.g. for Laravel it could be:
+Translations are provided via `\DonnySim\Validation\Contracts\MessageResolver` contract.
 
-```php
-<?php
+## Laravel
 
-use DonnySim\Validation\Message;
-use DonnySim\Validation\Contracts\MessageResolver;
-use Illuminate\Contracts\Translation\Translator as TranslatorContract;
-
-class TranslationResolver implements MessageResolver
-{
-    protected TranslatorContract $translator;
-
-    public function __construct(TranslatorContract $translator)
-    {
-        $this->translator = $translator;
-    }
-
-    public function resolve(Message $message): string
-    {
-        $path = $message->getEntry()->getPath();
-
-        return $this->translator->get(
-            "validation.{$message->getKey()}",
-            ['attribute' => $path] + $message->getParams()
-        );
-    }
-}
-```
-
-Thought the validation message keys might not match the ones provided by Laravel.
-
-## TODO
-
-- Decide if it's for Laravel or more general validator.
-
-  For laravel we could include service provider, validation message replacements, rules related to laravel like exists etc.
+TODO
 
 ## Available Validation Rules
 
