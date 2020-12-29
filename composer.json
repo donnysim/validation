@@ -2,7 +2,8 @@
   "name": "donnysim/validation",
   "description": "Data validator for PHP.",
   "keywords": [
-    "validator"
+    "validator",
+    "laravel"
   ],
   "type": "library",
   "license": "MIT",
@@ -36,6 +37,13 @@
   "autoload-dev": {
     "psr-4": {
       "DonnySim\\Validation\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "DonnySim\\Validation\\Laravel\\ServiceProvider"
+      ]
     }
   }
 }

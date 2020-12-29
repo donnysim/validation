@@ -9,6 +9,7 @@ use DateTime;
 use DateTimeImmutable;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Exceptions\ValidationException;
 use DonnySim\Validation\Rules;
 use DonnySim\Validation\Tests\Stubs\RuleStub;
 use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
@@ -18,6 +19,36 @@ use PHPUnit\Framework\TestCase;
 
 class ValidatorTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function it_throws_validation_exception_on_failure(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->required()], ['foo' => 'FOO']);
+        $v->validate();
+    }
+
+    /**
+     * @test
+     */
+    public function it_uses_custom_failure_handler(): void
+    {
+        $usesCustomHandler = false;
+
+        Validator::setFailureHandler(static function (Validator $validator) use (&$usesCustomHandler) {
+            $usesCustomHandler = true;
+        });
+
+        $v = $this->makeValidator(['foo' => null], [Rules::make('foo')->required()], ['foo' => 'FOO']);
+        $v->validate();
+
+        self::assertTrue($usesCustomHandler);
+
+        Validator::setFailureHandler(null);
+    }
+
     /**
      * @test
      */

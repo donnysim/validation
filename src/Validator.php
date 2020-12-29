@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use Closure;
 use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
+use DonnySim\Validation\Exceptions\ValidationException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
 class Validator implements MessageOverrideProvider
 {
+    protected static ?Closure $failureHandler = null;
+
     protected MessageResolver $resolver;
 
     protected string $missingValue;
@@ -46,6 +50,11 @@ class Validator implements MessageOverrideProvider
         // TODO prevent adding multiple rules with same pattern?
     }
 
+    public static function setFailureHandler(?Closure $handler): void
+    {
+        static::$failureHandler = $handler;
+    }
+
     public function getMessages(): MessageBag
     {
         return $this->messages;
@@ -61,6 +70,15 @@ class Validator implements MessageOverrideProvider
     public function fails(): bool
     {
         return !$this->passes();
+    }
+
+    public function validate(): array
+    {
+        if ($this->fails()) {
+            $this->fail();
+        }
+
+        return $this->getValidatedData();
     }
 
     public function getValidatedData(): array
@@ -161,6 +179,18 @@ class Validator implements MessageOverrideProvider
                     $this->messages->add($message->getEntry()->getPath(), $this->resolver->resolve($message, $this));
                 }
             }
+        }
+    }
+
+    /**
+     * @throws \DonnySim\Validation\Exceptions\ValidationException
+     */
+    protected function fail(): void
+    {
+        if (static::$failureHandler) {
+            (static::$failureHandler)($this);
+        } else {
+            throw new ValidationException($this->getMessages());
         }
     }
 }
