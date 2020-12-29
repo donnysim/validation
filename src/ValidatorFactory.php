@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use Closure;
 use DonnySim\Validation\Contracts\MessageResolver;
 use UnexpectedValueException;
 
 class ValidatorFactory
 {
     protected static ?self $instance = null;
+
+    protected static ?Closure $instanceResolver = null;
 
     protected MessageResolver $resolver;
 
@@ -23,19 +26,28 @@ class ValidatorFactory
         static::$instance = $instance;
     }
 
+    public static function setInstanceResolver(Closure $closure): void
+    {
+        static::$instanceResolver = $closure;
+    }
+
     public static function instance(): self
     {
         if (!static::$instance) {
-            throw new UnexpectedValueException('Global instance has not been set. Use setInstance to set global instance.');
+            if (static::$instanceResolver) {
+                static::$instance = (static::$instanceResolver)();
+            } else {
+                throw new UnexpectedValueException('Global instance has not been set. Use setInstance to set global instance.');
+            }
         }
 
         return static::$instance;
     }
 
-    public function make(array $data, array $rules, array $attributeNames = []): Validator
+    public function make(array $data, array $rules, array $overrides = []): Validator
     {
         $validator = new Validator($this->resolver, $data, $rules);
-        $validator->override($attributeNames);
+        $validator->override($overrides);
 
         return $validator;
     }
