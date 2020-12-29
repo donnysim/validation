@@ -10,8 +10,11 @@ use DonnySim\Validation\EntryPipeline;
 
 class IpAddress implements SingleRule
 {
-    public const NAME = 'ip_address';
-    public const TYPE_ALL = 'All';
+    public const NAME_MIXED = 'ip_address.mixed';
+    public const NAME_IPV4 = 'ip_address.ipv4';
+    public const NAME_IPV6 = 'ip_address.ipv6';
+
+    public const TYPE_MIXED = 'Mixed';
     public const TYPE_IPV4 = 'Ipv4';
     public const TYPE_IPV6 = 'Ipv6';
 
@@ -19,7 +22,7 @@ class IpAddress implements SingleRule
 
     public function __construct(?string $type)
     {
-        $this->type = $type ?: static::TYPE_ALL;
+        $this->type = $type ?: static::TYPE_MIXED;
     }
 
     public function handle(EntryPipeline $pipeline, Entry $entry): void
@@ -30,9 +33,9 @@ class IpAddress implements SingleRule
 
         $value = $entry->getValue();
 
-        if ($this->type === static::TYPE_ALL) {
+        if ($this->type === static::TYPE_MIXED) {
             if (\filter_var($value, \FILTER_VALIDATE_IP) === false) {
-                $pipeline->fail(static::NAME);
+                $pipeline->fail(static::NAME_MIXED);
             }
 
             return;
@@ -40,7 +43,7 @@ class IpAddress implements SingleRule
 
         if ($this->type === static::TYPE_IPV4) {
             if (\filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4) === false) {
-                $pipeline->fail(static::NAME);
+                $pipeline->fail(static::NAME_IPV4);
             }
 
             return;
@@ -48,7 +51,7 @@ class IpAddress implements SingleRule
 
         if ($this->type === static::TYPE_IPV6) {
             if (\filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV6) === false) {
-                $pipeline->fail(static::NAME);
+                $pipeline->fail(static::NAME_IPV6);
             }
 
             return;

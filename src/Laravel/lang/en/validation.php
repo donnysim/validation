@@ -42,7 +42,11 @@ return [
     ],
     'in' => 'The selected :attribute is invalid.',
     'integer_type' => 'The :attribute must be of type integer.',
-    'ip_address' => 'The :attribute must be a valid IP address.',
+    'ip_address' => [
+        'mixed' => 'The :attribute must be a valid IP address.',
+        'ipv4' => 'The :attribute must be a valid IPv4 address.',
+        'ipv6' => 'The :attribute must be a valid IPv6 address.',
+    ],
     'json' => 'The :attribute must be a valid JSON string.',
     'less_than' => [
         'array' => 'The :attribute must have less than :max items.',

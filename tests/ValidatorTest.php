@@ -1518,10 +1518,10 @@ class ValidatorTest extends TestCase
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['foo' => '127.0.0.1'], [Rules::make('foo')->ipAddress(Rules\IpAddress::TYPE_IPV6)]);
-        $this->assertValidationFail($v, 'foo', 'foo must be a valid ip address');
+        $this->assertValidationFail($v, 'foo', 'foo must be a valid ipv6 address');
 
         $v = $this->makeValidator(['foo' => '::1'], [Rules::make('foo')->ipAddress(Rules\IpAddress::TYPE_IPV4)]);
-        $this->assertValidationFail($v, 'foo', 'foo must be a valid ip address');
+        $this->assertValidationFail($v, 'foo', 'foo must be a valid ipv4 address');
     }
 
     /**
@@ -2676,7 +2676,9 @@ class ValidatorTest extends TestCase
             'greater_than_or_equal.string' => ':attribute should be min :other length',
             'in' => ':attribute must be in array',
             'integer_type' => ':attribute must be integer',
-            'ip_address' => ':attribute must be a valid ip address',
+            'ip_address.mixed' => ':attribute must be a valid ip address',
+            'ip_address.ipv4' => ':attribute must be a valid ipv4 address',
+            'ip_address.ipv6' => ':attribute must be a valid ipv6 address',
             'json' => ':attribute must be json',
             'less_than.array' => ':attribute should contain less than :other items',
             'less_than.numeric' => ':attribute should be less than :other',
