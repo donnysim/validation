@@ -1055,12 +1055,11 @@ class ValidatorTest extends TestCase
         $v = $this->makeValidator(['foo' => '4.1'], [Rules::make('foo')->numeric()->between('3.1', '4.1')]);
         self::assertTrue($v->passes());
 
-        // TODO
-//        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.4, 3.6)]);
-//        self::assertTrue($v->passes());
-//
-//        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.0, 3.4)]);
-//        $this->assertValidationFail($v, 'foo', 'foo must be between 3.0 and 3.4');
+        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.4, 3.6)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.5], [Rules::make('foo')->between(3.0, 3.4)]);
+        $this->assertValidationFail($v, 'foo', 'foo must be between 3 and 3.4');
 
         // TODO
 //        $file = $this->getMockBuilder(File::class)->onlyMethods(['getSize'])->setConstructorArgs([__FILE__, false])->getMock();
