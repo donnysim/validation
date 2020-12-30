@@ -48,6 +48,9 @@ return [
         'ipv6' => 'The :attribute must be a valid IPv6 address.',
     ],
     'json' => 'The :attribute must be a valid JSON string.',
+    'laravel' => [
+        'exists' => 'The selected :attribute is invalid.',
+    ],
     'less_than' => [
         'array' => 'The :attribute must have less than :max items.',
         'numeric' => 'The :attribute must be less than :max.',
