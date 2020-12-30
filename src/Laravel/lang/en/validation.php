@@ -50,6 +50,7 @@ return [
     'json' => 'The :attribute must be a valid JSON string.',
     'laravel' => [
         'exists' => 'The selected :attribute is invalid.',
+        'unique' => 'The :attribute has already been taken.',
     ],
     'less_than' => [
         'array' => 'The :attribute must have less than :max items.',
