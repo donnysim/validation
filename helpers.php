@@ -14,7 +14,7 @@ function rule(string $pattern, bool $includeInData = true): Rules
     return Rules::make($pattern, $includeInData);
 }
 
-function field_reference(string $pattern): FieldReference
+function reference(string $pattern): FieldReference
 {
     return Rules::reference($pattern);
 }

@@ -47,7 +47,7 @@ $data = $validator->getValidatedData();
 //];
 ```
 
-Referencing other fields uses `field_reference`, e.g. `rule('start_date')->before(field_reference('end_date'))`. Support for references depends on rules, and some rules might
+Referencing other fields uses `reference`, e.g. `rule('start_date')->before(reference('end_date'))`. Support for references depends on rules, and some rules might
 accept other field name as an argument e.g. `same('other_field')`. Referenced field values are provided as is from data without any validation passes.
 
 You can use your own rule via `->rule($myRule)`.
@@ -216,10 +216,10 @@ The dates will be passed into the `strtotime` PHP function in order to be conver
 Instead of passing a date string to be evaluated by `strtotime`, you may specify another field to compare against the date:
 
 ```php
-use function DonnySim\Validation\field_reference;
+use function DonnySim\Validation\reference;
 use function DonnySim\Validation\rule;
 
-rule('ends')->dateAfter(field_reference('starts'));
+rule('ends')->dateAfter(freference('starts'));
 ```
 
 ### Date After Or Equal
