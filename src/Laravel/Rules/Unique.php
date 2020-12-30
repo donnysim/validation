@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation\Rules\Laravel;
+namespace DonnySim\Validation\Laravel\Rules;
 
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\FieldReference;
@@ -16,7 +16,7 @@ use UnexpectedValueException;
 
 class Unique implements BatchRule
 {
-    public const NAME = 'laravel.unique';
+    public const NAME = 'unique';
 
     /**
      * @var \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder
@@ -32,13 +32,13 @@ class Unique implements BatchRule
 
     protected ?string $exceptColumn = null;
 
-    public function __construct($target, ?string $column = null)
+    public function __construct($target, string $column)
     {
         $this->builder = $this->getBuilder($target);
         $this->column = $this->getColumn($column, $target);
     }
 
-    public static function make($target, ?string $column = null): self
+    public static function make($target, string $column): self
     {
         return new static($target, $column);
     }

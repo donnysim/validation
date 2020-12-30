@@ -91,7 +91,7 @@ Below is a list of all available validation rules and their function:
 </tr>
 <tr>
 <td align="center" valign="top"><strong>E</strong></td>
-<td width="1000"><a href="#email">Email</a></br><a href="#ends-with">Ends With</a></td>
+<td width="1000"><a href="#email">Email</a></br><a href="#ends-with">Ends With</a></br><a href="#exists">Exists</a></td>
 </tr>
 <tr>
 <td align="center" valign="top"><strong>F</strong></td>
@@ -143,7 +143,7 @@ Below is a list of all available validation rules and their function:
 </tr>
 <tr>
 <td align="center" valign="top"><strong>U</strong></td>
-<td width="1000"><a href="#url">Url</a></br><a href="#uuid">Uuid</a></td>
+<td width="1000"><a href="#unique">Unique</a></br><a href="#url">Url</a></br><a href="#uuid">Uuid</a></td>
 </tr>
 <tr>
 <td align="center" valign="top"><strong>W</strong></td>
@@ -280,6 +280,10 @@ By default, the `RFCValidation` validator is applied
 ### Ends With
 
 The field under validation must end with one of the given values.
+
+### Exists
+
+The field under validation must exist in a given database table.
 
 ### Filled
 
@@ -465,6 +469,10 @@ The field under validation must be of string type.
 ### Timezone
 
 The field under validation must be a valid timezone identifier according to the `timezone_identifiers_list` PHP function.
+
+### Unique
+
+The field under validation must not exist within the given database table.
 
 ### Url
 

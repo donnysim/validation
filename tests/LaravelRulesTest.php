@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests;
 
+use DonnySim\Validation\Laravel\Rules\Unique;
 use DonnySim\Validation\Rules;
-use DonnySim\Validation\Rules\Laravel\Exists;
-use DonnySim\Validation\Rules\Laravel\Unique;
 use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
 use DonnySim\Validation\Validator;
 use Illuminate\Database\Capsule\Manager as DB;
@@ -22,47 +21,47 @@ class LaravelRulesTest extends TestCase
     {
         $v = $this->makeValidator(
             ['email' => 'foo'],
-            [Rules::make('email')->rule(Exists::make('entities', 'email'))]
+            [Rules::make('email')->exists('entities', 'email')]
         );
         $this->assertValidationFail($v, 'email', 'email is invalid');
 
         DB::table('entities')->insert([['email' => 'exists_builder', 'active' => 1]]);
         $v = $this->makeValidator(
             ['email' => 'exists_builder'],
-            [Rules::make('email')->rule(Exists::make(DB::table('entities')->where('active', 1), 'email'))]
+            [Rules::make('email')->exists(DB::table('entities')->where('active', 1), 'email')]
         );
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(
             ['email' => 'exists_builder'],
-            [Rules::make('email')->rule(Exists::make(DB::table('entities')->where('active', 0), 'email'))]
+            [Rules::make('email')->exists(DB::table('entities')->where('active', 0), 'email')]
         );
         $this->assertValidationFail($v, 'email', 'email is invalid');
 
         DB::table('entities')->insert([['email' => 'exists_arr_case1_1'], ['email' => 'exists_arr_case1_2']]);
         $v = $this->makeValidator(
             ['email' => ['exists_arr_case1_1', 'exists_arr_case1_2']],
-            [Rules::make('email')->rule(Exists::make(DB::table('entities'), 'email'))]
+            [Rules::make('email')->exists(DB::table('entities'), 'email')]
         );
         self::assertTrue($v->passes());
 
         DB::table('entities')->insert([['email' => 'exists_arr_case2_1']]);
         $v = $this->makeValidator(
             ['email' => ['exists_arr_case2_1', 'exists_arr_case2_2']],
-            [Rules::make('email')->rule(Exists::make(DB::table('entities'), 'email'))]
+            [Rules::make('email')->exists(DB::table('entities'), 'email')]
         );
         $this->assertValidationFail($v, 'email', 'email is invalid');
 
         DB::table('entities')->insert([['email' => 'exists_wild_1'], ['email' => 'exists_wild_2']]);
         $v = $this->makeValidator(
             ['emails' => ['exists_wild_1', 'exists_wild_2', 'exists_wild_3']],
-            [Rules::make('emails.*')->rule(Exists::make(DB::table('entities'), 'email'))]
+            [Rules::make('emails.*')->exists(DB::table('entities'), 'email')]
         );
         $this->assertValidationFail($v, 'emails.2', 'emails.2 is invalid');
 
         $v = $this->makeValidator(
             ['emails' => ['exists_wild_1', 'exists_wild_2']],
-            [Rules::make('emails.*')->rule(Exists::make(DB::table('entities'), 'email'))]
+            [Rules::make('emails.*')->exists(DB::table('entities'), 'email')]
         );
         self::assertTrue($v->passes());
     }
@@ -74,28 +73,28 @@ class LaravelRulesTest extends TestCase
     {
         $v = $this->makeValidator(
             ['email' => 'foo'],
-            [Rules::make('email')->rule(Unique::make('entities', 'email'))]
+            [Rules::make('email')->unique('entities', 'email')]
         );
         self::assertTrue($v->passes());
 
         DB::table('entities')->insert([['email' => 'unique']]);
         $v = $this->makeValidator(
             ['email' => 'unique'],
-            [Rules::make('email')->rule(Unique::make('entities', 'email'))]
+            [Rules::make('email')->unique('entities', 'email')]
         );
         $this->assertValidationFail($v, 'email', 'email is taken');
 
         $id = DB::table('entities')->insertGetId(['email' => 'unique_id']);
         $v = $this->makeValidator(
             ['email' => 'unique_id'],
-            [Rules::make('email')->rule(Unique::make('entities', 'email')->except($id))]
+            [Rules::make('email')->unique('entities', 'email', $id)]
         );
         self::assertTrue($v->passes());
 
         DB::table('entities')->insert([['email' => 'unique_builder', 'active' => 1]]);
         $v = $this->makeValidator(
             ['email' => 'unique_builder'],
-            [Rules::make('email')->rule(Unique::make(DB::table('entities')->where('active', 1), 'email'))]
+            [Rules::make('email')->unique(DB::table('entities')->where('active', 1), 'email')]
         );
         $this->assertValidationFail($v, 'email', 'email is taken');
 
@@ -137,8 +136,8 @@ class LaravelRulesTest extends TestCase
     protected function makeValidator(array $data, array $rules, array $overrides = []): Validator
     {
         $validator = new Validator(new TestMessageResolver([
-            'laravel.exists' => ':attribute is invalid',
-            'laravel.unique' => ':attribute is taken',
+            'exists' => ':attribute is invalid',
+            'unique' => ':attribute is taken',
         ]), $data, $rules);
 
         return $validator->override($overrides);

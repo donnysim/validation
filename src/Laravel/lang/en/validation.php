@@ -29,6 +29,7 @@ return [
     'digits_between' => 'The :attribute must be between :min and :max digits.',
     'distinct' => 'The :attribute field has a duplicate value.',
     'ends_with' => 'The :attribute must end with one of the following: :values.',
+    'exists' => 'The selected :attribute is invalid.',
     'filled' => 'The :attribute field must have a value.',
     'greater_than' => [
         'array' => 'The :attribute must have more than :min items.',
@@ -48,10 +49,6 @@ return [
         'ipv6' => 'The :attribute must be a valid IPv6 address.',
     ],
     'json' => 'The :attribute must be a valid JSON string.',
-    'laravel' => [
-        'exists' => 'The selected :attribute is invalid.',
-        'unique' => 'The :attribute has already been taken.',
-    ],
     'less_than' => [
         'array' => 'The :attribute must have less than :max items.',
         'numeric' => 'The :attribute must be less than :max.',
@@ -76,6 +73,7 @@ return [
     'starts_with' => 'The :attribute must start with one of the following: :values.',
     'string_type' => 'The :attribute must be of type string.',
     'timezone' => 'The :attribute must be a valid zone.',
+    'unique' => 'The :attribute has already been taken.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
 ];

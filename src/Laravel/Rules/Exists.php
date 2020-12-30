@@ -2,19 +2,17 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation\Rules\Laravel;
+namespace DonnySim\Validation\Laravel\Rules;
 
 use DonnySim\Validation\Contracts\BatchRule;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use InvalidArgumentException;
 use UnexpectedValueException;
 
 class Exists implements BatchRule
 {
-    public const NAME = 'laravel.exists';
+    public const NAME = 'exists';
 
     /**
      * @var \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder
@@ -23,13 +21,13 @@ class Exists implements BatchRule
 
     protected string $column;
 
-    public function __construct($target, ?string $column = null)
+    public function __construct($target, string $column)
     {
         $this->builder = $this->getBuilder($target);
-        $this->column = $this->getColumn($column, $target);
+        $this->column = $column;
     }
 
-    public static function make($target, ?string $column = null): self
+    public static function make($target, string $column): self
     {
         return new static($target, $column);
     }
@@ -98,18 +96,5 @@ class Exists implements BatchRule
         }
 
         throw new UnexpectedValueException('Cannot infer builder from parameter of type ' . \gettype($value));
-    }
-
-    protected function getColumn($column, $target): string
-    {
-        if (\is_string($column)) {
-            return $column;
-        }
-
-        if ($target instanceof Model) {
-            return $target->getQualifiedKeyName();
-        }
-
-        throw new InvalidArgumentException('Cannot infer column from parameter type ' . \gettype($target));
     }
 }

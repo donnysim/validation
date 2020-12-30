@@ -8,6 +8,8 @@ use Closure;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
 use DonnySim\Validation\Contracts\SingleRule;
+use DonnySim\Validation\Laravel\Rules\Exists;
+use DonnySim\Validation\Laravel\Rules\Unique;
 use DonnySim\Validation\Rules\Accepted;
 use DonnySim\Validation\Rules\ActiveUrl;
 use DonnySim\Validation\Rules\Alpha;
@@ -266,6 +268,19 @@ class Rules
         return $this;
     }
 
+    /**
+     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder|string $target
+     * @param string $column
+     *
+     * @return static
+     */
+    public function exists($target, string $column): self
+    {
+        $this->rules[] = new Exists($target, $column);
+
+        return $this;
+    }
+
     public function filled(): self
     {
         $this->rules[] = new Filled();
@@ -519,6 +534,21 @@ class Rules
     public function timezone(): self
     {
         $this->rules[] = new Timezone();
+
+        return $this;
+    }
+
+    /**
+     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder|string $target
+     * @param string $column
+     * @param \DonnySim\Validation\FieldReference|string|int|string[]|int[] $except
+     * @param string $exceptColumn
+     *
+     * @return static
+     */
+    public function unique($target, string $column, $except = null, string $exceptColumn = 'id'): self
+    {
+        $this->rules[] = Unique::make($target, $column)->except($except, $exceptColumn);
 
         return $this;
     }
