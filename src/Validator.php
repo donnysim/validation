@@ -23,7 +23,7 @@ class Validator implements MessageOverrideProvider
     protected array $data;
 
     /**
-     * @var \DonnySim\Validation\Rules[]
+     * @var \DonnySim\Validation\Contracts\RuleSet[]
      */
     protected array $rules = [];
 
