@@ -564,7 +564,7 @@ class ValidatorTest extends TestCase
 
         $v = $this->makeValidator(
             ['x' => \date('d/m/Y')],
-            [Rules::make('x')->dateAfter('today')]
+            [Rules::make('x')->dateAfter('today', 'd/m/Y')]
         );
         $this->assertValidationFail($v, 'x', 'x must be after today');
 
