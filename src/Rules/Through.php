@@ -9,7 +9,7 @@ use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 
-class Pipe implements SingleRule
+class Through implements SingleRule
 {
     protected Closure $callback;
 

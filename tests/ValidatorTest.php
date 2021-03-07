@@ -2085,13 +2085,13 @@ class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function pipe_rule(): void
+    public function through_rule(): void
     {
         $v = $this->makeValidator(
             ['foo' => [1, 2, 3]],
             [
                 Rules::make('foo.*')
-                    ->pipe(static function (EntryPipeline $pipeline, Entry $entry) {
+                    ->through(static function (EntryPipeline $pipeline, Entry $entry) {
                         switch ($entry->getValue()) {
                             case 2:
                                 $pipeline->insertNext(fn(Rules $rules) => $rules->booleanType());

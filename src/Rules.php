@@ -34,7 +34,7 @@ use DonnySim\Validation\Rules\NotIn;
 use DonnySim\Validation\Rules\Nullable;
 use DonnySim\Validation\Rules\Numeric;
 use DonnySim\Validation\Rules\OmitFromData;
-use DonnySim\Validation\Rules\Pipe;
+use DonnySim\Validation\Rules\Through;
 use DonnySim\Validation\Rules\Present;
 use DonnySim\Validation\Rules\Regex;
 use DonnySim\Validation\Rules\Required;
@@ -346,9 +346,9 @@ class Rules
         return $this;
     }
 
-    public function pipe(Closure $callback): self
+    public function through(Closure $callback): self
     {
-        $this->rules[] = new Pipe($callback);
+        $this->rules[] = new Through($callback);
 
         return $this;
     }

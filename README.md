@@ -405,7 +405,7 @@ use function DonnySim\Validation\rule;
 
 rule('roles.*')
     ->arrayType()
-    ->pipe(function (EntryPipeline $pipeline, Entry $entry) {
+    ->through(function (EntryPipeline $pipeline, Entry $entry) {
         if (isset($entry->getValue()['temp_id'])) {
             $pipeline->insertNext(fn(Rules $rules) => $rules->rule(new MyCustomRule()));
         } else {
