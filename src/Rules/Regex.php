@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function is_string;
+use function preg_match;
 
 class Regex implements SingleRule
 {
@@ -30,12 +32,12 @@ class Regex implements SingleRule
         }
 
         $value = $entry->getValue();
-        if (!\is_string($value)) {
+        if (!is_string($value)) {
             $pipeline->fail($this->boolean ? static::NAME : static::NAME_NOT);
             return;
         }
 
-        $result = \preg_match($this->pattern, $value);
+        $result = preg_match($this->pattern, $value);
 
         if (($this->boolean && !$result) || (!$this->boolean && $result)) {
             $pipeline->fail($this->boolean ? static::NAME : static::NAME_NOT);

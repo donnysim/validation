@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function is_string;
+use function preg_match;
 
 class AlphaDash implements SingleRule
 {
@@ -19,7 +21,7 @@ class AlphaDash implements SingleRule
         }
 
         $value = $entry->getValue();
-        if (!\is_string($value) || !\preg_match('/^[\pL\pM\pN_-]+$/u', $value)) {
+        if (!is_string($value) || !preg_match('/^[\pL\pM\pN_-]+$/u', $value)) {
             $pipeline->fail(static::NAME);
         }
     }

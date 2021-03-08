@@ -9,6 +9,9 @@ use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use UnexpectedValueException;
+use function array_unique;
+use function gettype;
+use function is_string;
 
 class Exists implements BatchRule
 {
@@ -53,7 +56,7 @@ class Exists implements BatchRule
             }
         }
 
-        $keys = \array_unique($keys);
+        $keys = array_unique($keys);
 
         if (empty($keys)) {
             return;
@@ -91,10 +94,10 @@ class Exists implements BatchRule
             return $value;
         }
 
-        if (\is_string($value)) {
+        if (is_string($value)) {
             return Manager::table($value);
         }
 
-        throw new UnexpectedValueException('Cannot infer builder from parameter of type ' . \gettype($value));
+        throw new UnexpectedValueException('Cannot infer builder from parameter of type ' . gettype($value));
     }
 }

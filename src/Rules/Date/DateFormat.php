@@ -8,6 +8,7 @@ use DateTime;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function is_string;
 
 class DateFormat implements SingleRule
 {
@@ -28,7 +29,7 @@ class DateFormat implements SingleRule
 
         $value = $entry->getValue();
 
-        if (!\is_string($value)) {
+        if (!is_string($value)) {
             $pipeline->fail(static::NAME, ['format' => $this->format]);
             return;
         }

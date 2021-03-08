@@ -7,6 +7,10 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function is_int;
+use function is_string;
+use function mb_strlen;
+use function preg_match;
 
 class Digits implements SingleRule
 {
@@ -34,12 +38,12 @@ class Digits implements SingleRule
 
         $value = $entry->getValue();
 
-        if (\is_int($value)) {
+        if (is_int($value)) {
             $value = (string)$value;
         }
 
         if ($this->operator === '=') {
-            if (!\is_string($value) || \preg_match('/\D/', $value) || \strlen($value) !== $this->first) {
+            if (!is_string($value) || preg_match('/\D/', $value) || mb_strlen($value) !== $this->first) {
                 $pipeline->fail(static::NAME, ['digits' => $this->first]);
             }
 
@@ -47,12 +51,12 @@ class Digits implements SingleRule
         }
 
         if ($this->operator === '><') {
-            if (!\is_string($value) || \preg_match('/\D/', $value)) {
+            if (!is_string($value) || preg_match('/\D/', $value)) {
                 $pipeline->fail(static::NAME_BETWEEN, ['min' => $this->first, 'max' => $this->second]);
                 return;
             }
 
-            $length = \strlen($value);
+            $length = mb_strlen($value);
             if ($length < $this->first || $length > $this->second) {
                 $pipeline->fail(static::NAME_BETWEEN, ['min' => $this->first, 'max' => $this->second]);
             }

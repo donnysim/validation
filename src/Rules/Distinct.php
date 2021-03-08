@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules;
 
 use DonnySim\Validation\Contracts\BatchRule;
+use function array_search;
+use function array_splice;
 
 class Distinct implements BatchRule
 {
@@ -24,13 +26,13 @@ class Distinct implements BatchRule
                 continue;
             }
 
-            $index = \array_search($pipeline->getEntry()->getValue(), $processedValues, true);
+            $index = array_search($pipeline->getEntry()->getValue(), $processedValues, true);
             if ($index !== false && $index >= 0) {
                 $processedPipelines[$index]->fail(static::NAME);
                 $pipeline->fail(static::NAME);
 
-                \array_splice($processedValues, $index, 1);
-                \array_splice($processedPipelines, $index, 1);
+                array_splice($processedValues, $index, 1);
+                array_splice($processedPipelines, $index, 1);
                 continue;
             }
 

@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace DonnySim\Validation;
 
 use Closure;
+use function array_key_exists;
+use function array_merge;
+use function array_slice;
+use function implode;
+use function is_array;
 
 class PathWalker
 {
@@ -56,7 +61,7 @@ class PathWalker
 
         if ($key === '*') {
             // We cannot loop if it's not an array.
-            if (!\is_array($data)) {
+            if (!is_array($data)) {
                 $this->miss($this->getPath($segments, $position), $wildcards);
                 return;
             }
@@ -64,7 +69,7 @@ class PathWalker
             foreach ($data as $dataKey => $dataValue) {
                 $dataSegments = $segments;
                 $dataSegments[$position] = (string)$dataKey;
-                $dataWildcards = \array_merge($wildcards, [(string)$dataKey]);
+                $dataWildcards = array_merge($wildcards, [(string)$dataKey]);
 
                 // Check if last segment in chain.
                 if (!isset($segments[$position + 1])) {
@@ -80,7 +85,7 @@ class PathWalker
         }
 
         // Check value because it might not be what we expect from wildcard paths.
-        if (!\is_array($data) || !\array_key_exists($key, $data)) {
+        if (!is_array($data) || !array_key_exists($key, $data)) {
             $this->miss($this->getPath($segments, $position), $wildcards);
             return;
         }
@@ -92,7 +97,7 @@ class PathWalker
         }
 
         // Check if value is an array and we can continue down the tree.
-        if (!\is_array($data[$key])) {
+        if (!is_array($data[$key])) {
             $this->miss($this->getPath($segments, $position), $wildcards);
             return;
         }
@@ -102,9 +107,9 @@ class PathWalker
 
     protected function getPath(array $segments, int $position): string
     {
-        return \implode(
+        return implode(
             '.',
-            $position ? \array_slice($segments, 0, $position + 1) : $segments
+            $position ? array_slice($segments, 0, $position + 1) : $segments
         );
     }
 

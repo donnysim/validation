@@ -7,6 +7,7 @@ namespace DonnySim\Validation\Rules\Types;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function is_bool;
 
 class BooleanType implements SingleRule
 {
@@ -14,7 +15,7 @@ class BooleanType implements SingleRule
 
     public function handle(EntryPipeline $pipeline, Entry $entry): void
     {
-        if ($entry->isMissing() || \is_bool($entry->getValue())) {
+        if ($entry->isMissing() || is_bool($entry->getValue())) {
             return;
         }
 

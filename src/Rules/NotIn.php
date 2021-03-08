@@ -7,6 +7,7 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function in_array;
 
 class NotIn implements SingleRule
 {
@@ -25,7 +26,7 @@ class NotIn implements SingleRule
             return;
         }
 
-        if (\in_array($entry->getValue(), $this->values, true)) {
+        if (in_array($entry->getValue(), $this->values, true)) {
             $pipeline->fail(static::NAME);
         }
     }

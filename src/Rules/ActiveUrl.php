@@ -8,6 +8,13 @@ use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use Exception;
+use function count;
+use function dns_get_record;
+use function is_string;
+use function parse_url;
+use const DNS_A;
+use const DNS_AAAA;
+use const PHP_URL_HOST;
 
 class ActiveUrl implements SingleRule
 {
@@ -20,16 +27,16 @@ class ActiveUrl implements SingleRule
         }
 
         $value = $entry->getValue();
-        if (!\is_string($value)) {
+        if (!is_string($value)) {
             $pipeline->fail(static::NAME);
             return;
         }
 
-        $url = \parse_url($value, \PHP_URL_HOST);
+        $url = parse_url($value, PHP_URL_HOST);
 
         if ($url) {
             try {
-                if (\count(\dns_get_record($url, \DNS_A | \DNS_AAAA)) > 0) {
+                if (count(dns_get_record($url, DNS_A | DNS_AAAA)) > 0) {
                     return;
                 }
             } catch (Exception $e) {

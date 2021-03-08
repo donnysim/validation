@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function implode;
+use function substr;
 
 class EndsWith implements SingleRule
 {
@@ -33,11 +35,11 @@ class EndsWith implements SingleRule
 
         $haystack = $entry->getValue();
         foreach ($this->needles as $needle) {
-            if ($needle !== '' && \substr($haystack, -\strlen($needle)) === $needle) {
+            if ($needle !== '' && substr($haystack, -mb_strlen($needle)) === $needle) {
                 return;
             }
         }
 
-        $pipeline->fail(static::NAME, ['values' => \implode(', ', $this->needles)]);
+        $pipeline->fail(static::NAME, ['values' => implode(', ', $this->needles)]);
     }
 }

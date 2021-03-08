@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function in_array;
+use function timezone_identifiers_list;
 
 class Timezone implements SingleRule
 {
@@ -18,7 +20,7 @@ class Timezone implements SingleRule
             return;
         }
 
-        if (!\in_array($entry->getValue(), \timezone_identifiers_list(), true)) {
+        if (!in_array($entry->getValue(), timezone_identifiers_list(), true)) {
             $pipeline->fail(static::NAME);
         }
     }

@@ -8,6 +8,8 @@ use Closure;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
 use DonnySim\Validation\Contracts\SingleRule;
+use function array_merge;
+use function array_slice;
 
 class EntryPipeline
 {
@@ -173,6 +175,6 @@ class EntryPipeline
 
     protected function insertRulesAfter(Rules $rules): void
     {
-        $this->rules = \array_merge(\array_slice($this->rules, 0, $this->currentRuleIndex + 1), $rules->getRules(), \array_slice($this->rules, $this->currentRuleIndex + 1));
+        $this->rules = array_merge(array_slice($this->rules, 0, $this->currentRuleIndex + 1), $rules->getRules(), array_slice($this->rules, $this->currentRuleIndex + 1));
     }
 }

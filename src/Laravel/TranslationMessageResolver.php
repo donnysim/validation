@@ -8,6 +8,8 @@ use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
 use DonnySim\Validation\Message;
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
+use function array_merge;
+use function compact;
 
 class TranslationMessageResolver implements MessageResolver
 {
@@ -33,7 +35,7 @@ class TranslationMessageResolver implements MessageResolver
 
         return $this->translator->get(
             "donnysim::validation.{$message->getKey()}",
-            \array_merge(\compact('path', 'attribute'), $message->getParams())
+            array_merge(compact('path', 'attribute'), $message->getParams())
         );
     }
 }

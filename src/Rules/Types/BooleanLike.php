@@ -7,6 +7,7 @@ namespace DonnySim\Validation\Rules\Types;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function in_array;
 
 class BooleanLike implements SingleRule
 {
@@ -23,6 +24,6 @@ class BooleanLike implements SingleRule
 
     protected function isBooleanLike($value): bool
     {
-        return \in_array($value, [true, false, 'true', 'false', 1, 0, '1', '0', 'yes', 'no', 'on', 'off'], true);
+        return in_array($value, [true, false, 'true', 'false', 1, 0, '1', '0', 'yes', 'no', 'on', 'off'], true);
     }
 }

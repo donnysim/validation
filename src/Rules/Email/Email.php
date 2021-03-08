@@ -14,6 +14,7 @@ use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
 use Egulias\EmailValidator\Validation\NoRFCWarningsValidation;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Egulias\EmailValidator\Validation\SpoofCheckValidation;
+use function is_string;
 
 class Email implements SingleRule
 {
@@ -41,7 +42,7 @@ class Email implements SingleRule
             return;
         }
 
-        if (!\is_string($entry->getValue()) || !$this->validateEmail($entry->getValue())) {
+        if (!is_string($entry->getValue()) || !$this->validateEmail($entry->getValue())) {
             $pipeline->fail(static::NAME);
         }
     }

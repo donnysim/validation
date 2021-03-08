@@ -7,6 +7,9 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use Exception;
+use function json_decode;
+use const JSON_THROW_ON_ERROR;
 
 class Json implements SingleRule
 {
@@ -18,9 +21,9 @@ class Json implements SingleRule
             return;
         }
 
-        \json_decode($entry->getValue(), false);
-
-        if (\json_last_error() !== \JSON_ERROR_NONE) {
+        try {
+            json_decode($entry->getValue(), false, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $exception) {
             $pipeline->fail(static::NAME);
         }
     }

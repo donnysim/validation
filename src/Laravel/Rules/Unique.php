@@ -13,6 +13,11 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use UnexpectedValueException;
+use function array_column;
+use function array_unique;
+use function gettype;
+use function is_int;
+use function is_string;
 
 class Unique implements BatchRule
 {
@@ -86,7 +91,7 @@ class Unique implements BatchRule
                 $reference = $pipeline->getValidator()->getValueEntry($pipeline->getEntry()->resolvePathWildcards($this->exceptValue->getField()));
                 $referenceValue = $reference->getValue();
 
-                if (!$reference->isMissing() && (\is_string($referenceValue) || \is_int($referenceValue))) {
+                if (!$reference->isMissing() && (is_string($referenceValue) || is_int($referenceValue))) {
                     $entry['except'] = $referenceValue;
                 }
             }
@@ -121,7 +126,7 @@ class Unique implements BatchRule
                 ->when($this->exceptValue !== null, function ($builder) {
                     $builder->whereNotIn($this->exceptColumn, (array)$this->exceptValue);
                 })
-                ->whereIn($this->column, \array_unique(Arr::flatten(\array_column($entries, 'value'))));
+                ->whereIn($this->column, array_unique(Arr::flatten(array_column($entries, 'value'))));
         }
 
         $occurrences = $builder->pluck($this->column)->map(fn($key) => (string)$key);
@@ -153,16 +158,16 @@ class Unique implements BatchRule
             return $value;
         }
 
-        if (\is_string($value)) {
+        if (is_string($value)) {
             return Manager::table($value);
         }
 
-        throw new UnexpectedValueException('Cannot infer builder from parameter of type ' . \gettype($value));
+        throw new UnexpectedValueException('Cannot infer builder from parameter of type ' . gettype($value));
     }
 
     protected function getColumn($column, $target): string
     {
-        if (\is_string($column)) {
+        if (is_string($column)) {
             return $column;
         }
 
@@ -170,6 +175,6 @@ class Unique implements BatchRule
             return $target->getQualifiedKeyName();
         }
 
-        throw new InvalidArgumentException('Cannot infer column from parameter type ' . \gettype($target));
+        throw new InvalidArgumentException('Cannot infer column from parameter type ' . gettype($target));
     }
 }

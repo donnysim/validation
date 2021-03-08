@@ -13,6 +13,8 @@ use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\FieldReference;
 use InvalidArgumentException;
+use function is_numeric;
+use function is_string;
 
 class DateBeforeOrAfter implements SingleRule
 {
@@ -54,7 +56,7 @@ class DateBeforeOrAfter implements SingleRule
         }
 
         $value = $entry->getValue();
-        if (!\is_string($value) && !\is_numeric($value) && !$value instanceof DateTimeInterface) {
+        if (!is_string($value) && !is_numeric($value) && !$value instanceof DateTimeInterface) {
             $pipeline->fail($this->getMessageKey(), ['date' => $this->getDateString($referenceValue)]);
             return;
         }
@@ -129,7 +131,7 @@ class DateBeforeOrAfter implements SingleRule
 
     protected function getDateString($value, ?string $format = null): string
     {
-        if (\is_string($value)) {
+        if (is_string($value)) {
             return $value;
         }
 

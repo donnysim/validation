@@ -8,6 +8,11 @@ use DateTimeInterface;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function checkdate;
+use function date_parse;
+use function is_numeric;
+use function is_string;
+use function strtotime;
 
 class Date implements SingleRule
 {
@@ -24,18 +29,18 @@ class Date implements SingleRule
             return;
         }
 
-        if ((!\is_string($value) && !\is_numeric($value)) || \strtotime($value) === false) {
+        if ((!is_string($value) && !is_numeric($value)) || strtotime($value) === false) {
             $pipeline->fail(static::NAME);
             return;
         }
 
-        $date = \date_parse($value);
+        $date = date_parse($value);
         if ($date['month'] === false || $date['day'] === false || $date['year'] === false) {
             $pipeline->fail(static::NAME);
             return;
         }
 
-        if (!\checkdate($date['month'], $date['day'], $date['year'])) {
+        if (!checkdate($date['month'], $date['day'], $date['year'])) {
             $pipeline->fail(static::NAME);
         }
     }

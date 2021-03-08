@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Rules;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
+use function is_string;
+use function preg_match;
 
 class Url implements SingleRule
 {
@@ -19,7 +21,7 @@ class Url implements SingleRule
         }
 
         $value = $entry->getValue();
-        if (!\is_string($value)) {
+        if (!is_string($value)) {
             $pipeline->fail(static::NAME);
             return;
         }
@@ -47,7 +49,7 @@ class Url implements SingleRule
             (?:\# (?:[\pL\pN\-._\~!$&\'()*+,;=:@/?]|%[0-9A-Fa-f]{2})* )?       # a fragment (optional)
         $~ixu';
 
-        if (!\preg_match($pattern, $value)) {
+        if (!preg_match($pattern, $value)) {
             $pipeline->fail(static::NAME);
         }
     }
