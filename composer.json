@@ -15,17 +15,16 @@
     }
   ],
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": "^7.4||^8.0",
     "ext-bcmath": "*",
     "ext-json": "*",
     "brick/math": "^0.9.1",
     "egulias/email-validator": "^2.1",
-    "illuminate/database": "^v8.0",
-    "illuminate/support": "^8.0",
-    "illuminate/validation": "^8.0",
+    "illuminate/support": "*",
     "nesbot/carbon": "^2.42"
   },
   "require-dev": {
+    "illuminate/database": "^v8.0",
     "phpunit/phpunit": "^9.5"
   },
   "autoload": {
