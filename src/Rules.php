@@ -23,7 +23,7 @@ use DonnySim\Validation\Rules\DateFormat;
 use DonnySim\Validation\Rules\Different;
 use DonnySim\Validation\Rules\Digits;
 use DonnySim\Validation\Rules\Distinct;
-use DonnySim\Validation\Rules\Email;
+use DonnySim\Validation\Rules\Email\Email;
 use DonnySim\Validation\Rules\EndsWith;
 use DonnySim\Validation\Rules\Filled;
 use DonnySim\Validation\Rules\In;

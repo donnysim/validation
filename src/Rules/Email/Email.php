@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation\Rules;
+namespace DonnySim\Validation\Rules\Email;
 
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Entry;
