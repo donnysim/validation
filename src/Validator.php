@@ -31,11 +31,6 @@ class Validator implements MessageOverrideProvider
      */
     protected array $rules = [];
 
-    /**
-     * @var \DonnySim\Validation\Contracts\RuleSet[]
-     */
-    protected array $executionRules = [];
-
     protected array $validatedData = [];
 
     protected MessageBag $messages;
@@ -161,12 +156,12 @@ class Validator implements MessageOverrideProvider
     {
         $this->validated = false;
         $this->validatedData = [];
-        $this->executionRules = $this->rules;
         $this->messages = new MessageBag();
+        $originalRules = $this->rules;
 
         $ruleSetIndex = 0;
-        while (isset($this->executionRules[$ruleSetIndex])) {
-            $ruleSet = $this->executionRules[$ruleSetIndex++];
+        while (isset($this->rules[$ruleSetIndex])) {
+            $ruleSet = $this->rules[$ruleSetIndex++];
             $pattern = $ruleSet->getPattern();
             $entryStack = new EntryStack();
 
@@ -190,6 +185,7 @@ class Validator implements MessageOverrideProvider
             }
         }
 
+        $this->rules = $originalRules;
         $this->validated = true;
     }
 

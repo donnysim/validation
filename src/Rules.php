@@ -340,7 +340,7 @@ class Rules implements RuleSet
         return $this;
     }
 
-    public function through(Closure $callback): self
+    public function then(Closure $callback): self
     {
         $this->rules[] = new Through($callback);
 

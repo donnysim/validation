@@ -2092,7 +2092,7 @@ class ValidatorTest extends TestCase
             ['foo' => [1, 2, 3]],
             [
                 Rules::make('foo.*')
-                    ->through(static function (EntryPipeline $pipeline, Entry $entry) {
+                    ->then(static function (EntryPipeline $pipeline, Entry $entry) {
                         switch ($entry->getValue()) {
                             case 2:
                                 $pipeline->insertNext(fn(Rules $rules) => $rules->booleanType());
@@ -2341,6 +2341,21 @@ class ValidatorTest extends TestCase
         ]);
         $this->assertValidationFail($v, 'foo', 'foo is required', 2);
         $this->assertValidationFail($v, 'client.name', 'client.name is required', 2);
+    }
+
+    /**
+     * @test
+     */
+    public function it_processes_rules_sets_added_during_validation(): void
+    {
+        $v = $this->makeValidator([
+            'entries' => [1, 2, true]
+        ], [
+            Rules::make('entries')->arrayType()->then(static function (EntryPipeline $pipeline) {
+                $pipeline->getValidator()->add(Rules::make('entries.*')->integerType());
+            }),
+        ]);
+        $this->assertValidationFail($v, 'entries.2', 'entries.2 must be integer');
     }
 
     public function validUuidList(): array
