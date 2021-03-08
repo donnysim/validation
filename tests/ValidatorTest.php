@@ -2313,6 +2313,17 @@ class ValidatorTest extends TestCase
         $this->assertValidationFail($v, 'foo', 'foo must be uuid');
     }
 
+    /**
+     * @test
+     */
+    public function it_bails_on_first_failed_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 1, 'bar' => 1], [Rules::make('foo')->booleanType(), Rules::make('bar')->booleanType()])
+            ->bailOnFirstError();
+        self::assertFalse($v->passes(), 'Validation should fail but passed.');
+        self::assertSame(1, $v->getMessages()->count());
+    }
+
     public function validUuidList(): array
     {
         return [

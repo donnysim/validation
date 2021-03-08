@@ -40,6 +40,8 @@ class Validator implements MessageOverrideProvider
 
     protected array $messageOverrides = [];
 
+    protected bool $bailOnFirstError = false;
+
     public function __construct(MessageResolver $resolver, array $data, array $rules)
     {
         $this->resolver = $resolver;
@@ -47,7 +49,6 @@ class Validator implements MessageOverrideProvider
         $this->rules = $rules;
         $this->messages = new MessageBag();
         $this->missingValue = 'missing' . Str::random(8);
-        // TODO prevent adding multiple rules with same pattern?
     }
 
     public static function setFailureHandler(?Closure $handler): void
@@ -79,6 +80,13 @@ class Validator implements MessageOverrideProvider
         }
 
         return $this->getValidatedData();
+    }
+
+    public function bailOnFirstError(bool $value = true): self
+    {
+        $this->bailOnFirstError = $value;
+
+        return $this;
     }
 
     public function getValidatedData(): array
@@ -153,6 +161,10 @@ class Validator implements MessageOverrideProvider
 
             $walker->walk($pattern);
             $this->processPipeline($pipeline);
+
+            if ($this->bailOnFirstError && $this->messages->isNotEmpty()) {
+                break;
+            }
         }
 
         $this->validated = true;
