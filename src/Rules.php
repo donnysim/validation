@@ -7,6 +7,7 @@ namespace DonnySim\Validation;
 use Closure;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
+use DonnySim\Validation\Contracts\RuleSet;
 use DonnySim\Validation\Contracts\SingleRule;
 use DonnySim\Validation\Laravel\Rules\Exists;
 use DonnySim\Validation\Laravel\Rules\Unique;
@@ -54,7 +55,7 @@ use DonnySim\Validation\Rules\Uuid;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
-class Rules
+class Rules implements RuleSet
 {
     /**
      * @var \DonnySim\Validation\Contracts\Rule[]
