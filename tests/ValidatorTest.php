@@ -11,6 +11,7 @@ use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\Exceptions\ValidationException;
 use DonnySim\Validation\Rules;
+use DonnySim\Validation\Tests\Stubs\ClientRuleGroupStub;
 use DonnySim\Validation\Tests\Stubs\RuleStub;
 use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
 use DonnySim\Validation\Validator;
@@ -2322,6 +2323,24 @@ class ValidatorTest extends TestCase
             ->bailOnFirstError();
         self::assertFalse($v->passes(), 'Validation should fail but passed.');
         self::assertSame(1, $v->getMessages()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_rule_groups(): void
+    {
+        $v = $this->makeValidator([
+            'foo' => null,
+            'client' => [
+                'last_name' => 'test',
+            ],
+        ], [
+            Rules::make('foo')->required(),
+            new ClientRuleGroupStub(),
+        ]);
+        $this->assertValidationFail($v, 'foo', 'foo is required', 2);
+        $this->assertValidationFail($v, 'client.name', 'client.name is required', 2);
     }
 
     public function validUuidList(): array

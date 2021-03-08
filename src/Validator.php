@@ -7,10 +7,14 @@ namespace DonnySim\Validation;
 use Closure;
 use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
+use DonnySim\Validation\Contracts\RuleGroup as RuleGroupContract;
+use DonnySim\Validation\Contracts\RuleSet;
+use DonnySim\Validation\Exceptions\InvalidRuleException;
 use DonnySim\Validation\Exceptions\ValidationException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
+use function is_array;
 
 class Validator implements MessageOverrideProvider
 {
@@ -46,9 +50,9 @@ class Validator implements MessageOverrideProvider
     {
         $this->resolver = $resolver;
         $this->data = $data;
-        $this->rules = $rules;
         $this->messages = new MessageBag();
         $this->missingValue = 'missing' . Str::random(8);
+        $this->add($rules);
     }
 
     public static function setFailureHandler(?Closure $handler): void
@@ -132,6 +136,25 @@ class Validator implements MessageOverrideProvider
         }
 
         return new Entry($field, [], $field, $value, true);
+    }
+
+    public function add($rules): self
+    {
+        $entries = is_array($rules) ? $rules : [$rules];
+
+        foreach ($entries as $entry) {
+            if ($entry instanceof RuleSet) {
+                $this->rules[] = $entry;
+            } elseif ($entry instanceof RuleGroupContract) {
+                foreach ($entry->getRules() as $rule) {
+                    $this->add($rule);
+                }
+            } else {
+                throw new InvalidRuleException('Unexpected rule encountered, expected RuleSet or RuleGroup.');
+            }
+        }
+
+        return $this;
     }
 
     protected function execute(): void
