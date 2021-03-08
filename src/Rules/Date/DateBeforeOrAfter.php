@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation\Rules;
+namespace DonnySim\Validation\Rules\Date;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
