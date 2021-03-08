@@ -27,12 +27,12 @@ class Validator implements MessageOverrideProvider
      */
     protected array $rules = [];
 
-    protected array $validatedData = [];
-
     /**
-     * @var \DonnySim\Validation\Pipeline[]
+     * @var \DonnySim\Validation\Contracts\RuleSet[]
      */
-    protected array $pipelines = [];
+    protected array $executionRules = [];
+
+    protected array $validatedData = [];
 
     protected MessageBag $messages;
 
@@ -128,35 +128,30 @@ class Validator implements MessageOverrideProvider
 
     protected function execute(): void
     {
+        $this->validated = false;
         $this->validatedData = [];
-        $this->pipelines = [];
+        $this->executionRules = $this->rules;
         $this->messages = new MessageBag();
 
-        foreach ($this->rules as $ruleSet) {
+        $ruleSetIndex = 0;
+        while (isset($this->executionRules[$ruleSetIndex])) {
+            $ruleSet = $this->executionRules[$ruleSetIndex++];
             $pattern = $ruleSet->getPattern();
-
-            if (!isset($this->pipelines[$pattern])) {
-                $this->pipelines[$pattern] = new Pipeline();
-            }
+            $pipeline = new Pipeline();
 
             $walker = new PathWalker($this->data);
-            $walker->onHit(function (string $path, $value, array $wildcards) use ($ruleSet, $pattern) {
+            $walker->onHit(function (string $path, $value, array $wildcards) use ($pipeline, $ruleSet, $pattern) {
                 $entry = new Entry($pattern, $wildcards, $path, $value, true);
                 $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
-
-                $this->pipelines[$pattern]->add($entryPipeline);
+                $pipeline->add($entryPipeline);
             });
-            $walker->onMiss(function (string $path, array $wildcards) use ($ruleSet, $pattern) {
+            $walker->onMiss(function (string $path, array $wildcards) use ($pipeline, $ruleSet, $pattern) {
                 $entry = new Entry($pattern, $wildcards, $path, null, false);
                 $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
-
-                $this->pipelines[$pattern]->add($entryPipeline);
+                $pipeline->add($entryPipeline);
             });
 
             $walker->walk($pattern);
-        }
-
-        foreach ($this->pipelines as $pipeline) {
             $this->processPipeline($pipeline);
         }
 
