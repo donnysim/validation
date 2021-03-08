@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
-use Closure;
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
 use DonnySim\Validation\Contracts\SingleRule;
 use function array_merge;
 use function array_slice;
+use function is_array;
 
 class EntryPipeline
 {
@@ -94,13 +94,15 @@ class EntryPipeline
     /**
      * Append rules after current one to be processed next.
      *
-     * @param \Closure $callback
+     * @param \DonnySim\Validation\Contracts\RuleSet|\DonnySim\Validation\Contracts\Rule[] $rules
      */
-    public function insertNext(Closure $callback): void
+    public function insertNext($rules): void
     {
-        $rules = Rules::make($this->getEntry()->getPath());
-        $callback($rules);
-        $this->insertRulesAfter($rules);
+        if (is_array($rules)) {
+            $this->insertRulesAfter($rules);
+        } else {
+            $this->insertRulesAfter($rules->getRules());
+        }
     }
 
     public function getEntry(): Entry
@@ -173,8 +175,8 @@ class EntryPipeline
         $this->currentRuleIndex++;
     }
 
-    protected function insertRulesAfter(Rules $rules): void
+    protected function insertRulesAfter(array $rules): void
     {
-        $this->rules = array_merge(array_slice($this->rules, 0, $this->currentRuleIndex + 1), $rules->getRules(), array_slice($this->rules, $this->currentRuleIndex + 1));
+        $this->rules = array_merge(array_slice($this->rules, 0, $this->currentRuleIndex + 1), $rules, array_slice($this->rules, $this->currentRuleIndex + 1));
     }
 }

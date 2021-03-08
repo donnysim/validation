@@ -75,7 +75,7 @@ class Rules implements RuleSet
      *
      * @return static
      */
-    public static function make(string $pattern, bool $includeInData = true)
+    public static function make(string $pattern = '', bool $includeInData = true)
     {
         $instance = new static($pattern);
 

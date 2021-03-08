@@ -11,6 +11,7 @@ use DonnySim\Validation\Entry;
 use DonnySim\Validation\EntryPipeline;
 use DonnySim\Validation\Exceptions\ValidationException;
 use DonnySim\Validation\Rules;
+use DonnySim\Validation\Rules\SizeCompare;
 use DonnySim\Validation\Tests\Stubs\ClientRuleGroupStub;
 use DonnySim\Validation\Tests\Stubs\RuleStub;
 use DonnySim\Validation\Tests\Stubs\TestMessageResolver;
@@ -2095,10 +2096,10 @@ class ValidatorTest extends TestCase
                     ->then(static function (EntryPipeline $pipeline, Entry $entry) {
                         switch ($entry->getValue()) {
                             case 2:
-                                $pipeline->insertNext(fn(Rules $rules) => $rules->booleanType());
+                                $pipeline->insertNext(Rules::make()->booleanType());
                                 break;
                             case 3:
-                                $pipeline->insertNext(fn(Rules $rules) => $rules->greaterThanOrEqual(4));
+                                $pipeline->insertNext([new SizeCompare(SizeCompare::BOOL_GT, 4, true)]);
                                 break;
                         }
                     })
