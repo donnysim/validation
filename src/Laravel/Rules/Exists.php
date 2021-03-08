@@ -12,7 +12,7 @@ use UnexpectedValueException;
 
 class Exists implements BatchRule
 {
-    public const NAME = 'exists';
+    public const NAME = 'laravel.exists';
 
     /**
      * @var \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder

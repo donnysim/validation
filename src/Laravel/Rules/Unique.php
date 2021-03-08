@@ -16,7 +16,7 @@ use UnexpectedValueException;
 
 class Unique implements BatchRule
 {
-    public const NAME = 'unique';
+    public const NAME = 'laravel.unique';
 
     /**
      * @var \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder
