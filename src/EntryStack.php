@@ -7,7 +7,7 @@ namespace DonnySim\Validation;
 use DonnySim\Validation\Contracts\Rule;
 use Generator;
 
-class Pipeline
+class EntryStack
 {
     /**
      * @var \DonnySim\Validation\EntryPipeline[]

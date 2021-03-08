@@ -168,22 +168,22 @@ class Validator implements MessageOverrideProvider
         while (isset($this->executionRules[$ruleSetIndex])) {
             $ruleSet = $this->executionRules[$ruleSetIndex++];
             $pattern = $ruleSet->getPattern();
-            $pipeline = new Pipeline();
+            $entryStack = new EntryStack();
 
             $walker = new PathWalker($this->data);
-            $walker->onHit(function (string $path, $value, array $wildcards) use ($pipeline, $ruleSet, $pattern) {
+            $walker->onHit(function (string $path, $value, array $wildcards) use ($entryStack, $ruleSet, $pattern) {
                 $entry = new Entry($pattern, $wildcards, $path, $value, true);
                 $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
-                $pipeline->add($entryPipeline);
+                $entryStack->add($entryPipeline);
             });
-            $walker->onMiss(function (string $path, array $wildcards) use ($pipeline, $ruleSet, $pattern) {
+            $walker->onMiss(function (string $path, array $wildcards) use ($entryStack, $ruleSet, $pattern) {
                 $entry = new Entry($pattern, $wildcards, $path, null, false);
                 $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
-                $pipeline->add($entryPipeline);
+                $entryStack->add($entryPipeline);
             });
 
             $walker->walk($pattern);
-            $this->processPipeline($pipeline);
+            $this->processPipeline($entryStack);
 
             if ($this->bailOnFirstError && $this->messages->isNotEmpty()) {
                 break;
@@ -193,7 +193,7 @@ class Validator implements MessageOverrideProvider
         $this->validated = true;
     }
 
-    protected function processPipeline(Pipeline $pipeline): void
+    protected function processPipeline(EntryStack $pipeline): void
     {
         $pipeline->run();
 
