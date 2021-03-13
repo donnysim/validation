@@ -97,6 +97,13 @@ class Validator implements MessageOverrideProvider
         return $this->validatedData;
     }
 
+    public function usingMessageResolver(MessageResolver $resolver): self
+    {
+        $this->resolver = $resolver;
+
+        return $this;
+    }
+
     public function getMessageResolver(): MessageResolver
     {
         return $this->resolver;
