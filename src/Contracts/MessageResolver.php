@@ -12,7 +12,7 @@ interface MessageResolver
      * @param \DonnySim\Validation\Message $message
      * @param \DonnySim\Validation\Contracts\MessageOverrideProvider $provider
      *
-     * @return string
+     * @return mixed
      */
-    public function resolve(Message $message, MessageOverrideProvider $provider): string;
+    public function resolve(Message $message, MessageOverrideProvider $provider);
 }
