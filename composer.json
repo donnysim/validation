@@ -18,10 +18,10 @@
     "php": "^7.4||^8.0",
     "ext-bcmath": "*",
     "ext-json": "*",
-    "brick/math": "^0.9.1",
-    "egulias/email-validator": "^2.1",
+    "brick/math": "^0.9.2",
+    "egulias/email-validator": "^3.1",
     "illuminate/support": "*",
-    "nesbot/carbon": "^2.42"
+    "nesbot/carbon": "^2.46"
   },
   "require-dev": {
     "illuminate/database": "^v8.0",

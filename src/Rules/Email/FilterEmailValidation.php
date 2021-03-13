@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules\Email;
 
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Exception\InvalidEmail;
+use Egulias\EmailValidator\Result\InvalidEmail;
 use Egulias\EmailValidator\Validation\EmailValidation;
 use function filter_var;
 use function is_null;
