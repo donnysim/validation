@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
-use function array_shift;
 use function preg_replace_callback;
 
 class Entry
@@ -61,10 +60,10 @@ class Entry
 
     public function resolvePathWildcards(string $path): string
     {
-        $replacements = $this->wildcards;
+        $index = 0;
 
-        return preg_replace_callback('/\*/', static function () use (&$replacements) {
-            return array_shift($replacements) ?? '*';
+        return preg_replace_callback('/\*/', function () use (&$index) {
+            return $this->wildcards[$index++] ?? '*';
         }, $path);
     }
 }
