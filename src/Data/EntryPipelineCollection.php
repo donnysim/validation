@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation;
+namespace DonnySim\Validation\Data;
 
 use DonnySim\Validation\Contracts\Rule;
 use Generator;
 
-class EntryStack
+class EntryPipelineCollection
 {
     /**
-     * @var \DonnySim\Validation\EntryPipeline[]
+     * @var \DonnySim\Validation\Data\EntryPipeline[]
      */
     protected array $entryPipelines = [];
 
@@ -43,15 +43,15 @@ class EntryStack
     }
 
     /**
-     * @return \DonnySim\Validation\EntryPipeline[]
+     * @return \DonnySim\Validation\Data\EntryPipeline[]
      */
-    public function getEntryPipelines(): array
+    public function getPipelines(): array
     {
         return $this->entryPipelines;
     }
 
     /**
-     * @return \Generator|\DonnySim\Validation\EntryPipeline[]
+     * @return \Generator|\DonnySim\Validation\Data\EntryPipeline[]
      */
     protected function unfinishedPipelines(): Generator
     {
@@ -65,7 +65,7 @@ class EntryStack
     /**
      * @param \DonnySim\Validation\Contracts\Rule $rule
      *
-     * @return \DonnySim\Validation\EntryPipeline[]
+     * @return \DonnySim\Validation\Data\EntryPipeline[]
      */
     protected function getPipelinesForBatch(Rule $rule): array
     {

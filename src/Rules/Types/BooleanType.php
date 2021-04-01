@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules\Types;
 
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use function is_bool;
 
 class BooleanType implements SingleRule

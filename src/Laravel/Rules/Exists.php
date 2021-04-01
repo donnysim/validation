@@ -36,7 +36,7 @@ class Exists implements BatchRule
     }
 
     /**
-     * @param \DonnySim\Validation\EntryPipeline[] $pipelines
+     * @param \DonnySim\Validation\Data\EntryPipeline[] $pipelines
      */
     public function handle(array $pipelines): void
     {

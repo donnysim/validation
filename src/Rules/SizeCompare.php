@@ -6,8 +6,8 @@ namespace DonnySim\Validation\Rules;
 
 use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use DonnySim\Validation\Rules\Concerns\SizeValidation;
 use UnexpectedValueException;
 
@@ -54,7 +54,6 @@ class SizeCompare implements SingleRule
 
         if ($value === null || $this->targetValue === null || $value->{$compareUsing}($this->targetValue)) {
             $pipeline->fail($this->messageKey($entry->getValue(), $numeric), ['other' => $this->valueForError($this->targetValue)]);
-            return;
         }
     }
 

@@ -6,8 +6,8 @@ namespace DonnySim\Validation\Rules\Date;
 
 use DateTimeInterface;
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use function checkdate;
 use function date_parse;
 use function is_numeric;
@@ -35,7 +35,7 @@ class Date implements SingleRule
         }
 
         $date = date_parse($value);
-        if ($date['month'] === false || $date['day'] === false || $date['year'] === false) {
+        if (!$date || $date['month'] === false || $date['day'] === false || $date['year'] === false) {
             $pipeline->fail(static::NAME);
             return;
         }

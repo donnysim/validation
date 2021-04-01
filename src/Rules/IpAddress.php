@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules;
 
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use function filter_var;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
@@ -53,10 +53,8 @@ class IpAddress implements SingleRule
             return;
         }
 
-        if ($this->type === static::TYPE_IPV6) {
-            if (filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
-                $pipeline->fail(static::NAME_IPV6);
-            }
+        if (($this->type === static::TYPE_IPV6) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+            $pipeline->fail(static::NAME_IPV6);
         }
     }
 }

@@ -9,8 +9,8 @@ use Carbon\Exceptions\InvalidFormatException;
 use DateTime;
 use DateTimeInterface;
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use DonnySim\Validation\FieldReference;
 use InvalidArgumentException;
 use function is_numeric;
@@ -63,7 +63,7 @@ class DateBeforeOrAfter implements SingleRule
 
         $format = $this->format;
         if (!$format) {
-            /** @var \DonnySim\Validation\Rules\DateFormat|null $dateFormatRule */
+            /** @var \DonnySim\Validation\Rules\Date\DateFormat|null $dateFormatRule */
             $dateFormatRule = $pipeline->findPreviousRule(DateFormat::class);
 
             if ($dateFormatRule) {

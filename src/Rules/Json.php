@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules;
 
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use Exception;
 use function json_decode;
 use const JSON_THROW_ON_ERROR;

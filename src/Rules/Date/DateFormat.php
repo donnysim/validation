@@ -6,8 +6,8 @@ namespace DonnySim\Validation\Rules\Date;
 
 use DateTime;
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use function is_string;
 
 class DateFormat implements SingleRule

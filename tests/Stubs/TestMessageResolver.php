@@ -6,7 +6,7 @@ namespace DonnySim\Validation\Tests\Stubs;
 
 use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
-use DonnySim\Validation\Message;
+use DonnySim\Validation\Data\Message;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 

@@ -9,6 +9,9 @@ use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
 use DonnySim\Validation\Contracts\RuleGroup as RuleGroupContract;
 use DonnySim\Validation\Contracts\RuleSet;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
+use DonnySim\Validation\Data\EntryPipelineCollection;
 use DonnySim\Validation\Exceptions\InvalidRuleException;
 use DonnySim\Validation\Exceptions\ValidationException;
 use Illuminate\Support\Arr;
@@ -170,7 +173,7 @@ class Validator implements MessageOverrideProvider
         while (isset($this->rules[$ruleSetIndex])) {
             $ruleSet = $this->rules[$ruleSetIndex++];
             $pattern = $ruleSet->getPattern();
-            $entryStack = new EntryStack();
+            $entryStack = new EntryPipelineCollection();
 
             $walker = new PathWalker($this->data);
             $walker->onHit(function (string $path, $value, array $wildcards) use ($entryStack, $ruleSet, $pattern) {
@@ -196,11 +199,11 @@ class Validator implements MessageOverrideProvider
         $this->validated = true;
     }
 
-    protected function processPipeline(EntryStack $pipeline): void
+    protected function processPipeline(EntryPipelineCollection $pipeline): void
     {
         $pipeline->run();
 
-        foreach ($pipeline->getEntryPipelines() as $entryPipeline) {
+        foreach ($pipeline->getPipelines() as $entryPipeline) {
             $messages = $entryPipeline->getMessages();
 
             if (empty($messages)) {

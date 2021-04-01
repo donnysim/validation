@@ -13,12 +13,12 @@ class Distinct implements BatchRule
     public const NAME = 'distinct';
 
     /**
-     * @param \DonnySim\Validation\EntryPipeline[] $pipelines
+     * @param \DonnySim\Validation\Data\EntryPipeline[] $pipelines
      */
     public function handle(array $pipelines): void
     {
         $processedValues = [];
-        /** @var \DonnySim\Validation\EntryPipeline[] $processedPipelines */
+        /** @var \DonnySim\Validation\Data\EntryPipeline[] $processedPipelines */
         $processedPipelines = [];
 
         foreach ($pipelines as $pipeline) {

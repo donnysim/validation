@@ -6,7 +6,7 @@ namespace DonnySim\Validation\Laravel;
 
 use DonnySim\Validation\Contracts\MessageOverrideProvider;
 use DonnySim\Validation\Contracts\MessageResolver;
-use DonnySim\Validation\Message;
+use DonnySim\Validation\Data\Message;
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use function array_merge;
 use function compact;

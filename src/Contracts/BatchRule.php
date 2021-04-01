@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Contracts;
 interface BatchRule extends Rule
 {
     /**
-     * @param \DonnySim\Validation\EntryPipeline[] $pipelines
+     * @param \DonnySim\Validation\Data\EntryPipeline[] $pipelines
      */
     public function handle(array $pipelines): void;
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation;
+namespace DonnySim\Validation\Data;
 
 class Message
 {

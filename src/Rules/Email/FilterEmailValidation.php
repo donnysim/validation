@@ -31,7 +31,7 @@ class FilterEmailValidation implements EmailValidation
 
     public function isValid($email, EmailLexer $emailLexer): bool
     {
-        return is_null($this->flags)
+        return $this->flags === null
             ? filter_var($email, FILTER_VALIDATE_EMAIL) !== false
             : filter_var($email, FILTER_VALIDATE_EMAIL, $this->flags) !== false;
     }

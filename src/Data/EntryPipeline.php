@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation;
+namespace DonnySim\Validation\Data;
 
 use DonnySim\Validation\Contracts\BatchRule;
 use DonnySim\Validation\Contracts\Rule;
 use DonnySim\Validation\Contracts\SingleRule;
+use DonnySim\Validation\Validator;
 use function array_merge;
 use function array_slice;
 use function is_array;
@@ -32,7 +33,7 @@ class EntryPipeline
     protected int $currentRuleIndex = 0;
 
     /**
-     * @var \DonnySim\Validation\Message[]
+     * @var \DonnySim\Validation\Data\Message[]
      */
     protected array $messages = [];
 
@@ -111,7 +112,7 @@ class EntryPipeline
     }
 
     /**
-     * @return \DonnySim\Validation\Message[]
+     * @return \DonnySim\Validation\Data\Message[]
      */
     public function getMessages(): array
     {

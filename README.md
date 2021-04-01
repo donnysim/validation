@@ -398,8 +398,8 @@ $data = $validator->getValidatedData();
 Sometimes it's necessary to do tweak rules depending on entry value, you can achieve this via `pipe` rule:
 
 ```php
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use DonnySim\Validation\Rules;
 use function DonnySim\Validation\rule;
 

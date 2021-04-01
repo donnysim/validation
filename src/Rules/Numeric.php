@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules;
 
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use function is_float;
 use function is_int;
 use function is_numeric;
@@ -55,7 +55,7 @@ class Numeric implements SingleRule
 
             if (
                 (!is_int($value) && !is_string($value)) ||
-                (is_string($value) && !preg_match("/^-?\d$/", $value))
+                (is_string($value) && !preg_match('/^-?\d$/', $value))
             ) {
                 $pipeline->fail(static::NAME_INTEGER);
             }
@@ -68,7 +68,7 @@ class Numeric implements SingleRule
 
             if (
                 (!is_float($value) && !is_string($value)) ||
-                (is_string($value) && !preg_match("/^-?\d+\.\d+$/", $value))
+                (is_string($value) && !preg_match('/^-?\d+\.\d+$/', $value))
             ) {
                 $pipeline->fail(static::NAME_FLOAT);
             }

@@ -6,8 +6,8 @@ namespace DonnySim\Validation\Rules;
 
 use Brick\Math\BigDecimal;
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Entry;
-use DonnySim\Validation\EntryPipeline;
+use DonnySim\Validation\Data\Entry;
+use DonnySim\Validation\Data\EntryPipeline;
 use DonnySim\Validation\Rules\Concerns\SizeValidation;
 
 class Between implements SingleRule
@@ -41,7 +41,6 @@ class Between implements SingleRule
 
         if ($value === null || $this->min === null || $this->max === null || $this->min->isGreaterThan($value) || $this->max->isLessThan($value)) {
             $pipeline->fail($this->messageKey($entry->getValue(), $numeric), ['min' => $this->valueForError($this->min), 'max' => $this->valueForError($this->max)]);
-            return;
         }
     }
 

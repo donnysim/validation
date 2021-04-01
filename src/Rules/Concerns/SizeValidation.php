@@ -71,7 +71,7 @@ trait SizeValidation
     {
         $value = (string)$value;
 
-        if (preg_match("/^-?\d+\.\d+$/", $value)) {
+        if (preg_match('/^-?\d+\.\d+$/', $value)) {
             return rtrim($value, '.0');
         }
 
