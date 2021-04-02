@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
-use Closure;
+use DonnySim\Validation\Data\Entry;
+use Generator;
 use function array_key_exists;
 use function array_merge;
 use function array_slice;
+use function explode;
 use function implode;
 use function is_array;
 
 class PathWalker
 {
-    protected ?Closure $onHitCallback = null;
-
-    protected ?Closure $onMissCallback = null;
-
     protected array $data;
 
     public function __construct(array $data)
@@ -24,36 +22,32 @@ class PathWalker
         $this->data = $data;
     }
 
-    public function onHit(Closure $callback): self
+    /**
+     * @param string $pattern
+     *
+     * @return \Generator|\DonnySim\Validation\Data\Entry[]
+     */
+    public function walk(string $pattern): Generator
     {
-        $this->onHitCallback = $callback;
-
-        return $this;
-    }
-
-    public function onMiss(Closure $callback): self
-    {
-        $this->onMissCallback = $callback;
-
-        return $this;
-    }
-
-    public function walk(string $path): void
-    {
-        $this->walkPath($this->data, \explode('.', $path));
+        foreach ($this->walkPath($this->data, $pattern, explode('.', $pattern)) as $entry) {
+            yield $entry;
+        }
     }
 
     /**
      * @param mixed $data
+     * @param string $pattern
      * @param array $segments
      * @param int $position
      * @param string[] $wildcards
+     *
+     * @return \Generator
      */
-    protected function walkPath($data, array $segments, int $position = 0, array $wildcards = []): void
+    protected function walkPath($data, string $pattern, array $segments, int $position = 0, array $wildcards = []): Generator
     {
         // Make sure the position is not out of bounds.
         if (!isset($segments[$position])) {
-            $this->miss($this->getPath($segments, $position - 1), $wildcards);
+            yield new Entry($pattern, $wildcards, $this->getPath($segments, $position - 1), null, false);
             return;
         }
 
@@ -62,7 +56,7 @@ class PathWalker
         if ($key === '*') {
             // We cannot loop if it's not an array.
             if (!is_array($data)) {
-                $this->miss($this->getPath($segments, $position), $wildcards);
+                yield new Entry($pattern, $wildcards, $this->getPath($segments, $position), null, false);
                 return;
             }
 
@@ -74,11 +68,13 @@ class PathWalker
                 // Check if last segment in chain.
                 if (!isset($segments[$position + 1])) {
                     // Don't increment position because we replaced the wildcard with index.
-                    $this->hit($this->getPath($dataSegments, $position), $dataValue, $dataWildcards);
+                    yield new Entry($pattern, $dataWildcards, $this->getPath($dataSegments, $position), $dataValue, true);
                     continue;
                 }
 
-                $this->walkPath($dataValue, $dataSegments, $position + 1, $dataWildcards);
+                foreach ($this->walkPath($dataValue, $pattern, $dataSegments, $position + 1, $dataWildcards) as $entry) {
+                    yield $entry;
+                }
             }
 
             return;
@@ -86,23 +82,25 @@ class PathWalker
 
         // Check value because it might not be what we expect from wildcard paths.
         if (!is_array($data) || !array_key_exists($key, $data)) {
-            $this->miss($this->getPath($segments, $position), $wildcards);
+            yield new Entry($pattern, $wildcards, $this->getPath($segments, $position), null, false);
             return;
         }
 
         // Check if last segment in chain.
         if (!isset($segments[$position + 1])) {
-            $this->hit($this->getPath($segments, $position), $data[$key], $wildcards);
+            yield new Entry($pattern, $wildcards, $this->getPath($segments, $position), $data[$key], true);
             return;
         }
 
         // Check if value is an array and we can continue down the tree.
         if (!is_array($data[$key])) {
-            $this->miss($this->getPath($segments, $position), $wildcards);
+            yield new Entry($pattern, $wildcards, $this->getPath($segments, $position), null, false);
             return;
         }
 
-        $this->walkPath($data[$key], $segments, $position + 1, $wildcards);
+        foreach ($this->walkPath($data[$key], $pattern, $segments, $position + 1, $wildcards) as $entry) {
+            yield $entry;
+        }
     }
 
     protected function getPath(array $segments, int $position): string
@@ -111,23 +109,5 @@ class PathWalker
             '.',
             $position ? array_slice($segments, 0, $position + 1) : $segments
         );
-    }
-
-    protected function hit(string $path, $value, array $wildcards): bool
-    {
-        if ($this->onHitCallback) {
-            ($this->onHitCallback)($path, $value, $wildcards);
-        }
-
-        return true;
-    }
-
-    protected function miss(string $path, array $wildcards): bool
-    {
-        if ($this->onMissCallback) {
-            ($this->onMissCallback)($path, $wildcards);
-        }
-
-        return false;
     }
 }

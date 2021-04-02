@@ -53,6 +53,19 @@ class Entry
         $this->value = $value;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getWildcards(): array
+    {
+        return $this->wildcards;
+    }
+
+    public function exists(): bool
+    {
+        return $this->exists;
+    }
+
     public function isMissing(): bool
     {
         return !$this->exists;

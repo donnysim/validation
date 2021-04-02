@@ -170,24 +170,18 @@ class Validator implements MessageOverrideProvider
         $originalRules = $this->rules;
 
         $ruleSetIndex = 0;
+        $walker = new PathWalker($this->data);
+
         while (isset($this->rules[$ruleSetIndex])) {
             $ruleSet = $this->rules[$ruleSetIndex++];
             $pattern = $ruleSet->getPattern();
             $entryStack = new EntryPipelineCollection();
 
-            $walker = new PathWalker($this->data);
-            $walker->onHit(function (string $path, $value, array $wildcards) use ($entryStack, $ruleSet, $pattern) {
-                $entry = new Entry($pattern, $wildcards, $path, $value, true);
+            foreach ($walker->walk($pattern) as $entry) {
                 $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
                 $entryStack->add($entryPipeline);
-            });
-            $walker->onMiss(function (string $path, array $wildcards) use ($entryStack, $ruleSet, $pattern) {
-                $entry = new Entry($pattern, $wildcards, $path, null, false);
-                $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
-                $entryStack->add($entryPipeline);
-            });
+            }
 
-            $walker->walk($pattern);
             $this->processPipeline($entryStack);
 
             if ($this->bailOnFirstError && $this->messages->isNotEmpty()) {

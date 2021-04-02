@@ -14,8 +14,8 @@ class PathWalkerTest extends TestCase
      */
     public function object_keys(): void
     {
-        self::assertSame($this->walk([], 'path'), [[false, 'path', []]]);
-        self::assertSame($this->walk(['path' => 'value'], 'path'), [[true, 'path', 'value', []]]);
+        self::assertSame([[false, 'path', null, []]], $this->walk([], 'path'));
+        self::assertSame([[true, 'path', 'value', []]], $this->walk(['path' => 'value'], 'path'));
     }
 
     /**
@@ -23,13 +23,13 @@ class PathWalkerTest extends TestCase
      */
     public function nested_object_keys(): void
     {
-        self::assertSame($this->walk([], 'first.second'), [[false, 'first.second', []]]);
-        self::assertSame($this->walk(['first' => 'value'], 'first.second'), [[false, 'first.second', []]]);
-        self::assertSame($this->walk([
+        self::assertSame([[false, 'first.second', null, []]], $this->walk([], 'first.second'));
+        self::assertSame([[false, 'first.second', null, []]], $this->walk(['first' => 'value'], 'first.second'));
+        self::assertSame([[true, 'first.second', 'value', []]], $this->walk([
             'first' => [
                 'second' => 'value',
             ],
-        ], 'first.second'), [[true, 'first.second', 'value', []]]);
+        ], 'first.second'));
     }
 
     /**
@@ -37,8 +37,8 @@ class PathWalkerTest extends TestCase
      */
     public function wildcard_root(): void
     {
-        self::assertSame($this->walk([], '*'), []);
-        self::assertSame($this->walk(['first', 'second'], '*'), [[true, '0', 'first', ['0']], [true, '1', 'second', ['1']]]);
+        self::assertSame([], $this->walk([], '*'));
+        self::assertSame([[true, '0', 'first', ['0']], [true, '1', 'second', ['1']]], $this->walk(['first', 'second'], '*'));
     }
 
     /**
@@ -46,50 +46,46 @@ class PathWalkerTest extends TestCase
      */
     public function wildcard_nested(): void
     {
-        self::assertSame($this->walk([], '*.*'), []);
-        self::assertSame($this->walk(['first', 'second'], '*.name'), [[false, '0.name', ['0']], [false, '1.name', ['1']]]);
-        self::assertSame($this->walk([
+        self::assertSame([], $this->walk([], '*.*'));
+        self::assertSame([[false, '0.name', null, ['0']], [false, '1.name', null, ['1']]], $this->walk(['first', 'second'], '*.name'));
+        self::assertSame([[true, '0.name', 'first', ['0']], [true, 'second.name', 'second', ['second']]], $this->walk([
             [
                 'name' => 'first',
             ],
             'second' => [
                 'name' => 'second',
             ],
-        ], '*.name'), [[true, '0.name', 'first', ['0']], [true, 'second.name', 'second', ['second']]]);
-        self::assertSame($this->walk([
+        ], '*.name'));
+        self::assertSame([[true, 'first.name', 'first', ['first']], [true, 'second.name', 'second', ['second']]], $this->walk([
             'first' => [
                 'name' => 'first',
             ],
             'second' => [
                 'name' => 'second',
             ],
-        ], '*.name'), [[true, 'first.name', 'first', ['first']], [true, 'second.name', 'second', ['second']]]);
-        self::assertSame($this->walk([
+        ], '*.name'));
+        self::assertSame([[true, 'first.0', '1', ['first', '0']], [true, 'first.1', '2', ['first', '1']], [true, 'second.name', 'second', ['second', 'name']]], $this->walk([
             'first' => ['1', '2'],
             'second' => ['name' => 'second'],
-        ], '*.*'), [[true, 'first.0', '1', ['first', '0']], [true, 'first.1', '2', ['first', '1']], [true, 'second.name', 'second', ['second', 'name']]]);
-        self::assertSame($this->walk([
+        ], '*.*'));
+        self::assertSame([[true, 'first.0.0', '1', ['first', '0', '0']], [true, 'first.0.1', '2', ['first', '0', '1']]], $this->walk([
             'first' => [
                 [
                     '1',
                     '2'
                 ],
             ],
-        ], '*.*.*'), [[true, 'first.0.0', '1', ['first', '0', '0']], [true, 'first.0.1', '2', ['first', '0', '1']]]);
+        ], '*.*.*'));
     }
 
     protected function walk(array $data, string $path): ?array
     {
         $result = [];
         $walker = new PathWalker($data);
-        $walker
-            ->onHit(static function (string $path, $value, array $wildcards) use (&$result) {
-                $result[] = [true, $path, $value, $wildcards];
-            })
-            ->onMiss(static function (string $path, array $wildcards) use (&$result) {
-                $result[] = [false, $path, $wildcards];
-            });
-        $walker->walk($path);
+
+        foreach ($walker->walk($path) as $entry) {
+            $result[] = [$entry->exists(), $entry->getPath(), $entry->getValue(), $entry->getWildcards()];
+        }
 
         return $result;
     }
