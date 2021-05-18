@@ -17,7 +17,7 @@ use function rtrim;
 
 trait SizeValidation
 {
-    public function getValueSize($value, bool $canBeNumeric): ?BigDecimal
+    public function getValueSize(mixed $value, bool $canBeNumeric): ?BigDecimal
     {
         if ($value === null) {
             return null;
@@ -46,7 +46,7 @@ trait SizeValidation
         return null;
     }
 
-    public function getValueType($value, bool $canBeNumeric): string
+    public function getValueType(mixed $value, bool $canBeNumeric): string
     {
         if ($value === null) {
             return 'string';
@@ -69,12 +69,12 @@ trait SizeValidation
 
     public function valueForError(BigDecimal $value): string
     {
-        $value = (string)$value;
+        $stringValue = (string)$value;
 
-        if (preg_match('/^-?\d+\.\d+$/', $value)) {
-            return rtrim($value, '.0');
+        if (preg_match('/^-?\d+\.\d+$/', $stringValue)) {
+            return rtrim($stringValue, '.0');
         }
 
-        return $value;
+        return $stringValue;
     }
 }

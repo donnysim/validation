@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Contracts;
 
-use DonnySim\Validation\Data\Entry;
-use DonnySim\Validation\Data\EntryPipeline;
+use DonnySim\Validation\Process\DataEntry;
+use DonnySim\Validation\Process\ValidationProcess;
 
-interface SingleRule extends Rule
+interface SingleRule
 {
-    public function handle(EntryPipeline $pipeline, Entry $entry): void;
+    public function handle(ValidationProcess $process, DataEntry $entry): void;
 }

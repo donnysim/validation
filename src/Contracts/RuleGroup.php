@@ -7,9 +7,7 @@ namespace DonnySim\Validation\Contracts;
 interface RuleGroup
 {
     /**
-     * Get rules.
-     *
-     * @return \DonnySim\Validation\Contracts\Rule[]
+     * @return array<int, \DonnySim\Validation\Contracts\SingleRule|\DonnySim\Validation\Contracts\BatchRule>
      */
     public function getRules(): array;
 }

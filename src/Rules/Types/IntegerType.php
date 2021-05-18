@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules\Types;
 
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Data\Entry;
-use DonnySim\Validation\Data\EntryPipeline;
+use DonnySim\Validation\Process\DataEntry;
+use DonnySim\Validation\Process\ValidationProcess;
 use function is_int;
 
 class IntegerType implements SingleRule
 {
     public const NAME = 'integer_type';
 
-    public function handle(EntryPipeline $pipeline, Entry $entry): void
+    public function handle(ValidationProcess $process, DataEntry $entry): void
     {
         if ($entry->isMissing() || is_int($entry->getValue())) {
             return;
         }
 
-        $pipeline->fail(static::NAME);
+        $entry->addMessageAndFinish(static::NAME);
     }
 }

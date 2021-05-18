@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Contracts;
 
-interface BatchRule extends Rule
+use DonnySim\Validation\Process\ValidationProcess;
+
+interface BatchRule
 {
     /**
-     * @param \DonnySim\Validation\Data\EntryPipeline[] $pipelines
+     * @param \DonnySim\Validation\Process\ValidationProcess $process
+     * @param \DonnySim\Validation\Process\DataEntry[] $entries
      */
-    public function handle(array $pipelines): void;
+    public function handle(ValidationProcess $process, array $entries): void;
 }

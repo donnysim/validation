@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules\Types;
 
 use DonnySim\Validation\Contracts\SingleRule;
-use DonnySim\Validation\Data\Entry;
-use DonnySim\Validation\Data\EntryPipeline;
+use DonnySim\Validation\Process\DataEntry;
+use DonnySim\Validation\Process\ValidationProcess;
 use function in_array;
 
 class BooleanLike implements SingleRule
 {
     public const NAME = 'boolean_like';
 
-    public function handle(EntryPipeline $pipeline, Entry $entry): void
+    public function handle(ValidationProcess $process, DataEntry $entry): void
     {
         if ($entry->isMissing() || $this->isBooleanLike($entry->getValue())) {
             return;
         }
 
-        $pipeline->fail(static::NAME);
+        $entry->addMessageAndFinish(static::NAME);
     }
 
     protected function isBooleanLike($value): bool

@@ -38,7 +38,7 @@ class PathWalkerTest extends TestCase
     public function wildcard_root(): void
     {
         self::assertSame([], $this->walk([], '*'));
-        self::assertSame([[true, '0', 'first', ['0']], [true, '1', 'second', ['1']]], $this->walk(['first', 'second'], '*'));
+        self::assertSame([[true, '0', 'first', [0]], [true, '1', 'second', [1]]], $this->walk(['first', 'second'], '*'));
     }
 
     /**
@@ -47,8 +47,8 @@ class PathWalkerTest extends TestCase
     public function wildcard_nested(): void
     {
         self::assertSame([], $this->walk([], '*.*'));
-        self::assertSame([[false, '0.name', null, ['0']], [false, '1.name', null, ['1']]], $this->walk(['first', 'second'], '*.name'));
-        self::assertSame([[true, '0.name', 'first', ['0']], [true, 'second.name', 'second', ['second']]], $this->walk([
+        self::assertSame([[false, '0.name', null, [0]], [false, '1.name', null, [1]]], $this->walk(['first', 'second'], '*.name'));
+        self::assertSame([[true, '0.name', 'first', [0]], [true, 'second.name', 'second', ['second']]], $this->walk([
             [
                 'name' => 'first',
             ],
@@ -64,15 +64,15 @@ class PathWalkerTest extends TestCase
                 'name' => 'second',
             ],
         ], '*.name'));
-        self::assertSame([[true, 'first.0', '1', ['first', '0']], [true, 'first.1', '2', ['first', '1']], [true, 'second.name', 'second', ['second', 'name']]], $this->walk([
+        self::assertSame([[true, 'first.0', '1', ['first', 0]], [true, 'first.1', '2', ['first', 1]], [true, 'second.name', 'second', ['second', 'name']]], $this->walk([
             'first' => ['1', '2'],
             'second' => ['name' => 'second'],
         ], '*.*'));
-        self::assertSame([[true, 'first.0.0', '1', ['first', '0', '0']], [true, 'first.0.1', '2', ['first', '0', '1']]], $this->walk([
+        self::assertSame([[true, 'first.0.0', '1', ['first', 0, 0]], [true, 'first.0.1', '2', ['first', 0, 1]]], $this->walk([
             'first' => [
                 [
                     '1',
-                    '2'
+                    '2',
                 ],
             ],
         ], '*.*.*'));

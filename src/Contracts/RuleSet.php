@@ -6,17 +6,12 @@ namespace DonnySim\Validation\Contracts;
 
 interface RuleSet
 {
-    /**
-     * Get attribute pattern for validation.
-     *
-     * @return string
-     */
     public function getPattern(): string;
 
     /**
-     * Get rules.
-     *
-     * @return \DonnySim\Validation\Contracts\Rule[]
+     * @return array<int, \DonnySim\Validation\Contracts\SingleRule|\DonnySim\Validation\Contracts\BatchRule>
      */
     public function getRules(): array;
+
+    public function shouldExtractData(): bool;
 }

@@ -6,6 +6,6 @@ namespace DonnySim\Validation\Exceptions;
 
 use Exception;
 
-class InvalidRuleException extends Exception
+final class InvalidRuleException extends Exception
 {
 }
