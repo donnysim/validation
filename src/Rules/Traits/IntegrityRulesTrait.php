@@ -7,6 +7,7 @@ namespace DonnySim\Validation\Rules\Traits;
 use DonnySim\Validation\Rules\Integrity\Accepted;
 use DonnySim\Validation\Rules\Integrity\Confirmed;
 use DonnySim\Validation\Rules\Integrity\Distinct;
+use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\Rules\Integrity\In;
 
 trait IntegrityRulesTrait
@@ -28,6 +29,13 @@ trait IntegrityRulesTrait
     public function distinct(): static
     {
         $this->rule(new Distinct());
+
+        return $this;
+    }
+
+    public function email(array $types = [Email::VALIDATE_RFC, Email::VALIDATE_DNS]): static
+    {
+        $this->rules[] = new Email($types);
 
         return $this;
     }

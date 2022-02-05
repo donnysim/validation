@@ -53,7 +53,7 @@ trait ValidationHelpersTrait
 //            'digits' => ':attribute must have :digits digits',
 //            'digits_between' => ':attribute must have digits between :min and :max',
             'distinct' => ':attribute must be distinct',
-//            'email' => ':attribute must be email',
+            'email' => ':attribute must be email',
 //            'ends_with' => ':attribute must end with :values',
             'filled' => ':attribute must be filled',
 //            'greater_than.array' => ':attribute should contain more than :other items',

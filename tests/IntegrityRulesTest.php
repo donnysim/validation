@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests;
 
+use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
 use PHPUnit\Framework\TestCase;
@@ -147,6 +148,62 @@ final class IntegrityRulesTest extends TestCase
             'foo.1' => ['foo.1 must be distinct'],
             'bar.1' => ['bar.1 must be distinct'],
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function email_rule(): void
+    {
+        $v = $this->makeValidator([], [RuleSet::make('email')->email()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['email' => 'aslsdlks'], [RuleSet::make('email')->email()]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => ['aslsdlks']], [RuleSet::make('email')->email()]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => 'foo@gmail.com'], [RuleSet::make('email')->email()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['email' => 'foo@gmäil.com'], [RuleSet::make('email')->email()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['email' => 'foo@bar '], [RuleSet::make('email')->email([Email::VALIDATE_STRICT])]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => 'foo@bar'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER])]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => 'example@example.com'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['email' => 'exämple@example.com'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER])]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => 'exämple@exämple.com'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER])]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => 'foo@bar'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER_UNICODE])]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
+
+        $v = $this->makeValidator(['email' => 'example@example.com'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER_UNICODE])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['email' => 'exämple@example.com'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER_UNICODE])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['email' => 'exämple@exämple.com'], [RuleSet::make('email')->email([Email::VALIDATE_FILTER_UNICODE])]);
+        self::assertFalse($v->passes());
+        $this->assertValidationFail($v, ['email' => ['email must be email']]);
     }
 
     /**
