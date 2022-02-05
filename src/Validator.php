@@ -5,52 +5,42 @@ declare(strict_types=1);
 namespace DonnySim\Validation;
 
 use Closure;
-use DonnySim\Validation\Contracts\MessageOverrideProvider;
-use DonnySim\Validation\Contracts\MessageResolver;
-use DonnySim\Validation\Contracts\RuleGroup as RuleGroupContract;
-use DonnySim\Validation\Contracts\RuleSet;
-use DonnySim\Validation\Data\Entry;
-use DonnySim\Validation\Data\EntryPipeline;
-use DonnySim\Validation\Data\EntryPipelineCollection;
 use DonnySim\Validation\Exceptions\InvalidRuleException;
 use DonnySim\Validation\Exceptions\ValidationException;
-use Illuminate\Support\Arr;
-use Illuminate\Support\MessageBag;
-use Illuminate\Support\Str;
-use function is_array;
+use DonnySim\Validation\Interfaces\MessageResolverInterface;
+use DonnySim\Validation\Interfaces\RuleSetGroupInterface;
+use DonnySim\Validation\Interfaces\RuleSetInterface;
+use DonnySim\Validation\Process\ValidationProcess;
 
-class Validator implements MessageOverrideProvider
+class Validator extends ArrayMessageResolver
 {
+    protected static ?MessageResolverInterface $defaultMessageResolver = null;
+
     protected static ?Closure $failureHandler = null;
-
-    protected MessageResolver $resolver;
-
-    protected string $missingValue;
 
     protected array $data;
 
     /**
-     * @var \DonnySim\Validation\Contracts\RuleSet[]
+     * @var array<\DonnySim\Validation\Interfaces\RuleSetInterface|\DonnySim\Validation\Interfaces\RuleSetGroupInterface>
      */
     protected array $rules = [];
 
-    protected array $validatedData = [];
+    protected ?ValidationProcess $process = null;
 
-    protected MessageBag $messages;
-
-    protected bool $validated = false;
-
-    protected array $messageOverrides = [];
-
-    protected bool $bailOnFirstError = false;
-
-    public function __construct(MessageResolver $resolver, array $data, array $rules)
+    /**
+     * @param array<\DonnySim\Validation\Interfaces\RuleSetInterface|\DonnySim\Validation\Interfaces\RuleSetGroupInterface> $rules
+     *
+     * @throws \DonnySim\Validation\Exceptions\InvalidRuleException
+     */
+    public function __construct(array $data, array $rules)
     {
-        $this->resolver = $resolver;
         $this->data = $data;
-        $this->messages = new MessageBag();
-        $this->missingValue = 'missing' . Str::random(8);
-        $this->add($rules);
+        $this->addRules($rules);
+    }
+
+    public static function setDefaultMessageResolver(?MessageResolverInterface $messageResolver): void
+    {
+        self::$defaultMessageResolver = $messageResolver;
     }
 
     public static function setFailureHandler(?Closure $handler): void
@@ -58,23 +48,29 @@ class Validator implements MessageOverrideProvider
         static::$failureHandler = $handler;
     }
 
-    public function getMessages(): MessageBag
+    /**
+     * @param array<\DonnySim\Validation\Interfaces\RuleSetInterface|\DonnySim\Validation\Interfaces\RuleSetGroupInterface> $rules
+     *
+     * @throws \DonnySim\Validation\Exceptions\InvalidRuleException
+     */
+    public function addRules(array $rules): self
     {
-        return $this->messages;
+        foreach ($rules as $entry) {
+            if ($entry instanceof RuleSetInterface) {
+                $this->rules[] = $entry;
+            } elseif ($entry instanceof RuleSetGroupInterface) {
+                $this->addRules($entry->getRules());
+            } else {
+                throw new InvalidRuleException('Unexpected rule encountered, expected RuleSetInterface or RuleSetGroupInterface.');
+            }
+        }
+
+        return $this;
     }
 
-    public function passes(): bool
-    {
-        $this->execute();
-
-        return $this->messages->isEmpty();
-    }
-
-    public function fails(): bool
-    {
-        return !$this->passes();
-    }
-
+    /**
+     * @throws \DonnySim\Validation\Exceptions\ValidationException
+     */
     public function validate(): array
     {
         if ($this->fails()) {
@@ -84,132 +80,52 @@ class Validator implements MessageOverrideProvider
         return $this->getValidatedData();
     }
 
-    public function bailOnFirstError(bool $value = true): self
-    {
-        $this->bailOnFirstError = $value;
-
-        return $this;
-    }
-
     public function getValidatedData(): array
     {
-        if (!$this->validated) {
-            $this->execute();
-        }
-
-        return $this->validatedData;
+        return $this->getProcess()->getValidatedData();
     }
 
-    public function usingMessageResolver(MessageResolver $resolver): self
+    public function passes(): bool
     {
-        $this->resolver = $resolver;
-
-        return $this;
+        return empty($this->getMessages());
     }
 
-    public function getMessageResolver(): MessageResolver
+    public function fails(): bool
     {
-        return $this->resolver;
+        return !$this->passes();
     }
 
     /**
-     * @param array $attributes
-     *
-     * Replace attributes with custom names.
-     * Format ['pattern' => 'name'].
-     *
-     * @return static
+     * @return \DonnySim\Validation\Message[]
      */
-    public function override(array $attributes): self
+    public function getMessages(): array
     {
-        $this->messageOverrides = $attributes;
-
-        return $this;
+        return $this->getProcess()->getMessages();
     }
 
-    public function getMessageOverrides(): array
+    public function resolveMessages(?MessageResolverInterface $messageResolver): mixed
     {
-        return $this->messageOverrides;
+        return ($messageResolver ?: self::$defaultMessageResolver ?: $this)->resolveMessage($this->getMessages());
     }
 
-    public function getValueEntry(string $field): Entry
+    protected function getProcess(): ValidationProcess
     {
-        $value = Arr::get($this->data, $field, $this->missingValue);
-
-        if ($value === $this->missingValue) {
-            return new Entry($field, [], $field, null, false);
+        if (!$this->process) {
+            $this->execute();
         }
 
-        return new Entry($field, [], $field, $value, true);
-    }
-
-    public function add($rules): self
-    {
-        $entries = is_array($rules) ? $rules : [$rules];
-
-        foreach ($entries as $entry) {
-            if ($entry instanceof RuleSet) {
-                $this->rules[] = $entry;
-            } elseif ($entry instanceof RuleGroupContract) {
-                foreach ($entry->getRules() as $rule) {
-                    $this->add($rule);
-                }
-            } else {
-                throw new InvalidRuleException('Unexpected rule encountered, expected RuleSet or RuleGroup.');
-            }
-        }
-
-        return $this;
+        return $this->process;
     }
 
     protected function execute(): void
     {
-        $this->validated = false;
-        $this->validatedData = [];
-        $this->messages = new MessageBag();
-        $originalRules = $this->rules;
-
-        $ruleSetIndex = 0;
-        $walker = new PathWalker($this->data);
-
-        while (isset($this->rules[$ruleSetIndex])) {
-            $ruleSet = $this->rules[$ruleSetIndex++];
-            $pattern = $ruleSet->getPattern();
-            $entryStack = new EntryPipelineCollection();
-
-            foreach ($walker->walk($pattern) as $entry) {
-                $entryPipeline = new EntryPipeline($this, $entry, $ruleSet->getRules());
-                $entryStack->add($entryPipeline);
-            }
-
-            $this->processPipeline($entryStack);
-
-            if ($this->bailOnFirstError && $this->messages->isNotEmpty()) {
-                break;
-            }
-        }
-
-        $this->rules = $originalRules;
-        $this->validated = true;
+        $this->process = new ValidationProcess($this->data, $this->rules);
+        $this->process->run();
     }
 
-    protected function processPipeline(EntryPipelineCollection $pipeline): void
+    protected function reset(): void
     {
-        $pipeline->run();
-
-        foreach ($pipeline->getPipelines() as $entryPipeline) {
-            $messages = $entryPipeline->getMessages();
-
-            if (empty($messages)) {
-                if ($entryPipeline->shouldExtractData()) {
-                    Arr::set($this->validatedData, $entryPipeline->getEntry()->getPath(), $entryPipeline->getEntry()->getValue());
-                }
-            } else {
-                foreach ($messages as $message) {
-                    $this->messages->add($message->getEntry()->getPath(), $this->resolver->resolve($message, $this));
-                }
-            }
-        }
+        $this->process = null;
     }
 
     /**

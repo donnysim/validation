@@ -7,17 +7,16 @@ namespace DonnySim\Validation\Rules\Casts;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Process\EntryProcess;
-use function in_array;
-use function is_bool;
+use function is_int;
 
-final class ToBoolean implements RuleInterface
+final class ToInteger implements RuleInterface
 {
     public function validate(DataEntry $entry, EntryProcess $process): void
     {
-        if ($entry->isNotPresent() || is_bool($entry->getValue())) {
+        if ($entry->isNotPresent() || is_int($entry->getValue())) {
             return;
         }
 
-        $entry->setValue(in_array($entry->getValue(), ['true', 1, '1', 'yes', 'on'], true));
+        $entry->setValue((int)$entry->getValue());
     }
 }

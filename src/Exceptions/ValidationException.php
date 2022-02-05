@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Exceptions;
 
 use Exception;
-use Illuminate\Support\MessageBag;
 
 class ValidationException extends Exception
 {
-    protected MessageBag $messages;
+    protected mixed $messages;
 
-    /**
-     * @param \Illuminate\Support\MessageBag|array $messages
-     */
-    public function __construct($messages)
+    public function __construct(mixed $messages)
     {
         parent::__construct('The given data was invalid.');
+        $this->messages = $messages;
+    }
 
-        $this->messages = $messages instanceof MessageBag ? $messages : new MessageBag($messages);
+    public function getMessages(): mixed
+    {
+        return $this->messages;
     }
 }
