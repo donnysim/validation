@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Process;
 
+use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Data\DataWalker;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Message;
@@ -51,6 +52,15 @@ final class ValidationProcess
     public function getValidatedData(): array
     {
         return $this->validatedData;
+    }
+
+    public function getField(string $path): DataEntry
+    {
+        foreach (DataWalker::walk($this->data, $path) as $entry) {
+            return $entry;
+        }
+
+        return new DataEntry($path, [], $path, null, false);
     }
 
     public function addMessages(Message|array $message): void

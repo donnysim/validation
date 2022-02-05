@@ -105,6 +105,11 @@ final class EntryProcess
         $this->state = DataProcessStateEnum::STOPPED;
     }
 
+    public function getField(string $field): DataEntry
+    {
+        return $this->validationProcess->getField($field);
+    }
+
     /**
      * @template T
      *

@@ -8,6 +8,7 @@ use DonnySim\Validation\Rules\Type\ArrayType;
 use DonnySim\Validation\Rules\Type\BooleanLike;
 use DonnySim\Validation\Rules\Type\BooleanType;
 use DonnySim\Validation\Rules\Type\IntegerType;
+use DonnySim\Validation\Rules\Type\Numeric;
 use DonnySim\Validation\Rules\Type\StringType;
 
 trait TypeRulesTrait
@@ -36,6 +37,27 @@ trait TypeRulesTrait
     public function integerType(): static
     {
         $this->rule(new IntegerType());
+
+        return $this;
+    }
+
+    public function numeric(): static
+    {
+        $this->rules[] = new Numeric(Numeric::TYPE_MIXED);
+
+        return $this;
+    }
+
+    public function numericFloat(): static
+    {
+        $this->rules[] = new Numeric(Numeric::TYPE_FLOAT);
+
+        return $this;
+    }
+
+    public function numericInteger(): static
+    {
+        $this->rules[] = new Numeric(Numeric::TYPE_INTEGER);
 
         return $this;
     }

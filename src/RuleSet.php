@@ -8,12 +8,14 @@ use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Rules\Traits\BaseRulesTrait;
 use DonnySim\Validation\Rules\Traits\CastRulesTrait;
+use DonnySim\Validation\Rules\Traits\IntegrityRulesTrait;
 use DonnySim\Validation\Rules\Traits\TypeRulesTrait;
 
 class RuleSet implements RuleSetInterface
 {
     use BaseRulesTrait;
     use CastRulesTrait;
+    use IntegrityRulesTrait;
     use TypeRulesTrait;
 
     protected string $pattern;

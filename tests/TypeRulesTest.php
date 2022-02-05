@@ -7,6 +7,7 @@ namespace DonnySim\Validation\Tests;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 final class TypeRulesTest extends TestCase
 {
@@ -115,6 +116,132 @@ final class TypeRulesTest extends TestCase
 
         $v = $this->makeValidator(['foo' => 2], [RuleSet::make('foo')->booleanLike()]);
         $this->assertValidationFail($v, ['foo' => ['foo must be boolean like']]);
+    }
+
+    /**
+     * @test
+     */
+    public function numeric_rule(): void
+    {
+        $v = $this->makeValidator([], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->numeric()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric']]);
+
+        $v = $this->makeValidator(['foo' => new stdClass()], [RuleSet::make('foo')->numeric()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric']]);
+
+        $v = $this->makeValidator(['foo' => 'asdad'], [RuleSet::make('foo')->numeric()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric']]);
+
+        $v = $this->makeValidator(['foo' => '1.23'], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1.23'], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1'], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '1'], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1.1], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1.1], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function numeric_float_rule(): void
+    {
+        $v = $this->makeValidator([], [RuleSet::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => new stdClass()], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => 'asdad'], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => '1.23'], [RuleSet::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1.23'], [RuleSet::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '-1'], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => '1'], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => -1], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => 1], [RuleSet::make('foo')->numericFloat()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric float']]);
+
+        $v = $this->makeValidator(['foo' => -1.1], [RuleSet::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1.1], [RuleSet::make('foo')->numericFloat()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function numeric_integer_rule(): void
+    {
+        $v = $this->makeValidator([], [RuleSet::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
+
+        $v = $this->makeValidator(['foo' => new stdClass()], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
+
+        $v = $this->makeValidator(['foo' => 'asdad'], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
+
+        $v = $this->makeValidator(['foo' => '1.23'], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
+
+        $v = $this->makeValidator(['foo' => '-1.23'], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
+
+        $v = $this->makeValidator(['foo' => '-1'], [RuleSet::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '1'], [RuleSet::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1], [RuleSet::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 1], [RuleSet::make('foo')->numericInteger()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => -1.1], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
+
+        $v = $this->makeValidator(['foo' => 1.1], [RuleSet::make('foo')->numericInteger()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be numeric integer']]);
     }
 
     /**
