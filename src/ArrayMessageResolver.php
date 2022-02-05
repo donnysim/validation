@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation;
 
+use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 
 class ArrayMessageResolver implements MessageResolverInterface
 {
-    public function resolveMessage(array $messages): array
+    public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
     {
         $result = [];
 

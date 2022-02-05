@@ -17,22 +17,30 @@ class Message implements JsonSerializable
 
     protected string $attribute;
 
-    public function __construct(string $path, string $attribute, string $failingRuleName, array $params = [])
-    {
+    protected string $pattern;
+
+    public function __construct(
+        string $pattern,
+        string $path,
+        string $attribute,
+        string $failingRuleName,
+        array $params = []
+    ) {
+        $this->pattern = $pattern;
         $this->path = $path;
         $this->failingRuleName = $failingRuleName;
         $this->params = $params;
         $this->attribute = $attribute;
     }
 
-    public static function make(string $path, string $attribute, string $failingRuleName, array $params = []): self
-    {
-        return new self($path, $attribute, $failingRuleName, $params);
-    }
-
     public static function forEntry(DataEntry $entry, string $failingRuleName, array $params = []): self
     {
-        return new self($entry->getPath(), $entry->getKey(), $failingRuleName, $params);
+        return new self($entry->getPattern(), $entry->getPath(), $entry->getKey(), $failingRuleName, $params);
+    }
+
+    public function getPattern(): string
+    {
+        return $this->pattern;
     }
 
     public function getPath(): string

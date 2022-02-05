@@ -9,5 +9,5 @@ interface MessageResolverInterface
     /**
      * @param array<\DonnySim\Validation\Message> $messages
      */
-    public function resolveMessage(array $messages): mixed;
+    public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): mixed;
 }

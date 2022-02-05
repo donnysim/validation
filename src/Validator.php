@@ -12,7 +12,7 @@ use DonnySim\Validation\Interfaces\RuleSetGroupInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Process\ValidationProcess;
 
-class Validator extends ArrayMessageResolver
+class Validator
 {
     protected static ?MessageResolverInterface $defaultMessageResolver = null;
 
@@ -27,14 +27,22 @@ class Validator extends ArrayMessageResolver
 
     protected ?ValidationProcess $process = null;
 
+    protected MessageResolverInterface $messageResolver;
+
+    protected MessageOverrideProvider $overrideProvider;
+
     /**
      * @param array<\DonnySim\Validation\Interfaces\RuleSetInterface|\DonnySim\Validation\Interfaces\RuleSetGroupInterface> $rules
+     * @param array<string, string> $messageOverrides
+     * @param array<string, string> $attributeOverrides
      *
      * @throws \DonnySim\Validation\Exceptions\InvalidRuleException
      */
-    public function __construct(array $data, array $rules)
+    public function __construct(array $data, array $rules, array $messageOverrides = [], array $attributeOverrides = [])
     {
         $this->data = $data;
+        $this->messageResolver = new ArrayMessageResolver();
+        $this->overrideProvider = new MessageOverrideProvider($messageOverrides, $attributeOverrides);
         $this->addRules($rules);
     }
 
@@ -103,9 +111,10 @@ class Validator extends ArrayMessageResolver
         return $this->getProcess()->getMessages();
     }
 
-    public function resolveMessages(?MessageResolverInterface $messageResolver): mixed
+    public function resolveMessages(?MessageResolverInterface $messageResolver = null): mixed
     {
-        return ($messageResolver ?: self::$defaultMessageResolver ?: $this)->resolveMessage($this->getMessages());
+        return ($messageResolver ?: self::$defaultMessageResolver ?: $this->messageResolver)
+            ->resolveMessages($this->getMessages(), $this->overrideProvider);
     }
 
     protected function getProcess(): ValidationProcess

@@ -7,10 +7,10 @@ namespace DonnySim\Validation\Rules\Traits;
 use DonnySim\Validation\Rules\Base\Filled;
 use DonnySim\Validation\Rules\Base\Nullable;
 use DonnySim\Validation\Rules\Base\OmitResult;
+use DonnySim\Validation\Rules\Base\Optional;
 use DonnySim\Validation\Rules\Base\Present;
 use DonnySim\Validation\Rules\Base\Required;
 use DonnySim\Validation\Rules\Base\SetValueIfNotPresent;
-use DonnySim\Validation\Rules\Base\Optional;
 
 trait BaseRulesTrait
 {
@@ -34,8 +34,6 @@ trait BaseRulesTrait
 
         return $this;
     }
-
-
 
     public function present(): static
     {

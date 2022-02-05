@@ -7,10 +7,7 @@ namespace DonnySim\Validation\Process;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Enums\DataProcessStateEnum;
 use DonnySim\Validation\Interfaces\RuleInterface;
-use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Message;
-use function array_merge;
-use function array_slice;
 
 final class EntryProcess
 {
@@ -75,14 +72,6 @@ final class EntryProcess
         }
 
         $this->finish();
-    }
-
-    public function fork(RuleSetInterface $ruleSet): void
-    {
-        $this->rules = array_merge(
-            array_slice($this->rules, $this->currentRuleIndex),
-            $ruleSet->getRules()
-        );
     }
 
     /**

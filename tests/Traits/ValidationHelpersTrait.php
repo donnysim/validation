@@ -10,16 +10,16 @@ use function count;
 
 trait ValidationHelpersTrait
 {
-    protected function makeValidator(array $data, array $rules): Validator
+    protected function makeValidator(array $data, array $rules, array $messageOverrides = [], array $attributeOverrides = []): Validator
     {
-        return new Validator($data, $rules);
+        return new Validator($data, $rules, $messageOverrides, $attributeOverrides);
     }
 
     protected function assertValidationFail(Validator $validator, array $messages): void
     {
         self::assertFalse($validator->passes(), 'Validation should fail but passed.');
         $validationMessages = $validator->resolveMessages($this->makeValidationMessageResolver());
-        self::assertCount(count($messages), $validator->getMessages());
+        self::assertCount(count($messages), $validationMessages);
 
         foreach ($messages as $key => $message) {
             self::assertArrayHasKey($key, $validationMessages);

@@ -29,6 +29,11 @@ final class DataEntry
         $this->present = $present;
     }
 
+    public function getPattern(): string
+    {
+        return $this->pattern;
+    }
+
     public function getWildcards(): array
     {
         return $this->wildcards;

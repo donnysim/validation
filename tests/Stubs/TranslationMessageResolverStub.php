@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests\Stubs;
 
+use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use function array_keys;
 use function array_merge;
@@ -23,25 +24,48 @@ final class TranslationMessageResolverStub implements MessageResolverInterface
         $this->messages = $messages;
     }
 
-    public function resolveMessage(array $messages): array
+    public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
     {
         $result = [];
 
         foreach ($messages as $message) {
-            if (isset($this->messages[$message->getFailingRuleName()])) {
-                $result[$message->getPath()][] = $this->makeReplacements(
-                    $this->messages[$message->getFailingRuleName()],
-                    array_merge([
-                        'path' => $message->getPath(),
-                        'attribute' => $message->getAttribute(),
-                    ], $message->getParams())
-                );
-            } else {
-                $result[$message->getPath()][] = 'missing message';
+            $line = $this->messages[$message->getFailingRuleName()] ?? 'missing message';
+            $overriddenMessage = $overrideProvider->getMessageOverride($message);
+
+            if ($overriddenMessage) {
+                $line = $overriddenMessage;
             }
+
+            $path = $message->getPath();
+            $result[$path][] = $this->makeReplacements(
+                $line,
+                array_merge([
+                    'path' => $path,
+                    'attribute' => $overrideProvider->getAttributeOverride($message),
+                ], $message->getParams())
+            );
         }
 
         return $result;
+    }
+
+    protected function makeReplacements($line, array $replace)
+    {
+        if (empty($replace)) {
+            return $line;
+        }
+
+        $replace = $this->sortReplacements($replace);
+
+        foreach ($replace as $key => $value) {
+            $line = str_replace(
+                [':' . $key, ':' . mb_strtoupper($key, 'UTF-8'), ':' . $this->ucfirst($key)],
+                [$value, mb_strtoupper((string)$value, 'UTF-8'), $this->ucfirst((string)$value)],
+                $line
+            );
+        }
+
+        return $line;
     }
 
     protected function sortReplacements(array $replace): array
@@ -62,25 +86,6 @@ final class TranslationMessageResolverStub implements MessageResolverInterface
         }
 
         return $results;
-    }
-
-    protected function makeReplacements($line, array $replace)
-    {
-        if (empty($replace)) {
-            return $line;
-        }
-
-        $replace = $this->sortReplacements($replace);
-
-        foreach ($replace as $key => $value) {
-            $line = str_replace(
-                [':' . $key, ':' . mb_strtoupper($key, 'UTF-8'), ':' . $this->ucfirst($key)],
-                [$value, mb_strtoupper((string)$value, 'UTF-8'), $this->ucfirst((string)$value)],
-                $line
-            );
-        }
-
-        return $line;
     }
 
     protected function ucfirst(string $string): string

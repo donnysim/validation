@@ -10,5 +10,5 @@ interface MessageOverrideProviderInterface
 {
     public function getMessageOverride(Message $message): ?string;
 
-    public function getAttributeOverride(string $attribute): string;
+    public function getAttributeOverride(Message $message): string;
 }

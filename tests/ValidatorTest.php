@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Tests;
 
 use DonnySim\Validation\Exceptions\ValidationException;
+use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use DonnySim\Validation\Message;
 use DonnySim\Validation\RuleSet;
@@ -69,7 +70,7 @@ final class ValidatorTest extends TestCase
         self::assertTrue($v->fails());
 
         $messages = $v->resolveMessages(new class() implements MessageResolverInterface {
-            public function resolveMessage(array $messages): array
+            public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
             {
                 return array_map(static fn (Message $message) => [$message->getFailingRuleName(), $message->getPath()], $messages);
             }
@@ -77,6 +78,25 @@ final class ValidatorTest extends TestCase
 
         self::assertCount(1, $messages);
         self::assertSame([['required', 'foo']], $messages);
+    }
+
+    /**
+     * @test
+     */
+    public function it_uses_default_message_resolver(): void
+    {
+        Validator::setDefaultMessageResolver(new class() implements MessageResolverInterface {
+            public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
+            {
+                return ['custom message'];
+            }
+        });
+
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->required()]);
+
+        self::assertSame(['custom message'], $v->resolveMessages());
+
+        Validator::setFailureHandler(null);
     }
 
     /**
@@ -159,5 +179,39 @@ final class ValidatorTest extends TestCase
             $group,
         ]);
         $this->assertValidationFail($v, ['foo' => ['foo is required'], 'client.name' => ['client.name is required']]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_overrides_message(): void
+    {
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->required()], ['foo.required' => 'failed test']);
+        $this->assertValidationFail($v, ['foo' => ['failed test']]);
+
+        $v = $this->makeValidator(['foo' => [null, null]], [RuleSet::make('foo.*')->required()], ['foo.1.required' => 'failed 1', 'foo.*.required' => 'failed *']);
+        $this->assertValidationFail($v, ['foo.0' => ['failed *'], 'foo.1' => ['failed 1']]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_overrides_attribute_names(): void
+    {
+        $v = $this->makeValidator(
+            ['foo' => null],
+            [RuleSet::make('foo')->required()],
+            ['foo.required' => ':attribute failed'],
+            ['foo' => 'custom']
+        );
+        $this->assertValidationFail($v, ['foo' => ['custom failed']]);
+
+        $v = $this->makeValidator(
+            ['foo' => [null, null]],
+            [RuleSet::make('foo.*')->required()],
+            ['foo.*.required' => ':attribute failed'],
+            ['foo.*' => 'foo_*', 'foo.0' => 'foo_0']
+        );
+        $this->assertValidationFail($v, ['foo.0' => ['foo_0 failed'], 'foo.1' => ['foo_* failed']]);
     }
 }
