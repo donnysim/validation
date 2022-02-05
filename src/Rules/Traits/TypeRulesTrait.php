@@ -15,57 +15,41 @@ trait TypeRulesTrait
 {
     public function arrayType(): static
     {
-        $this->rule(new ArrayType());
-
-        return $this;
+        return $this->rule(new ArrayType());
     }
 
     public function booleanType(): static
     {
-        $this->rule(new BooleanType());
-
-        return $this;
+        return $this->rule(new BooleanType());
     }
 
     public function booleanLike(): static
     {
-        $this->rule(new BooleanLike());
-
-        return $this;
+        return $this->rule(new BooleanLike());
     }
 
     public function integerType(): static
     {
-        $this->rule(new IntegerType());
-
-        return $this;
+        return $this->rule(new IntegerType());
     }
 
     public function numeric(): static
     {
-        $this->rules[] = new Numeric(Numeric::TYPE_MIXED);
-
-        return $this;
+        return $this->rule(new Numeric(Numeric::TYPE_MIXED));
     }
 
     public function numericFloat(): static
     {
-        $this->rules[] = new Numeric(Numeric::TYPE_FLOAT);
-
-        return $this;
+        return $this->rule(new Numeric(Numeric::TYPE_FLOAT));
     }
 
     public function numericInteger(): static
     {
-        $this->rules[] = new Numeric(Numeric::TYPE_INTEGER);
-
-        return $this;
+        return $this->rule(new Numeric(Numeric::TYPE_INTEGER));
     }
 
     public function stringType(): static
     {
-        $this->rule(new StringType());
-
-        return $this;
+        return $this->rule(new StringType());
     }
 }

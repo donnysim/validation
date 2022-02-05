@@ -16,50 +16,36 @@ trait BaseRulesTrait
 {
     public function required(): static
     {
-        $this->rule(new Required());
-
-        return $this;
+        return $this->rule(new Required());
     }
 
     public function nullable(): static
     {
-        $this->rule(new Nullable());
-
-        return $this;
+        return $this->rule(new Nullable());
     }
 
-    public function filled(): self
+    public function filled(): static
     {
-        $this->rules[] = new Filled();
-
-        return $this;
+        return $this->rule(new Filled());
     }
 
     public function present(): static
     {
-        $this->rule(new Present());
-
-        return $this;
+        return $this->rule(new Present());
     }
 
     public function optional(): static
     {
-        $this->rule(new Optional());
-
-        return $this;
+        return $this->rule(new Optional());
     }
 
-    public function setValueIfNotPresent($value): self
+    public function setValueIfNotPresent($value): static
     {
-        $this->rules[] = new SetValueIfNotPresent($value);
-
-        return $this;
+        return $this->rule(new SetValueIfNotPresent($value));
     }
 
     public function omit(): static
     {
-        $this->rule(new OmitResult());
-
-        return $this;
+        return $this->rule(new OmitResult());
     }
 }

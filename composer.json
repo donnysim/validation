@@ -2,6 +2,7 @@
   "name": "donnysim/validation",
   "description": "Data validator for PHP.",
   "keywords": [
+    "php",
     "validator"
   ],
   "type": "library",

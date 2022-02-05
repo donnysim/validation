@@ -12,22 +12,16 @@ trait CastRulesTrait
 {
     public function toBoolean(): static
     {
-        $this->rule(new ToBoolean());
-
-        return $this;
+        return $this->rule(new ToBoolean());
     }
 
     public function toInteger(): static
     {
-        $this->rule(new ToInteger());
-
-        return $this;
+        return $this->rule(new ToInteger());
     }
 
     public function toString(): static
     {
-        $this->rule(new ToString());
-
-        return $this;
+        return $this->rule(new ToString());
     }
 }

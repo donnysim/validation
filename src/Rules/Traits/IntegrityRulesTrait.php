@@ -14,43 +14,31 @@ trait IntegrityRulesTrait
 {
     public function accepted(): static
     {
-        $this->rule(new Accepted());
-
-        return $this;
+        return $this->rule(new Accepted());
     }
 
     public function confirmed(): static
     {
-        $this->rule(new Confirmed());
-
-        return $this;
+        return $this->rule(new Confirmed());
     }
 
     public function distinct(): static
     {
-        $this->rule(new Distinct());
-
-        return $this;
+        return $this->rule(new Distinct());
     }
 
     public function email(array $types = [Email::VALIDATE_RFC, Email::VALIDATE_DNS]): static
     {
-        $this->rules[] = new Email($types);
-
-        return $this;
+        return $this->rule(new Email($types));
     }
 
     public function in(array $values): static
     {
-        $this->rules[] = new In($values);
-
-        return $this;
+        return $this->rule(new In($values));
     }
 
     public function notIn(array $values): static
     {
-        $this->rules[] = new In($values, false);
-
-        return $this;
+        return $this->rule(new In($values, false));
     }
 }
