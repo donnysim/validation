@@ -6,6 +6,7 @@ namespace DonnySim\Validation\Process;
 
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Enums\DataProcessStateEnum;
+use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
 
@@ -60,6 +61,10 @@ final class EntryProcess
 
             if (!$rule) {
                 break;
+            }
+
+            if ($rule instanceof CleanupStateInterface) {
+                $this->validationProcess->registerRuleCleanup($rule);
             }
 
             $rule->validate($this->entry, $this);

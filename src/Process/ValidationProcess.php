@@ -6,12 +6,14 @@ namespace DonnySim\Validation\Process;
 
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Data\DataWalker;
+use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Message;
 use function array_shift;
 use function count;
 use function explode;
 use function is_array;
+use function spl_object_id;
 
 final class ValidationProcess
 {
@@ -28,6 +30,11 @@ final class ValidationProcess
      * @var \DonnySim\Validation\Message[]
      */
     protected array $messages = [];
+
+    /**
+     * @var array<string, \DonnySim\Validation\Interfaces\CleanupStateInterface>
+     */
+    protected array $rulesToCleanup = [];
 
     /**
      * @param \DonnySim\Validation\Interfaces\RuleSetInterface[] $ruleSets
@@ -47,6 +54,8 @@ final class ValidationProcess
 
             $ruleSet = $this->nextRuleSet();
         }
+
+        $this->cleanup();
     }
 
     public function getValidatedData(): array
@@ -78,6 +87,11 @@ final class ValidationProcess
         return $this->messages;
     }
 
+    public function registerRuleCleanup(CleanupStateInterface $rule): void
+    {
+        $this->rulesToCleanup[spl_object_id($rule)] = $rule;
+    }
+
     protected function handleRuleSet(RuleSetInterface $ruleSet): void
     {
         /** @var \DonnySim\Validation\Data\DataEntry $dataEntry */
@@ -102,6 +116,15 @@ final class ValidationProcess
         }
 
         return array_shift($this->ruleSets);
+    }
+
+    protected function cleanup(): void
+    {
+        foreach ($this->rulesToCleanup as $rule) {
+            $rule->cleanup();
+        }
+
+        $this->rulesToCleanup = [];
     }
 
     protected function set(array &$array, string|array $key, mixed $value): void

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Rules\Integrity;
 
 use DonnySim\Validation\Data\DataEntry;
+use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
 use DonnySim\Validation\Process\EntryProcess;
 use function in_array;
 
-final class Distinct implements RuleInterface
+final class Distinct implements RuleInterface, CleanupStateInterface
 {
     public const NAME = 'distinct';
 
@@ -29,5 +30,10 @@ final class Distinct implements RuleInterface
         }
 
         $this->valueCache[$entry->getPath()] = $entry->getValue();
+    }
+
+    public function cleanup(): void
+    {
+        $this->valueCache = [];
     }
 }

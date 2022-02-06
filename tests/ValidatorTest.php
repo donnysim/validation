@@ -214,4 +214,20 @@ final class ValidatorTest extends TestCase
         );
         $this->assertValidationFail($v, ['foo.0' => ['foo_0 failed'], 'foo.1' => ['foo_* failed']]);
     }
+
+    /**
+     * @test
+     */
+    public function it_cleanups_stateful_rules(): void
+    {
+        $v = $this->makeValidator(['foo' => ['foo', 'foo']], [RuleSet::make('foo.*')->distinct()]);
+        $this->assertValidationFail($v, [
+            'foo.1' => ['foo.1 must be distinct'],
+        ]);
+
+        $v->reset();
+        $this->assertValidationFail($v, [
+            'foo.1' => ['foo.1 must be distinct'],
+        ]);
+    }
 }

@@ -117,6 +117,11 @@ class Validator
             ->resolveMessages($this->getMessages(), $this->overrideProvider);
     }
 
+    public function reset(): void
+    {
+        $this->process = null;
+    }
+
     protected function getProcess(): ValidationProcess
     {
         if (!$this->process) {
@@ -130,11 +135,6 @@ class Validator
     {
         $this->process = new ValidationProcess($this->data, $this->rules);
         $this->process->run();
-    }
-
-    protected function reset(): void
-    {
-        $this->process = null;
     }
 
     /**
