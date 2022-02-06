@@ -8,7 +8,10 @@ use DonnySim\Validation\Rules\Integrity\Accepted;
 use DonnySim\Validation\Rules\Integrity\Confirmed;
 use DonnySim\Validation\Rules\Integrity\Distinct;
 use DonnySim\Validation\Rules\Integrity\Email\Email;
+use DonnySim\Validation\Rules\Integrity\EndsWith;
 use DonnySim\Validation\Rules\Integrity\In;
+use DonnySim\Validation\Rules\Integrity\StartsWith;
+use function is_array;
 
 trait IntegrityRulesTrait
 {
@@ -40,5 +43,25 @@ trait IntegrityRulesTrait
     public function notIn(array $values): static
     {
         return $this->rule(new In($values, false));
+    }
+
+    /**
+     * @param string|array<string> $needles
+     */
+    public function endsWith(array|string $needles): static
+    {
+        $this->rules[] = new EndsWith(is_array($needles) ? $needles : [$needles]);
+
+        return $this;
+    }
+
+    /**
+     * @param string|array<string> $needles
+     */
+    public function startsWith(array|string $needles): static
+    {
+        $this->rules[] = new StartsWith(is_array($needles) ? $needles : [$needles]);
+
+        return $this;
     }
 }

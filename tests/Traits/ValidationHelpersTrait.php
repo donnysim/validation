@@ -37,6 +37,7 @@ trait ValidationHelpersTrait
             'confirmed' => ':attribute must be confirmed',
             'distinct' => ':attribute must be distinct',
             'email' => ':attribute must be email',
+            'ends_with' => ':attribute must end with :values',
             'filled' => ':attribute must be filled',
             'in' => ':attribute must be in array',
             'integer_type' => ':attribute must be integer',
@@ -46,6 +47,7 @@ trait ValidationHelpersTrait
             'numeric.mixed' => ':attribute must be numeric',
             'present' => ':attribute must be present',
             'required' => ':attribute is required',
+            'starts_with' => ':attribute must start with :values',
             'string_type' => ':attribute must be string',
         ]);
     }

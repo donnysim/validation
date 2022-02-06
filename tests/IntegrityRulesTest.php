@@ -244,4 +244,46 @@ final class IntegrityRulesTest extends TestCase
         $v = $this->makeValidator(['foo' => ['bar', 'baz']], [RuleSet::make('foo')->notIn(['bar', 'baz'])]);
         self::assertTrue($v->passes());
     }
+
+    /**
+     * @test
+     */
+    public function ends_with_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->endsWith('hello')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must end with hello']]);
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->endsWith('world')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->endsWith(['world', 'hello'])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->endsWith('http')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must end with http']]);
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->endsWith(['https', 'http'])]);
+        $this->assertValidationFail($v, ['foo' => ['foo must end with https, http']]);
+    }
+
+    /**
+     * @test
+     */
+    public function starts_with_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->startsWith('hello')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->startsWith('world')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must start with world']]);
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->startsWith(['world', 'hello'])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->startsWith('http')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must start with http']]);
+
+        $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->startsWith(['https', 'http'])]);
+        $this->assertValidationFail($v, ['foo' => ['foo must start with https, http']]);
+    }
 }
