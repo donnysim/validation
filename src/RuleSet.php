@@ -19,7 +19,12 @@ class RuleSet implements RuleSetInterface
     use IntegrityRulesTrait;
     use TypeRulesTrait;
 
-    public static function make(string $pattern): self
+    /**
+     * @param string $pattern
+     *  A pattern should always be provided unless used to change validation flow.
+     *  @see \DonnySim\Validation\Process\EntryProcess::next
+     */
+    public static function make(string $pattern = ''): self
     {
         return new self($pattern);
     }

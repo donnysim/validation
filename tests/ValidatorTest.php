@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests;
 
+use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Exceptions\ValidationException;
 use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use DonnySim\Validation\Message;
+use DonnySim\Validation\Process\EntryProcess;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\RuleSetGroup;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
@@ -229,5 +231,27 @@ final class ValidatorTest extends TestCase
         $this->assertValidationFail($v, [
             'foo.1' => ['foo.1 must be distinct'],
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_inserts_rules_to_be_validated(): void
+    {
+        $v = $this->makeValidator(['foo' => [true, false]], [
+            RuleSet::make('foo.*')
+                ->pipe(static function (DataEntry $entry, EntryProcess $process) {
+                    if ($entry->getValue() === true) {
+                        $process->insert(RuleSet::make()->toInteger()->toString());
+                    } elseif ($entry->getValue() === false) {
+                        $process->insert(RuleSet::make()->toString());
+                    }
+                })
+                ->pipe(static function (DataEntry $entry, EntryProcess $process) {
+                    $entry->setValue($entry->getValue() . ' value');
+                })
+        ]);
+
+        self::assertSame(['foo' => ['1 value', 'false value']], $v->getValidatedData());
     }
 }

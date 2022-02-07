@@ -8,7 +8,9 @@ use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Enums\DataProcessStateEnum;
 use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleInterface;
+use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Message;
+use function array_slice;
 
 final class EntryProcess
 {
@@ -113,6 +115,21 @@ final class EntryProcess
     public function getField(string $field): DataEntry
     {
         return $this->validationProcess->getField($field);
+    }
+
+    /**
+     * Insert rules to be executed after current rule.
+     * RuleSet name is ignored.
+     */
+    public function insert(RuleSetInterface $ruleSet): void
+    {
+        $rules = $this->rules;
+
+        $this->rules = [
+            ...array_slice($rules, 0, $this->currentRuleIndex + 1),
+            ...$ruleSet->getRules(),
+            ...array_slice($rules, $this->currentRuleIndex + 1)
+        ];
     }
 
     /**

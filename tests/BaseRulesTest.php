@@ -57,6 +57,12 @@ final class BaseRulesTest extends TestCase
         $v = $this->makeValidator(['foo' => 0], [RuleSet::make('foo')->required()]);
         self::assertTrue($v->passes());
 
+        $v = $this->makeValidator(['foo' => true], [RuleSet::make('foo')->required()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => false], [RuleSet::make('foo')->required()]);
+        self::assertTrue($v->passes());
+
         $v = $this->makeValidator(['foo' => []], [RuleSet::make('foo')->required()]);
         $this->assertValidationFail($v, ['foo' => ['foo is required']]);
 
@@ -193,7 +199,6 @@ final class BaseRulesTest extends TestCase
         $data = $v->getValidatedData();
         self::assertSame('shoo', $data['foo']);
     }
-
 
     /**
      * @test
