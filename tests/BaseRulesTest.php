@@ -52,6 +52,9 @@ final class BaseRulesTest extends TestCase
         $v = $this->makeValidator(['foo' => ''], [RuleSet::make('foo')->required()]);
         $this->assertValidationFail($v, ['foo' => ['foo is required']]);
 
+        $v = $this->makeValidator(['foo' => 0], [RuleSet::make('foo')->required()]);
+        self::assertTrue($v->passes());
+
         $v = $this->makeValidator(['foo' => []], [RuleSet::make('foo')->required()]);
         $this->assertValidationFail($v, ['foo' => ['foo is required']]);
 
@@ -82,17 +85,35 @@ final class BaseRulesTest extends TestCase
         $v = $this->makeValidator([], [RuleSet::make('foo')->filled()]);
         self::assertTrue($v->passes());
 
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->filled()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be filled']]);
+
         $v = $this->makeValidator(['foo' => ''], [RuleSet::make('foo')->filled()]);
         $this->assertValidationFail($v, ['foo' => ['foo must be filled']]);
 
-        $v = $this->makeValidator(['foo' => [['id' => 1], []]], [RuleSet::make('foo.*.id')->filled()]);
+        $v = $this->makeValidator(['foo' => 0], [RuleSet::make('foo')->filled()]);
         self::assertTrue($v->passes());
 
-        $v = $this->makeValidator(['foo' => [['id' => '']]], [RuleSet::make('foo.*.id')->filled()]);
-        $this->assertValidationFail($v, ['foo.0.id' => ['foo.0.id must be filled']]);
+        $v = $this->makeValidator(['foo' => []], [RuleSet::make('foo')->filled()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be filled']]);
 
-        $v = $this->makeValidator(['foo' => [['id' => null]]], [RuleSet::make('foo.*.id')->filled()]);
-        $this->assertValidationFail($v, ['foo.0.id' => ['foo.0.id must be filled']]);
+        $v = $this->makeValidator(['foo' => 'name'], [RuleSet::make('foo')->filled()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => ['name']], [RuleSet::make('foo')->filled()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => []], [RuleSet::make('foo.*')->filled()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [null]], [RuleSet::make('foo.*')->filled()]);
+        $this->assertValidationFail($v, ['foo.0' => ['foo.0 must be filled']]);
+
+        $v = $this->makeValidator(['foo' => ['bar']], [RuleSet::make('foo.*')->filled()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => ['bar', null]], [RuleSet::make('foo.*')->filled()]);
+        $this->assertValidationFail($v, ['foo.1' => ['foo.1 must be filled']]);
     }
 
     /**
