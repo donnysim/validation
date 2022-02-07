@@ -9,6 +9,8 @@ use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use function array_keys;
 use function array_merge;
 use function asort;
+use function implode;
+use function is_array;
 use function mb_strlen;
 use function mb_strtoupper;
 use function mb_substr;
@@ -58,6 +60,10 @@ final class TranslationMessageResolverStub implements MessageResolverInterface
         $replace = $this->sortReplacements($replace);
 
         foreach ($replace as $key => $value) {
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+
             $line = str_replace(
                 [':' . $key, ':' . mb_strtoupper($key, 'UTF-8'), ':' . $this->ucfirst($key)],
                 [$value, mb_strtoupper((string)$value, 'UTF-8'), $this->ucfirst((string)$value)],

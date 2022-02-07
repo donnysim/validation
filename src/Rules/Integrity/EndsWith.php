@@ -41,6 +41,6 @@ final class EndsWith implements RuleInterface
             }
         }
 
-        $process->fail(Message::forEntry($entry, self::NAME, ['values' => implode(', ', $this->needles)]));
+        $process->fail(Message::forEntry($entry, self::NAME, ['values' => $this->needles]));
     }
 }
