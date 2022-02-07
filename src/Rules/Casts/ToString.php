@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Rules\Casts;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Process\EntryProcess;
+use function is_array;
+use function is_bool;
 use function is_string;
 
 final class ToString implements RuleInterface
@@ -17,6 +19,14 @@ final class ToString implements RuleInterface
             return;
         }
 
-        $entry->setValue((string)$entry->getValue());
+        $value = $entry->getValue();
+
+        if (is_bool($value)) {
+            $entry->setValue($value ? 'true' : 'false');
+        } elseif (is_array($value)) {
+            $entry->setValue('array');
+        } else {
+            $entry->setValue((string)$entry->getValue());
+        }
     }
 }

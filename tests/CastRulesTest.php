@@ -79,7 +79,11 @@ final class CastRulesTest extends TestCase
     {
         $v = $this->makeValidator(['foo' => true], [RuleSet::make('foo')->toString()]);
         $data = $v->getValidatedData();
-        self::assertSame('1', $data['foo']);
+        self::assertSame('true', $data['foo']);
+
+        $v = $this->makeValidator(['foo' => false], [RuleSet::make('foo')->toString()]);
+        $data = $v->getValidatedData();
+        self::assertSame('false', $data['foo']);
 
         $v = $this->makeValidator(['foo' => 'true'], [RuleSet::make('foo')->toString()]);
         $data = $v->getValidatedData();
@@ -92,5 +96,9 @@ final class CastRulesTest extends TestCase
         $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->toString()]);
         $data = $v->getValidatedData();
         self::assertSame('', $data['foo']);
+
+        $v = $this->makeValidator(['foo' => []], [RuleSet::make('foo')->toString()]);
+        $data = $v->getValidatedData();
+        self::assertSame('array', $data['foo']);
     }
 }
