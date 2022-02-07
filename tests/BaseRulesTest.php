@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests;
 
+use DonnySim\Validation\Data\DataEntry;
+use DonnySim\Validation\Process\EntryProcess;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\Rules\Base\Nullable;
 use DonnySim\Validation\Rules\Base\Required;
@@ -190,5 +192,25 @@ final class BaseRulesTest extends TestCase
         self::assertTrue($v->passes());
         $data = $v->getValidatedData();
         self::assertSame('shoo', $data['foo']);
+    }
+
+
+    /**
+     * @test
+     */
+    public function pipe_rule(): void
+    {
+        $pipeCalled = false;
+
+        $v = $this->makeValidator(['foo' => null], [
+            RuleSet::make('foo')
+                ->pipe(static function (DataEntry $entry, EntryProcess $process) use (&$pipeCalled) {
+                    $pipeCalled = true;
+                })
+                ->required()
+        ]);
+
+        self::assertTrue($v->fails());
+        self::assertTrue($pipeCalled);
     }
 }

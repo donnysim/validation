@@ -8,6 +8,7 @@ use DonnySim\Validation\Rules\Base\Filled;
 use DonnySim\Validation\Rules\Base\Nullable;
 use DonnySim\Validation\Rules\Base\OmitResult;
 use DonnySim\Validation\Rules\Base\Optional;
+use DonnySim\Validation\Rules\Base\Pipe;
 use DonnySim\Validation\Rules\Base\Present;
 use DonnySim\Validation\Rules\Base\Required;
 use DonnySim\Validation\Rules\Base\SetValueIfNotPresent;
@@ -27,6 +28,11 @@ trait BaseRulesTrait
     public function filled(): static
     {
         return $this->rule(new Filled());
+    }
+
+    public function pipe(callable $callback): static
+    {
+        return $this->rule(new Pipe($callback));
     }
 
     public function present(): static
