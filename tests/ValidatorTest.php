@@ -87,18 +87,50 @@ final class ValidatorTest extends TestCase
      */
     public function it_uses_default_message_resolver(): void
     {
-        Validator::setDefaultMessageResolver(new class() implements MessageResolverInterface {
-            public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
-            {
-                return ['custom message'];
-            }
+        Validator::setMessageResolverFactory(static function () {
+            return new class() implements MessageResolverInterface {
+                public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
+                {
+                    return ['custom message'];
+                }
+            };
         });
 
         $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->required()]);
 
         self::assertSame(['custom message'], $v->resolveMessages());
 
-        Validator::setFailureHandler(null);
+        Validator::setMessageResolverFactory(null);
+    }
+
+    /**
+     * @test
+     */
+    public function it_uses_default_override_provider(): void
+    {
+        Validator::setOverrideProviderFactory(static function () {
+            return new class() implements MessageOverrideProviderInterface {
+                public function getMessageOverride(Message $message): ?string
+                {
+                    return 'test :attribute';
+                }
+
+                public function getAttributeOverride(Message $message): string
+                {
+                    return 'test';
+                }
+            };
+        });
+
+        $v = $this->makeValidator(
+            ['foo' => [null, null]],
+            [RuleSet::make('foo.*')->required()],
+            ['foo.*.required' => ':attribute failed'],
+            ['foo.*' => 'foo_*', 'foo.0' => 'foo_0']
+        );
+        $this->assertValidationFail($v, ['foo.0' => ['test test'], 'foo.1' => ['test test']]);
+
+        Validator::setOverrideProviderFactory(null);
     }
 
     /**

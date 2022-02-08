@@ -7,6 +7,7 @@ namespace DonnySim\Validation;
 use Closure;
 use DonnySim\Validation\Exceptions\InvalidRuleException;
 use DonnySim\Validation\Exceptions\ValidationException;
+use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use DonnySim\Validation\Interfaces\RuleSetGroupInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
@@ -14,7 +15,9 @@ use DonnySim\Validation\Process\ValidationProcess;
 
 class Validator
 {
-    protected static ?MessageResolverInterface $defaultMessageResolver = null;
+    protected static ?Closure $defaultMessageResolverFactory = null;
+
+    protected static ?Closure $defaultMessageProviderFactory = null;
 
     protected static ?Closure $failureHandler = null;
 
@@ -29,7 +32,7 @@ class Validator
 
     protected MessageResolverInterface $messageResolver;
 
-    protected MessageOverrideProvider $overrideProvider;
+    protected MessageOverrideProviderInterface $overrideProvider;
 
     /**
      * @param array<\DonnySim\Validation\Interfaces\RuleSetInterface|\DonnySim\Validation\Interfaces\RuleSetGroupInterface> $rules
@@ -41,14 +44,33 @@ class Validator
     public function __construct(array $data, array $rules, array $messageOverrides = [], array $attributeOverrides = [])
     {
         $this->data = $data;
-        $this->messageResolver = new ArrayMessageResolver();
-        $this->overrideProvider = new MessageOverrideProvider($messageOverrides, $attributeOverrides);
+        $this->messageResolver = static::makeMessageResolver();
+        $this->overrideProvider = static::makeOverrideProvider($messageOverrides, $attributeOverrides);
         $this->addRules($rules);
     }
 
-    public static function setDefaultMessageResolver(?MessageResolverInterface $messageResolver): void
+    public static function setMessageResolverFactory(?Closure $factory): void
     {
-        self::$defaultMessageResolver = $messageResolver;
+        self::$defaultMessageResolverFactory = $factory;
+    }
+
+    public static function setOverrideProviderFactory(?Closure $factory): void
+    {
+        self::$defaultMessageProviderFactory = $factory;
+    }
+
+    public static function makeMessageResolver(array $messageOverrides = [], array $attributeOverrides = []): MessageResolverInterface
+    {
+        return self::$defaultMessageResolverFactory ?
+            (self::$defaultMessageResolverFactory)($messageOverrides, $attributeOverrides) :
+            new ArrayMessageResolver();
+    }
+
+    public static function makeOverrideProvider(array $messageOverrides = [], array $attributeOverrides = []): MessageOverrideProviderInterface
+    {
+        return self::$defaultMessageProviderFactory ?
+            (self::$defaultMessageProviderFactory)($messageOverrides, $attributeOverrides) :
+            new MessageOverrideProvider($messageOverrides, $attributeOverrides);
     }
 
     public static function setFailureHandler(?Closure $handler): void
@@ -113,8 +135,7 @@ class Validator
 
     public function resolveMessages(?MessageResolverInterface $messageResolver = null): mixed
     {
-        return ($messageResolver ?: self::$defaultMessageResolver ?: $this->messageResolver)
-            ->resolveMessages($this->getMessages(), $this->overrideProvider);
+        return ($messageResolver ?: $this->messageResolver)->resolveMessages($this->getMessages(), $this->overrideProvider);
     }
 
     public function reset(): void
