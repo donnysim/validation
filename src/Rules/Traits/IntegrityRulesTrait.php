@@ -16,6 +16,7 @@ use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\Rules\Integrity\EndsWith;
 use DonnySim\Validation\Rules\Integrity\In;
 use DonnySim\Validation\Rules\Integrity\IpAddress;
+use DonnySim\Validation\Rules\Integrity\SizeComparison;
 use DonnySim\Validation\Rules\Integrity\StartsWith;
 use function is_array;
 
@@ -120,5 +121,57 @@ trait IntegrityRulesTrait
     public function startsWith(array|string $needles): static
     {
         return $this->rule(new StartsWith(is_array($needles) ? $needles : [$needles]));
+    }
+
+    /**
+     * @param mixed $value Non string floats will be compared using 14 precision.
+     */
+    public function lessThan(mixed $value, bool $allowEqual = false): static
+    {
+        $this->rules[] = new SizeComparison(SizeComparison::BOOL_LT, $value, $allowEqual);
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $value Non string floats will be compared using 14 precision.
+     */
+    public function lessThanOrEqual(mixed $value): static
+    {
+        return $this->lessThan($value, true);
+    }
+
+    /**
+     * @param mixed $value Non string floats will be compared using 14 precision.
+     */
+    public function greaterThan(mixed $value, bool $allowEqual = false): static
+    {
+        $this->rules[] = new SizeComparison(SizeComparison::BOOL_GT, $value, $allowEqual);
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $value Non string floats will be compared using 14 precision.
+     */
+    public function greaterThanOrEqual(mixed $value): static
+    {
+        return $this->greaterThan($value, true);
+    }
+
+    /**
+     * @param mixed $value Non string floats will be compared using 14 precision.
+     */
+    public function max(mixed $value): static
+    {
+        return $this->lessThanOrEqual($value);
+    }
+
+    /**
+     * @param mixed $value Non string floats will be compared using 14 precision.
+     */
+    public function min(mixed $value): static
+    {
+        return $this->greaterThanOrEqual($value);
     }
 }
