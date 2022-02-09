@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Rules\Traits;
 
+use DonnySim\Validation\Reference;
 use DonnySim\Validation\Rules\Integrity\Accepted;
 use DonnySim\Validation\Rules\Integrity\Confirmed;
 use DonnySim\Validation\Rules\Integrity\Date\Date;
 use DonnySim\Validation\Rules\Integrity\Date\DateComparison;
 use DonnySim\Validation\Rules\Integrity\Date\DateFormat;
+use DonnySim\Validation\Rules\Integrity\Different;
 use DonnySim\Validation\Rules\Integrity\Distinct;
 use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\Rules\Integrity\EndsWith;
@@ -72,6 +74,11 @@ trait IntegrityRulesTrait
     public function dateFormat(string $format): static
     {
         return $this->rule(new DateFormat($format));
+    }
+
+    public function different(Reference|string $reference): static
+    {
+        return $this->rule(new Different(Reference::make($reference)));
     }
 
     public function in(array $values): static

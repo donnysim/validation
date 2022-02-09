@@ -42,6 +42,7 @@ trait ValidationHelpersTrait
             'date_before_or_equal' => ':attribute must be before or equal :date',
             'date_equal' => ':attribute must be equal :date',
             'date_format' => ':attribute must match :format',
+            'different' => ':attribute must be different from :other',
             'distinct' => ':attribute must be distinct',
             'email' => ':attribute must be email',
             'ends_with' => ':attribute must end with :values',

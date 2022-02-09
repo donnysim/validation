@@ -154,6 +154,30 @@ final class IntegrityRulesTest extends TestCase
     /**
      * @test
      */
+    public function different_rule(): void
+    {
+        $v = $this->makeValidator([], [RuleSet::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar', 'baz' => 'boom'], [RuleSet::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar', 'baz' => null], [RuleSet::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar'], [RuleSet::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'bar', 'baz' => 'bar'], [RuleSet::make('foo')->different('baz')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be different from baz']]);
+
+        $v = $this->makeValidator(['foo' => '1e2', 'baz' => '100'], [RuleSet::make('foo')->different('baz')]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function email_rule(): void
     {
         $v = $this->makeValidator([], [RuleSet::make('email')->email()]);
