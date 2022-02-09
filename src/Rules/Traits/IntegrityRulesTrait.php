@@ -81,23 +81,17 @@ trait IntegrityRulesTrait
 
     public function ip(?string $type = null): static
     {
-        $this->rules[] = new IpAddress($type);
-
-        return $this;
+        return $this->rule(new IpAddress($type));
     }
 
     public function ipv4(): static
     {
-        $this->rules[] = new IpAddress(IpAddress::TYPE_IPV4);
-
-        return $this;
+        return $this->rule(new IpAddress(IpAddress::TYPE_IPV4));
     }
 
     public function ipv6(): static
     {
-        $this->rules[] = new IpAddress(IpAddress::TYPE_IPV6);
-
-        return $this;
+        return $this->rule(new IpAddress(IpAddress::TYPE_IPV6));
     }
 
     public function notIn(array $values): static
@@ -110,9 +104,7 @@ trait IntegrityRulesTrait
      */
     public function endsWith(array|string $needles): static
     {
-        $this->rules[] = new EndsWith(is_array($needles) ? $needles : [$needles]);
-
-        return $this;
+        return $this->rule(new EndsWith(is_array($needles) ? $needles : [$needles]));
     }
 
     /**
@@ -120,8 +112,6 @@ trait IntegrityRulesTrait
      */
     public function startsWith(array|string $needles): static
     {
-        $this->rules[] = new StartsWith(is_array($needles) ? $needles : [$needles]);
-
-        return $this;
+        return $this->rule(new StartsWith(is_array($needles) ? $needles : [$needles]));
     }
 }
