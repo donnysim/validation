@@ -43,6 +43,8 @@ trait ValidationHelpersTrait
             'date_equal' => ':attribute must be equal :date',
             'date_format' => ':attribute must match :format',
             'different' => ':attribute must be different from :other',
+            'digits' => ':attribute must have :digits digits',
+            'digits_between' => ':attribute must have digits between :min and :max',
             'distinct' => ':attribute must be distinct',
             'email' => ':attribute must be email',
             'ends_with' => ':attribute must end with :values',

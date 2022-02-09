@@ -11,6 +11,7 @@ use DonnySim\Validation\Rules\Integrity\Date\Date;
 use DonnySim\Validation\Rules\Integrity\Date\DateComparison;
 use DonnySim\Validation\Rules\Integrity\Date\DateFormat;
 use DonnySim\Validation\Rules\Integrity\Different;
+use DonnySim\Validation\Rules\Integrity\Digits;
 use DonnySim\Validation\Rules\Integrity\Distinct;
 use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\Rules\Integrity\EndsWith;
@@ -80,6 +81,16 @@ trait IntegrityRulesTrait
     public function different(Reference|string $reference): static
     {
         return $this->rule(new Different(Reference::make($reference)));
+    }
+
+    public function digits(int $digits): static
+    {
+        return $this->rule(new Digits('=', $digits));
+    }
+
+    public function digitsBetween(int $from, int $to): static
+    {
+        return $this->rule(new Digits('><', $from, $to));
     }
 
     public function in(array $values): static
