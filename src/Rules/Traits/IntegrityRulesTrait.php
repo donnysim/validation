@@ -6,6 +6,9 @@ namespace DonnySim\Validation\Rules\Traits;
 
 use DonnySim\Validation\Rules\Integrity\Accepted;
 use DonnySim\Validation\Rules\Integrity\Confirmed;
+use DonnySim\Validation\Rules\Integrity\Date\Date;
+use DonnySim\Validation\Rules\Integrity\Date\DateComparison;
+use DonnySim\Validation\Rules\Integrity\Date\DateFormat;
 use DonnySim\Validation\Rules\Integrity\Distinct;
 use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\Rules\Integrity\EndsWith;
@@ -33,6 +36,41 @@ trait IntegrityRulesTrait
     public function email(array $types = [Email::VALIDATE_RFC, Email::VALIDATE_DNS]): static
     {
         return $this->rule(new Email($types));
+    }
+
+    public function date(): static
+    {
+        return $this->rule(new Date());
+    }
+
+    public function dateAfter($date, ?string $format = null): static
+    {
+        return $this->rule(new DateComparison($date, '>', $format));
+    }
+
+    public function dateAfterOrEqual($date, ?string $format = null): static
+    {
+        return $this->rule(new DateComparison($date, '>=', $format));
+    }
+
+    public function dateBefore($date, ?string $format = null): static
+    {
+        return $this->rule(new DateComparison($date, '<', $format));
+    }
+
+    public function dateBeforeOrEqual($date, ?string $format = null): static
+    {
+        return $this->rule(new DateComparison($date, '<=', $format));
+    }
+
+    public function dateEqual($date, ?string $format = null): static
+    {
+        return $this->rule(new DateComparison($date, '=', $format));
+    }
+
+    public function dateFormat(string $format): static
+    {
+        return $this->rule(new DateFormat($format));
     }
 
     public function in(array $values): static

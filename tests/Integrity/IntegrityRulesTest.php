@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DonnySim\Validation\Tests;
+namespace DonnySim\Validation\Tests\Integrity;
 
 use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\RuleSet;
