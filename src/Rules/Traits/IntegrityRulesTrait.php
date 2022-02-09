@@ -128,9 +128,7 @@ trait IntegrityRulesTrait
      */
     public function lessThan(mixed $value, bool $allowEqual = false): static
     {
-        $this->rules[] = new SizeComparison(SizeComparison::BOOL_LT, $value, $allowEqual);
-
-        return $this;
+        return $this->rule(new SizeComparison(SizeComparison::BOOL_LT, $value, $allowEqual));
     }
 
     /**
@@ -146,9 +144,7 @@ trait IntegrityRulesTrait
      */
     public function greaterThan(mixed $value, bool $allowEqual = false): static
     {
-        $this->rules[] = new SizeComparison(SizeComparison::BOOL_GT, $value, $allowEqual);
-
-        return $this;
+        return $this->rule(new SizeComparison(SizeComparison::BOOL_GT, $value, $allowEqual));
     }
 
     /**

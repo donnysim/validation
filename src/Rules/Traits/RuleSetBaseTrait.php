@@ -20,7 +20,7 @@ trait RuleSetBaseTrait
         $this->pattern = $pattern;
     }
 
-    public function rule(RuleInterface $rule): self
+    public function rule(RuleInterface $rule): static
     {
         $this->rules[] = $rule;
 
@@ -30,7 +30,7 @@ trait RuleSetBaseTrait
     /**
      * @param \DonnySim\Validation\Interfaces\RuleInterface[] $rules
      */
-    public function rules(array $rules): self
+    public function rules(array $rules): static
     {
         foreach ($rules as $rule) {
             $this->rule($rule);
