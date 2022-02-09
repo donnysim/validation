@@ -13,6 +13,7 @@ use DonnySim\Validation\Rules\Integrity\Distinct;
 use DonnySim\Validation\Rules\Integrity\Email\Email;
 use DonnySim\Validation\Rules\Integrity\EndsWith;
 use DonnySim\Validation\Rules\Integrity\In;
+use DonnySim\Validation\Rules\Integrity\IpAddress;
 use DonnySim\Validation\Rules\Integrity\StartsWith;
 use function is_array;
 
@@ -76,6 +77,27 @@ trait IntegrityRulesTrait
     public function in(array $values): static
     {
         return $this->rule(new In($values));
+    }
+
+    public function ip(?string $type = null): static
+    {
+        $this->rules[] = new IpAddress($type);
+
+        return $this;
+    }
+
+    public function ipv4(): static
+    {
+        $this->rules[] = new IpAddress(IpAddress::TYPE_IPV4);
+
+        return $this;
+    }
+
+    public function ipv6(): static
+    {
+        $this->rules[] = new IpAddress(IpAddress::TYPE_IPV6);
+
+        return $this;
     }
 
     public function notIn(array $values): static

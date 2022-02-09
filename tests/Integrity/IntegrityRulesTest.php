@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Tests\Integrity;
 
 use DonnySim\Validation\Rules\Integrity\Email\Email;
+use DonnySim\Validation\Rules\Integrity\IpAddress;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
 use PHPUnit\Framework\TestCase;
@@ -285,5 +286,44 @@ final class IntegrityRulesTest extends TestCase
 
         $v = $this->makeValidator(['foo' => 'hello world'], [RuleSet::make('foo')->startsWith(['https', 'http'])]);
         $this->assertValidationFail($v, ['foo' => ['foo must start with https, http']]);
+    }
+
+    /**
+     * @test
+     */
+    public function ip_address_rule(): void
+    {
+        $v = $this->makeValidator([], [RuleSet::make('foo')->in(['bar', 'baz'])]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'aslsdlks'], [RuleSet::make('foo')->ip()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be a valid ip address']]);
+
+        $v = $this->makeValidator(['foo' => '127.0.0.1'], [RuleSet::make('foo')->ip()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '127.0.0.1'], [RuleSet::make('foo')->ip(IpAddress::TYPE_IPV4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '127.0.0.1'], [RuleSet::make('foo')->ipv4()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '::1'], [RuleSet::make('foo')->ip(IpAddress::TYPE_IPV6)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '::1'], [RuleSet::make('foo')->ipv6()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '127.0.0.1'], [RuleSet::make('foo')->ip(IpAddress::TYPE_IPV6)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be a valid ipv6 address']]);
+
+        $v = $this->makeValidator(['foo' => '127.0.0.1'], [RuleSet::make('foo')->ipv6()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be a valid ipv6 address']]);
+
+        $v = $this->makeValidator(['foo' => '::1'], [RuleSet::make('foo')->ip(IpAddress::TYPE_IPV4)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be a valid ipv4 address']]);
+
+        $v = $this->makeValidator(['foo' => '::1'], [RuleSet::make('foo')->ipv4()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be a valid ipv4 address']]);
     }
 }
