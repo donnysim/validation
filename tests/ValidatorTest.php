@@ -281,9 +281,29 @@ final class ValidatorTest extends TestCase
                 })
                 ->pipe(static function (DataEntry $entry, EntryProcess $process) {
                     $entry->setValue($entry->getValue() . ' value');
-                })
+                }),
         ]);
 
         self::assertSame(['foo' => ['1 value', 'false value']], $v->getValidatedData());
+    }
+
+    /**
+     * @test
+     */
+    public function it_forks_process_with_different_rules(): void
+    {
+        $v = $this->makeValidator(['foo' => [5, -5]], [
+            RuleSet::make('foo.*')
+                ->pipe(static function (DataEntry $entry, EntryProcess $process): void {
+                    if ($entry->getValue() > 0) {
+                        $process->fork(RuleSet::make()->integerType());
+                    } else {
+                        $process->fork(RuleSet::make()->booleanType());
+                    }
+                })
+                // Should never be called
+                ->stringType(),
+        ]);
+        $this->assertValidationFail($v, ['foo.1' => ['foo.1 must be boolean']]);
     }
 }

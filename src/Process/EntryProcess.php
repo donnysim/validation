@@ -10,6 +10,7 @@ use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Message;
+use function array_merge;
 use function array_slice;
 
 final class EntryProcess
@@ -115,6 +116,18 @@ final class EntryProcess
     public function getField(string $field): DataEntry
     {
         return $this->validationProcess->getField($field);
+    }
+
+    /**
+     * Replace further rules to be process with the ones provided.
+     * RuleSet name is ignored.
+     */
+    public function fork(RuleSetInterface $ruleSet): void
+    {
+        $this->rules = [
+            ...array_slice($this->rules, 0, $this->currentRuleIndex + 1),
+            ...$ruleSet->getRules(),
+        ];
     }
 
     /**
