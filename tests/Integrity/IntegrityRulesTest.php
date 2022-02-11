@@ -59,6 +59,94 @@ final class IntegrityRulesTest extends TestCase
     /**
      * @test
      */
+    public function alpha_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'aslsdlks'], [RuleSet::make('foo')->alpha()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator([
+            'foo' => 'aslsdlks
+1
+1',
+        ], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => 'http://google.com'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => 'ユニコードを基盤技術と'], [RuleSet::make('foo')->alpha()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'ユニコード を基盤技術と'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => 'नमस्कार'], [RuleSet::make('foo')->alpha()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'आपका स्वागत है'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => 'Continuación'], [RuleSet::make('foo')->alpha()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'ofreció su dimisión'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => '❤'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => '123'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => 123], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+
+        $v = $this->makeValidator(['foo' => 'abc123'], [RuleSet::make('foo')->alpha()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha']]);
+    }
+
+    /**
+     * @test
+     */
+    public function alpha_dash_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'asls1-_3dlks'], [RuleSet::make('foo')->alphaDash()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'http://-g232oogle.com'], [RuleSet::make('foo')->alphaDash()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha dash']]);
+
+        $v = $this->makeValidator(['foo' => 'नमस्कार-_'], [RuleSet::make('foo')->alphaDash()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '٧٨٩'], [RuleSet::make('foo')->alphaDash()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function alpha_num_rule(): void
+    {
+        $v = $this->makeValidator(['foo' => 'asls13dlks'], [RuleSet::make('foo')->alphaNum()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'http://g232oogle.com'], [RuleSet::make('foo')->alphaNum()]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be alpha num']]);
+
+        $v = $this->makeValidator(['foo' => '१२३'], [RuleSet::make('foo')->alphaNum()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '٧٨٩'], [RuleSet::make('foo')->alphaNum()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'नमस्कार'], [RuleSet::make('foo')->alphaNum()]);
+        self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
     public function confirmed(): void
     {
         $v = $this->makeValidator([], [RuleSet::make('foo')->confirmed()]);

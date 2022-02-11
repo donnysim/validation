@@ -6,6 +6,9 @@ namespace DonnySim\Validation\Rules\Traits;
 
 use DonnySim\Validation\Reference;
 use DonnySim\Validation\Rules\Integrity\Accepted;
+use DonnySim\Validation\Rules\Integrity\Alpha;
+use DonnySim\Validation\Rules\Integrity\AlphaDash;
+use DonnySim\Validation\Rules\Integrity\AlphaNum;
 use DonnySim\Validation\Rules\Integrity\Confirmed;
 use DonnySim\Validation\Rules\Integrity\Date\Date;
 use DonnySim\Validation\Rules\Integrity\Date\DateComparison;
@@ -26,6 +29,27 @@ trait IntegrityRulesTrait
     public function accepted(): static
     {
         return $this->rule(new Accepted());
+    }
+
+    public function alpha(): static
+    {
+        $this->rule(new Alpha());
+
+        return $this;
+    }
+
+    public function alphaDash(): static
+    {
+        $this->rule(new AlphaDash());
+
+        return $this;
+    }
+
+    public function alphaNum(): static
+    {
+        $this->rule(new AlphaNum());
+
+        return $this;
     }
 
     public function confirmed(): static

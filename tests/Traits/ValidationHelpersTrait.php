@@ -31,6 +31,9 @@ trait ValidationHelpersTrait
     {
         return new TranslationMessageResolverStub([
             'accepted' => ':attribute must be accepted',
+            'alpha' => ':attribute must be alpha',
+            'alpha_dash' => ':attribute must be alpha dash',
+            'alpha_num' => ':attribute must be alpha num',
             'array_type' => ':attribute must be array',
             'boolean_like' => ':attribute must be boolean like',
             'boolean_type' => ':attribute must be boolean',
