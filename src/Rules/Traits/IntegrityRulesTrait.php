@@ -59,9 +59,7 @@ trait IntegrityRulesTrait
      */
     public function between(float|int|string $min, float|int|string $max): static
     {
-        $this->rules[] = new Between($min, $max);
-
-        return $this;
+        return $this->rule(new Between($min, $max));
     }
 
     public function confirmed(): static
