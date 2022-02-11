@@ -9,6 +9,8 @@ use DonnySim\Validation\Rules\Integrity\IpAddress;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use function ini_set;
 
 final class IntegrityRulesTest extends TestCase
 {
@@ -142,6 +144,80 @@ final class IntegrityRulesTest extends TestCase
 
         $v = $this->makeValidator(['foo' => 'नमस्कार'], [RuleSet::make('foo')->alphaNum()]);
         self::assertTrue($v->passes());
+    }
+
+    /**
+     * @test
+     */
+    public function between_rule(): void
+    {
+        ini_set('precision', '17');
+
+        $v = $this->makeValidator(['foo' => null], [RuleSet::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 4 chars']]);
+
+        $v = $this->makeValidator(['foo' => new stdClass()], [RuleSet::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 4 chars']]);
+
+        $v = $this->makeValidator(['foo' => 'asdad'], [RuleSet::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 4 chars']]);
+
+        $v = $this->makeValidator(['foo' => 'anc'], [RuleSet::make('foo')->between(3, 4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 'ancfs'], [RuleSet::make('foo')->between(3, 5)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '12345'], [RuleSet::make('foo')->between(3, 4)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 4 chars']]);
+
+        $v = $this->makeValidator(['foo' => '4'], [RuleSet::make('foo')->between(3, 5)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 5 chars']]);
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3]], [RuleSet::make('foo')->between(3, 5)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3, 4]], [RuleSet::make('foo')->between(3, 4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => [1, 2, 3, 4, 5, 6]], [RuleSet::make('foo')->between(3, 5)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 5 items']]);
+
+        $v = $this->makeValidator(['foo' => 3], [RuleSet::make('foo')->between(3, 4)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 6], [RuleSet::make('foo')->between(3, 5)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 5']]);
+
+        $v = $this->makeValidator(['foo' => 3.1], [RuleSet::make('foo')->between(3.1, '3.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.1], [RuleSet::make('foo')->between('3.1', 3.1)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 2.9], [RuleSet::make('foo')->between('3.0', '3.5')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 3.5']]);
+
+        $v = $this->makeValidator(['foo' => '3'], [RuleSet::make('foo')->numeric()->between(4, 5)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 4 and 5']]);
+
+        $v = $this->makeValidator(['foo' => '3'], [RuleSet::make('foo')->numeric()->between(4.1, 5.1)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 4.1 and 5.1']]);
+
+        $v = $this->makeValidator(['foo' => '3'], [RuleSet::make('foo')->numeric()->between('4.1', '5.1')]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 4.1 and 5.1']]);
+
+        $v = $this->makeValidator(['foo' => '4.1'], [RuleSet::make('foo')->numeric()->between('4.1', '4.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '4.1'], [RuleSet::make('foo')->numeric()->between('3.1', '4.1')]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.5], [RuleSet::make('foo')->between(3.4, 3.6)]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => 3.5], [RuleSet::make('foo')->between(3.0, 3.4)]);
+        $this->assertValidationFail($v, ['foo' => ['foo must be between 3 and 3.4']]);
     }
 
     /**

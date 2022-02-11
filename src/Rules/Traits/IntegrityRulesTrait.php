@@ -9,6 +9,7 @@ use DonnySim\Validation\Rules\Integrity\Accepted;
 use DonnySim\Validation\Rules\Integrity\Alpha;
 use DonnySim\Validation\Rules\Integrity\AlphaDash;
 use DonnySim\Validation\Rules\Integrity\AlphaNum;
+use DonnySim\Validation\Rules\Integrity\Between;
 use DonnySim\Validation\Rules\Integrity\Confirmed;
 use DonnySim\Validation\Rules\Integrity\Date\Date;
 use DonnySim\Validation\Rules\Integrity\Date\DateComparison;
@@ -48,6 +49,17 @@ trait IntegrityRulesTrait
     public function alphaNum(): static
     {
         $this->rule(new AlphaNum());
+
+        return $this;
+    }
+
+    /**
+     * @param float|int|string $min Non string floats will be compared using 14 precision.
+     * @param float|int|string $max Non string floats will be compared using 14 precision.
+     */
+    public function between(float|int|string $min, float|int|string $max): static
+    {
+        $this->rules[] = new Between($min, $max);
 
         return $this;
     }
