@@ -10,7 +10,6 @@ use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
 use DonnySim\Validation\Message;
-use function array_merge;
 use function array_slice;
 
 final class EntryProcess
@@ -113,9 +112,17 @@ final class EntryProcess
         $this->state = DataProcessStateEnum::STOPPED;
     }
 
-    public function getField(string $field): DataEntry
+    public function getFieldEntry(string $field): DataEntry
     {
-        return $this->validationProcess->getField($field);
+        return $this->validationProcess->getEntry($field);
+    }
+
+    /**
+     * @return \DonnySim\Validation\Data\DataEntry[]
+     */
+    public function getAllEntries(string $pattern): array
+    {
+        return $this->validationProcess->getAllEntries($pattern);
     }
 
     /**

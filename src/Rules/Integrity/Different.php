@@ -27,7 +27,7 @@ final class Different implements RuleInterface
             return;
         }
 
-        $reference = $process->getField($entry->resolveSegmentWildcards($this->reference->getField()));
+        $reference = $process->getFieldEntry($entry->resolveSegmentWildcards($this->reference->getField()));
 
         if ($reference->isNotPresent()) {
             return;

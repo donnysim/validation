@@ -8,7 +8,6 @@ use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
 use DonnySim\Validation\Process\EntryProcess;
-use function implode;
 use function str_ends_with;
 
 final class EndsWith implements RuleInterface

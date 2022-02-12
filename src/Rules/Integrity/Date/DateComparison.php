@@ -50,7 +50,7 @@ final class DateComparison implements RuleInterface
 
         $referenceValue = $this->date;
         if ($referenceValue instanceof Reference) {
-            $referenceValue = $process->getField($entry->resolveSegmentWildcards($referenceValue->getField()))->getValue();
+            $referenceValue = $process->getFieldEntry($entry->resolveSegmentWildcards($referenceValue->getField()))->getValue();
         }
 
         if (!$referenceValue) {

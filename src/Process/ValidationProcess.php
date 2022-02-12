@@ -63,13 +63,27 @@ final class ValidationProcess
         return $this->validatedData;
     }
 
-    public function getField(string $path): DataEntry
+    public function getEntry(string $path): DataEntry
     {
         foreach (DataWalker::walk($this->data, $path) as $entry) {
             return $entry;
         }
 
         return new DataEntry($path, [], $path, null, false);
+    }
+
+    /**
+     * @return \DonnySim\Validation\Data\DataEntry[]
+     */
+    public function getAllEntries(string $pattern): array
+    {
+        $entries = [];
+
+        foreach (DataWalker::walk($this->data, $pattern) as $entry) {
+            $entries[] = $entry;
+        }
+
+        return $entries;
     }
 
     public function addMessages(Message|array $message): void

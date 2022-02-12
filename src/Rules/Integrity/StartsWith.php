@@ -8,7 +8,6 @@ use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
 use DonnySim\Validation\Process\EntryProcess;
-use function implode;
 use function str_starts_with;
 
 class StartsWith implements RuleInterface

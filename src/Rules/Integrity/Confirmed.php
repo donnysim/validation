@@ -19,7 +19,7 @@ final class Confirmed implements RuleInterface
             return;
         }
 
-        $reference = $process->getField($entry->getPath() . '_confirmation');
+        $reference = $process->getFieldEntry($entry->getPath() . '_confirmation');
 
         if ($reference->isNotPresent() || $entry->getValue() !== $reference->getValue()) {
             $process->fail(Message::forEntry($entry, self::NAME));
