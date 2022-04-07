@@ -8,6 +8,8 @@ interface RuleSetInterface
 {
     public function getPattern(): string;
 
+    public function setPattern(string $pattern);
+
     /**
      * @return array<int, \DonnySim\Validation\Interfaces\RuleInterface>
      */

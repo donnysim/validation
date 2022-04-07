@@ -44,6 +44,13 @@ trait RuleSetBaseTrait
         return $this->pattern;
     }
 
+    public function setPattern(string $pattern): static
+    {
+        $this->pattern = $pattern;
+
+        return $this;
+    }
+
     public function getRules(): array
     {
         return $this->rules;
