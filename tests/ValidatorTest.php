@@ -329,6 +329,28 @@ final class ValidatorTest extends TestCase
     /**
      * @test
      */
+    public function it_ignores_rules_containing_failed_segments_added_via_custom_message(): void
+    {
+        $v = $this->makeValidator(
+            [
+                'foo' => [1, 2, 3],
+                'bar' => 1,
+            ],
+            [
+                RuleSet::make('foo')->arrayType()->pipe(static function (DataEntry $entry, ValidationProcess $process) {
+                    $process->getCurrent()->fail(new Message('bar', 'bar', 'bar', 'none'));
+                }),
+                RuleSet::make('bar')->booleanType(), // must be ignored because `foo` failed
+            ]
+        );
+        $this->assertValidationFail($v, [
+            'bar' => ['bar placeholder'],
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_allows_adding_rule_sets_during_process(): void
     {
         $v = $this->makeValidator(['foo' => 1, 'bar' => 2], [

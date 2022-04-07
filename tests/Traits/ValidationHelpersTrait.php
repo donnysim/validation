@@ -80,6 +80,8 @@ trait ValidationHelpersTrait
             'required' => ':attribute is required',
             'starts_with' => ':attribute must start with :values',
             'string_type' => ':attribute must be string',
+
+            'none' => ':attribute placeholder',
         ]);
     }
 }
