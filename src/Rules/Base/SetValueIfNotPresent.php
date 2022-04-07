@@ -6,7 +6,7 @@ namespace DonnySim\Validation\Rules\Base;
 
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 
 final class SetValueIfNotPresent implements RuleInterface
 {
@@ -17,12 +17,12 @@ final class SetValueIfNotPresent implements RuleInterface
         $this->value = $value;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             $entry->setValue($this->value);
-            $process->setShouldExtractValue(true);
-            $process->stop();
+            $process->getCurrent()->setShouldExtractValue(true);
+            $process->getCurrent()->stop();
         }
     }
 }

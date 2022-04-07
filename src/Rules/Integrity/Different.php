@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Integrity;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\Reference;
 
 final class Different implements RuleInterface
@@ -21,20 +21,20 @@ final class Different implements RuleInterface
         $this->reference = $reference;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
-        $reference = $process->getFieldEntry($entry->resolveSegmentWildcards($this->reference->getField()));
+        $reference = $process->getEntry($entry->resolveSegmentWildcards($this->reference->getField()));
 
         if ($reference->isNotPresent()) {
             return;
         }
 
         if ($entry->getValue() === $reference->getValue()) {
-            $process->fail(Message::forEntry($entry, self::NAME, ['other' => $this->reference->getField()]));
+            $process->getCurrent()->fail(Message::forEntry($entry, self::NAME, ['other' => $this->reference->getField()]));
         }
     }
 }

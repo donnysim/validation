@@ -8,7 +8,7 @@ use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function in_array;
 
 final class Distinct implements RuleInterface, CleanupStateInterface
@@ -17,14 +17,14 @@ final class Distinct implements RuleInterface, CleanupStateInterface
 
     private array $valueCache = [];
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
         if (in_array($entry->getValue(), $this->valueCache, true)) {
-            $process->fail(Message::forEntry($entry, self::NAME));
+            $process->getCurrent()->fail(Message::forEntry($entry, self::NAME));
 
             return;
         }

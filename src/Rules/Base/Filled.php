@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Base;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\Rules\Traits\EmptyCheckTrait;
 
 final class Filled implements RuleInterface
@@ -16,14 +16,14 @@ final class Filled implements RuleInterface
 
     public const NAME = 'filled';
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
         if ($this->isEmpty($entry->getValue())) {
-            $process->fail(Message::forEntry($entry, self::NAME));
+            $process->getCurrent()->fail(Message::forEntry($entry, self::NAME));
         }
     }
 }

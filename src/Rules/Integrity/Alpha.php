@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Integrity;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function is_string;
 use function preg_match;
 
@@ -15,7 +15,7 @@ final class Alpha implements RuleInterface
 {
     public const NAME = 'alpha';
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
@@ -23,7 +23,7 @@ final class Alpha implements RuleInterface
 
         $value = $entry->getValue();
         if (!is_string($value) || !preg_match('/^[\pL\pM]+$/u', $value)) {
-            $process->fail(Message::forEntry($entry, self::NAME));
+            $process->getCurrent()->fail(Message::forEntry($entry, self::NAME));
         }
     }
 }

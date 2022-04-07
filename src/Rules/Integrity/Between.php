@@ -8,7 +8,7 @@ use Brick\Math\BigDecimal;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\Rules\Traits\SizeValidationTrait;
 use DonnySim\Validation\Rules\Type\Numeric;
 
@@ -28,13 +28,13 @@ final class Between implements RuleInterface
         $this->max = $this->getValueSize($max, true);
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
-        $numeric = $process->findPreviousRule(Numeric::class) !== null;
+        $numeric = $process->getCurrent()->findPreviousRule(Numeric::class) !== null;
         $value = $this->getValueSize($entry->getValue(), $numeric);
 
         if (
@@ -44,7 +44,7 @@ final class Between implements RuleInterface
             || $this->min->isGreaterThan($value)
             || $this->max->isLessThan($value)
         ) {
-            $process->fail(
+            $process->getCurrent()->fail(
                 Message::forEntry(
                     $entry,
                     $this->messageKey($entry->getValue(), $numeric),

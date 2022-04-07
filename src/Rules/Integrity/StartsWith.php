@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Integrity;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function str_starts_with;
 
 class StartsWith implements RuleInterface
@@ -27,7 +27,7 @@ class StartsWith implements RuleInterface
         $this->needles = $needles;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
@@ -40,6 +40,6 @@ class StartsWith implements RuleInterface
             }
         }
 
-        $process->fail(Message::forEntry($entry, self::NAME, ['values' => $this->needles]));
+        $process->getCurrent()->fail(Message::forEntry($entry, self::NAME, ['values' => $this->needles]));
     }
 }

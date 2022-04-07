@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Integrity;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function filter_var;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
@@ -34,7 +34,7 @@ final class IpAddress implements RuleInterface
         $this->type = $type ?: self::TYPE_MIXED;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
@@ -44,7 +44,7 @@ final class IpAddress implements RuleInterface
 
         if ($this->type === self::TYPE_MIXED) {
             if (filter_var($value, FILTER_VALIDATE_IP) === false) {
-                $process->fail(Message::forEntry($entry, self::NAME_MIXED));
+                $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_MIXED));
             }
 
             return;
@@ -52,14 +52,14 @@ final class IpAddress implements RuleInterface
 
         if ($this->type === self::TYPE_IPV4) {
             if (filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
-                $process->fail(Message::forEntry($entry, self::NAME_IPV4));
+                $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_IPV4));
             }
 
             return;
         }
 
         if (($this->type === self::TYPE_IPV6) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
-            $process->fail(Message::forEntry($entry, self::NAME_IPV6));
+            $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_IPV6));
         }
     }
 }

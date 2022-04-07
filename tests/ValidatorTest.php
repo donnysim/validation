@@ -9,7 +9,7 @@ use DonnySim\Validation\Exceptions\ValidationException;
 use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\RuleSetGroup;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
@@ -272,14 +272,14 @@ final class ValidatorTest extends TestCase
     {
         $v = $this->makeValidator(['foo' => [true, false]], [
             RuleSet::make('foo.*')
-                ->pipe(static function (DataEntry $entry, EntryProcess $process) {
+                ->pipe(static function (DataEntry $entry, ValidationProcess $process) {
                     if ($entry->getValue() === true) {
-                        $process->insert(RuleSet::make()->toInteger()->toString());
+                        $process->getCurrent()->insert(RuleSet::make()->toInteger()->toString());
                     } elseif ($entry->getValue() === false) {
-                        $process->insert(RuleSet::make()->toString());
+                        $process->getCurrent()->insert(RuleSet::make()->toString());
                     }
                 })
-                ->pipe(static function (DataEntry $entry, EntryProcess $process) {
+                ->pipe(static function (DataEntry $entry, ValidationProcess $process) {
                     $entry->setValue($entry->getValue() . ' value');
                 }),
         ]);
@@ -294,16 +294,67 @@ final class ValidatorTest extends TestCase
     {
         $v = $this->makeValidator(['foo' => [5, -5]], [
             RuleSet::make('foo.*')
-                ->pipe(static function (DataEntry $entry, EntryProcess $process): void {
+                ->pipe(static function (DataEntry $entry, ValidationProcess $process): void {
                     if ($entry->getValue() > 0) {
-                        $process->fork(RuleSet::make()->integerType());
+                        $process->getCurrent()->fork(RuleSet::make()->integerType());
                     } else {
-                        $process->fork(RuleSet::make()->booleanType());
+                        $process->getCurrent()->fork(RuleSet::make()->booleanType());
                     }
                 })
                 // Should never be called
                 ->stringType(),
         ]);
         $this->assertValidationFail($v, ['foo.1' => ['foo.1 must be boolean']]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_ignores_rules_containing_failed_segments(): void
+    {
+        $v = $this->makeValidator(
+            [
+                'foo' => [1, 2, 3],
+            ],
+            [
+                RuleSet::make('foo')->arrayType()->max(1),
+                RuleSet::make('foo.*')->booleanType(), // must be ignored because `foo` failed
+            ]
+        );
+        $this->assertValidationFail($v, [
+            'foo' => ['foo should contain less than 1 items'],
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_adding_rule_sets_during_process(): void
+    {
+        $v = $this->makeValidator(['foo' => 1, 'bar' => 2], [
+            RuleSet::make('foo')
+                ->integerType()
+                ->pipe(static function (DataEntry $entry, ValidationProcess $process): void {
+                    $process->addRuleSet(RuleSet::make('bar')->booleanType());
+                }),
+        ]);
+        $this->assertValidationFail($v, ['bar' => ['bar must be boolean']]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_adding_rule_set_groups_during_process(): void
+    {
+        $v = $this->makeValidator(['foo' => 1, 'bar' => 2], [
+            RuleSet::make('foo')
+                ->integerType()
+                ->pipe(static function (DataEntry $entry, ValidationProcess $process): void {
+                    $process->addRuleSet(RuleSetGroup::make([
+                        RuleSet::make('bar')->booleanType(),
+                    ]));
+                }),
+        ]);
+        $this->assertValidationFail($v, ['bar' => ['bar must be boolean']]);
     }
 }

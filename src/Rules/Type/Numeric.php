@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Type;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function is_float;
 use function is_int;
 use function is_numeric;
@@ -40,7 +40,7 @@ final class Numeric implements RuleInterface
         return $this->type;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
@@ -48,7 +48,7 @@ final class Numeric implements RuleInterface
 
         if ($this->type === self::TYPE_MIXED) {
             if (!is_numeric($entry->getValue())) {
-                $process->fail(Message::forEntry($entry, self::NAME_MIXED));
+                $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_MIXED));
             }
 
             return;
@@ -61,7 +61,7 @@ final class Numeric implements RuleInterface
                 (!is_int($value) && !is_string($value))
                 || (is_string($value) && !preg_match('/^-?\d$/', $value))
             ) {
-                $process->fail(Message::forEntry($entry, self::NAME_INTEGER));
+                $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_INTEGER));
             }
 
             return;
@@ -74,12 +74,12 @@ final class Numeric implements RuleInterface
                 (!is_float($value) && !is_string($value))
                 || (is_string($value) && !preg_match('/^-?\d+\.\d+$/', $value))
             ) {
-                $process->fail(Message::forEntry($entry, self::NAME_FLOAT));
+                $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_FLOAT));
             }
 
             return;
         }
 
-        $process->fail(Message::forEntry($entry, self::NAME_MIXED));
+        $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_MIXED));
     }
 }

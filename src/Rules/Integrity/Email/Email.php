@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Integrity\Email;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\DNSCheckValidation;
 use Egulias\EmailValidator\Validation\Extra\SpoofCheckValidation;
@@ -42,14 +42,14 @@ final class Email implements RuleInterface
         $this->types = $types;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
         if (!is_string($entry->getValue()) || !$this->validateEmail($entry->getValue())) {
-            $process->fail(Message::forEntry($entry, self::NAME));
+            $process->getCurrent()->fail(Message::forEntry($entry, self::NAME));
         }
     }
 

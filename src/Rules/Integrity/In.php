@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Rules\Integrity;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function in_array;
 
 final class In implements RuleInterface
@@ -25,14 +25,14 @@ final class In implements RuleInterface
         $this->bool = $bool;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
         if (in_array($entry->getValue(), $this->values, true) === !$this->bool) {
-            $process->fail(Message::forEntry($entry, $this->bool ? self::NAME_IN : self::NAME_NOT_IN));
+            $process->getCurrent()->fail(Message::forEntry($entry, $this->bool ? self::NAME_IN : self::NAME_NOT_IN));
         }
     }
 }

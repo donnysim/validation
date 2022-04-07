@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DonnySim\Validation\Tests;
 
 use DonnySim\Validation\Data\DataEntry;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\Rules\Base\Nullable;
 use DonnySim\Validation\Rules\Base\Required;
@@ -209,7 +209,7 @@ final class BaseRulesTest extends TestCase
 
         $v = $this->makeValidator(['foo' => null], [
             RuleSet::make('foo')
-                ->pipe(static function (DataEntry $entry, EntryProcess $process) use (&$pipeCalled) {
+                ->pipe(static function (DataEntry $entry, ValidationProcess $process) use (&$pipeCalled) {
                     $pipeCalled = true;
                 })
                 ->required()

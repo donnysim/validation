@@ -69,7 +69,7 @@ final class EntryProcess
                 $this->validationProcess->registerRuleCleanup($rule);
             }
 
-            $rule->validate($this->entry, $this);
+            $rule->validate($this->entry, $this->validationProcess);
 
             if ($this->hasFailed() || $this->isStopped()) {
                 break;
@@ -110,19 +110,6 @@ final class EntryProcess
     public function stop(): void
     {
         $this->state = DataProcessStateEnum::STOPPED;
-    }
-
-    public function getFieldEntry(string $field): DataEntry
-    {
-        return $this->validationProcess->getEntry($field);
-    }
-
-    /**
-     * @return \DonnySim\Validation\Data\DataEntry[]
-     */
-    public function getAllEntries(string $pattern): array
-    {
-        return $this->validationProcess->getAllEntries($pattern);
     }
 
     /**

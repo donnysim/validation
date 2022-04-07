@@ -7,6 +7,13 @@ This is built for data integrity and not for performance/insanely fast validatio
 
 TODO
 
+## TODO
+
+- [ ] fix keys with dots or asterisks possible problem?
+- [ ] rework rules to allow validating without process?
+- [ ] allow adding relative and absolute path rules based on entry?
+- [ ] ditch rules altogether if pattern contains failed path
+
 ## Validation
 
 ```php
@@ -59,7 +66,7 @@ To reset the state call the `reset` on the validator.
 ### Custom rules
 
 Each rule is a separate class, it must implement `\DonnySim\Validation\Interfaces\RuleSetInterface`.
-The rules get access to `\DonnySim\Validation\Data\DataEntry` and `\DonnySim\Validation\Process\EntryProcess` to interact with the process.
+The rules get access to `\DonnySim\Validation\Data\DataEntry` and `\DonnySim\Validation\Process\ValidationProcess` to interact with the process.
 
 If the rule fails, it must call the `fail` method on the process with a failing `\DonnySim\Validation\Message`.
 Instead of providing all the required Message parameters one by one you can use the `Message::forEntry` helper.
@@ -587,16 +594,16 @@ Insert additional rules to be executed right after the pipe, e.g.:
 
 ```php
 use DonnySim\Validation\Data\DataEntry;
-use DonnySim\Validation\Process\EntryProcess;
 use DonnySim\Validation\RuleSet;
+use DonnySim\Validation\Process\ValidationProcess;
 
 RuleSet::make('roles.*')
     ->arrayType()
-    ->pipe(function (DataEntry $entry, EntryProcess $process) {
+    ->pipe(function (DataEntry $entry, ValidationProcess $process) {
         if (isset($entry->getValue()['temp_id'])) {
-            $process->insert(RuleSet::make()->rule(CreateCustomRule::class));
+            $process->getCurrent()->insert(RuleSet::make()->rule(CreateCustomRule::class));
         } else {
-            $process->insert(RuleSet::make()->rule(UpdateCustomRule::class));
+            $process->getCurrent()->insert(RuleSet::make()->rule(UpdateCustomRule::class));
         }
     })
     // Will be called after CreateCustomRule or UpdateCustomRule
@@ -607,16 +614,16 @@ or change the rules to be processed, e.g.:
 
 ```php
 use DonnySim\Validation\Data\DataEntry;
-use DonnySim\Validation\Process\EntryProcess;
 use DonnySim\Validation\RuleSet;
+use DonnySim\Validation\Process\ValidationProcess;
 
 RuleSet::make('roles.*')
     ->arrayType()
-    ->pipe(function (DataEntry $entry, EntryProcess $process) {
+    ->pipe(function (DataEntry $entry, ValidationProcess $process) {
         if (isset($entry->getValue()['temp_id'])) {
-            $process->fork(RuleSet::make()->rule(CreateCustomRule::class));
+            $process->getCurrent()->fork(RuleSet::make()->rule(CreateCustomRule::class));
         } else {
-            $process->fork(RuleSet::make()->rule(UpdateCustomRule::class));
+            $process->getCurrent()->fork(RuleSet::make()->rule(UpdateCustomRule::class));
         }
     })
     // Will never be called, fork replaces further rules

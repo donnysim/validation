@@ -6,12 +6,12 @@ namespace DonnySim\Validation\Rules\Base;
 
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 
 final class OmitResult implements RuleInterface
 {
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
-        $process->setShouldExtractValue(false);
+        $process->getCurrent()->setShouldExtractValue(false);
     }
 }

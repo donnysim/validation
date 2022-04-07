@@ -8,7 +8,7 @@ use Brick\Math\BigDecimal;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\Rules\Traits\SizeValidationTrait;
 use DonnySim\Validation\Rules\Type\Numeric;
 use UnexpectedValueException;
@@ -46,18 +46,18 @@ final class SizeComparison implements RuleInterface
         $this->equal = $equal;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
         }
 
         $compareUsing = $this->getNegatedCompareFunctionName();
-        $numeric = $process->findPreviousRule(Numeric::class) !== null;
+        $numeric = $process->getCurrent()->findPreviousRule(Numeric::class) !== null;
         $value = $this->getValueSize($entry->getValue(), $numeric);
 
         if ($value === null || $this->targetValue === null || $value->{$compareUsing}($this->targetValue)) {
-            $process->fail(Message::forEntry($entry, $this->messageKey($entry->getValue(), $numeric), ['other' => $this->valueForError($this->targetValue)]));
+            $process->getCurrent()->fail(Message::forEntry($entry, $this->messageKey($entry->getValue(), $numeric), ['other' => $this->valueForError($this->targetValue)]));
         }
     }
 

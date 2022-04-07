@@ -9,9 +9,9 @@ use Carbon\Exceptions\InvalidFormatException;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
 use DateTime;
 use DateTimeInterface;
+use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\Reference;
 use InvalidArgumentException;
 use function is_numeric;
@@ -42,7 +42,7 @@ final class DateComparison implements RuleInterface
         $this->format = $format;
     }
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent()) {
             return;
@@ -50,7 +50,7 @@ final class DateComparison implements RuleInterface
 
         $referenceValue = $this->date;
         if ($referenceValue instanceof Reference) {
-            $referenceValue = $process->getFieldEntry($entry->resolveSegmentWildcards($referenceValue->getField()))->getValue();
+            $referenceValue = $process->getEntry($entry->resolveSegmentWildcards($referenceValue->getField()))->getValue();
         }
 
         if (!$referenceValue) {
@@ -59,14 +59,14 @@ final class DateComparison implements RuleInterface
 
         $value = $entry->getValue();
         if (!is_string($value) && !is_numeric($value) && !$value instanceof DateTimeInterface) {
-            $process->fail(Message::forEntry($entry, $this->getMessageKey(), ['date' => $this->getDateString($referenceValue)]));
+            $process->getCurrent()->fail(Message::forEntry($entry, $this->getMessageKey(), ['date' => $this->getDateString($referenceValue)]));
 
             return;
         }
 
         $format = $this->format;
         if (!$format) {
-            $dateFormatRule = $process->findPreviousRule(DateFormat::class);
+            $dateFormatRule = $process->getCurrent()->findPreviousRule(DateFormat::class);
 
             if ($dateFormatRule) {
                 $format = $dateFormatRule->getFormat();
@@ -80,12 +80,12 @@ final class DateComparison implements RuleInterface
         }
 
         if (!$second && $this->date instanceof Reference) {
-            $process->fail(Message::forEntry($entry, $this->getMessageKey(), ['date' => $this->date->getField(), 'format' => $format]));
+            $process->getCurrent()->fail(Message::forEntry($entry, $this->getMessageKey(), ['date' => $this->date->getField(), 'format' => $format]));
 
             return;
         }
 
-        $process->fail(Message::forEntry($entry, $this->getMessageKey(), ['date' => $this->getDateString($referenceValue, $format), 'format' => $format]));
+        $process->getCurrent()->fail(Message::forEntry($entry, $this->getMessageKey(), ['date' => $this->getDateString($referenceValue, $format), 'format' => $format]));
     }
 
     protected function getDateTimeWithOptionalFormat($value, ?string $format = null): ?Carbon

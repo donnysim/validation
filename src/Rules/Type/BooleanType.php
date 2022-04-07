@@ -7,19 +7,19 @@ namespace DonnySim\Validation\Rules\Type;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Interfaces\RuleInterface;
 use DonnySim\Validation\Message;
-use DonnySim\Validation\Process\EntryProcess;
+use DonnySim\Validation\Process\ValidationProcess;
 use function is_bool;
 
 final class BooleanType implements RuleInterface
 {
     public const NAME = 'boolean_type';
 
-    public function validate(DataEntry $entry, EntryProcess $process): void
+    public function validate(DataEntry $entry, ValidationProcess $process): void
     {
         if ($entry->isNotPresent() || is_bool($entry->getValue())) {
             return;
         }
 
-        $process->fail(Message::forEntry($entry, self::NAME));
+        $process->getCurrent()->fail(Message::forEntry($entry, self::NAME));
     }
 }
