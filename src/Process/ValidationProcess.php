@@ -18,7 +18,7 @@ use function spl_object_id;
 
 final class ValidationProcess
 {
-    private FailedSegments $errorTracker;
+    private FailedSegments $failedSegments;
 
     /**
      * @var \DonnySim\Validation\Interfaces\RuleSetInterface[]
@@ -41,7 +41,7 @@ final class ValidationProcess
      */
     public function __construct(array $data, array $ruleSets)
     {
-        $this->errorTracker = new FailedSegments();
+        $this->failedSegments = new FailedSegments();
         $this->result = new Result();
         $this->data = $data;
         $this->ruleSets = $ruleSets;
@@ -89,7 +89,7 @@ final class ValidationProcess
     {
         foreach (is_array($message) ? $message : [$message] as $entry) {
             $this->result->addMessage($entry);
-            $this->errorTracker->fail($entry->getPath());
+            $this->failedSegments->fail($entry->getPath());
         }
     }
 
@@ -119,13 +119,13 @@ final class ValidationProcess
 
     private function handleRuleSet(RuleSetInterface $ruleSet): void
     {
-        if ($this->errorTracker->hasFailed($ruleSet->getPattern())) {
+        if ($this->failedSegments->hasFailed($ruleSet->getPattern())) {
             return;
         }
 
         /** @var \DonnySim\Validation\Data\DataEntry $dataEntry */
         foreach (DataWalker::walk($this->data, $ruleSet->getPattern()) as $dataEntry) {
-            if ($this->errorTracker->hasFailed($dataEntry->getPath())) {
+            if ($this->failedSegments->hasFailed($dataEntry->getPath())) {
                 continue;
             }
 
