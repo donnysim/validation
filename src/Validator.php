@@ -176,7 +176,7 @@ class Validator
         if (static::$failureHandler) {
             (static::$failureHandler)($this);
         } else {
-            throw new ValidationException($this->getMessages());
+            throw new ValidationException($this);
         }
     }
 }
