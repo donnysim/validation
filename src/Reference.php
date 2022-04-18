@@ -6,7 +6,7 @@ namespace DonnySim\Validation;
 
 final class Reference
 {
-    protected string $field;
+    private string $field;
 
     public function __construct(string $field)
     {

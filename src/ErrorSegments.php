@@ -11,7 +11,7 @@ use function str_contains;
 
 final class ErrorSegments
 {
-    protected array $paths = [];
+    private array $paths = [];
 
     public function fail(string $path): void
     {
@@ -31,7 +31,7 @@ final class ErrorSegments
         return $this->containsFailedSegments($path);
     }
 
-    protected function containsFailedSegments(string $path): bool
+    private function containsFailedSegments(string $path): bool
     {
         $parts = explode('.', $path);
         $root = $this->paths;

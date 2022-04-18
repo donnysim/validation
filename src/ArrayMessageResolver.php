@@ -7,7 +7,7 @@ namespace DonnySim\Validation;
 use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 
-class ArrayMessageResolver implements MessageResolverInterface
+final class ArrayMessageResolver implements MessageResolverInterface
 {
     public function resolveMessages(array $messages, MessageOverrideProviderInterface $overrideProvider): array
     {

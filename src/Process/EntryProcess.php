@@ -14,22 +14,22 @@ use function array_slice;
 
 final class EntryProcess
 {
-    protected DataProcessStateEnum $state = DataProcessStateEnum::IDLE;
+    private DataProcessStateEnum $state = DataProcessStateEnum::IDLE;
 
-    protected DataEntry $entry;
+    private DataEntry $entry;
 
-    protected ValidationProcess $validationProcess;
+    private ValidationProcess $validationProcess;
 
     /**
      * @var array<int, \DonnySim\Validation\Interfaces\RuleInterface>
      */
-    protected array $rules;
+    private array $rules;
 
-    protected int $currentRuleIndex = 0;
+    private int $currentRuleIndex = 0;
 
-    protected bool $failed = false;
+    private bool $failed = false;
 
-    protected bool $shouldExtractValue;
+    private bool $shouldExtractValue;
 
     public function __construct(ValidationProcess $validationProcess, DataEntry $entry, array $rules)
     {
@@ -157,19 +157,19 @@ final class EntryProcess
         return null;
     }
 
-    protected function advance(): void
+    private function advance(): void
     {
         if ($this->hasFailed() || !isset($this->rules[++$this->currentRuleIndex])) {
             $this->finish();
         }
     }
 
-    protected function finish(): void
+    private function finish(): void
     {
         $this->state = DataProcessStateEnum::FINISHED;
     }
 
-    protected function getCurrentRule(): RuleInterface|null
+    private function getCurrentRule(): RuleInterface|null
     {
         return $this->rules[$this->currentRuleIndex] ?? null;
     }

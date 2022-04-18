@@ -6,17 +6,17 @@ namespace DonnySim\Validation;
 
 use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 
-class MessageOverrideProvider implements MessageOverrideProviderInterface
+final class MessageOverrideProvider implements MessageOverrideProviderInterface
 {
     /**
      * @var array<string>
      */
-    protected array $messageOverrides;
+    private array $messageOverrides;
 
     /**
      * @var array<string>
      */
-    protected array $attributeOverrides;
+    private array $attributeOverrides;
 
     /**
      * @param array<string, string> $messageOverrides

@@ -20,7 +20,7 @@ final class DataWalker
         }
     }
 
-    protected static function walkPath(
+    private static function walkPath(
         mixed $data,
         string $pattern,
         array $segments,
@@ -90,7 +90,7 @@ final class DataWalker
         }
     }
 
-    protected static function getPath(array $segments, int $position): string
+    private static function getPath(array $segments, int $position): string
     {
         if ($position === 0) {
             return implode('.', $segments);

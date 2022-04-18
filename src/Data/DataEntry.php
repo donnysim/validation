@@ -10,15 +10,15 @@ use function str_contains;
 
 final class DataEntry
 {
-    protected string $pattern;
+    private string $pattern;
 
-    protected array $wildcards;
+    private array $wildcards;
 
-    protected string $path;
+    private string $path;
 
-    protected mixed $value;
+    private mixed $value;
 
-    protected bool $present;
+    private bool $present;
 
     public function __construct(string $pattern, array $wildcards, string $path, mixed $value, bool $present)
     {
