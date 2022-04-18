@@ -9,7 +9,7 @@ use function explode;
 use function mb_substr;
 use function str_contains;
 
-final class ErrorSegments
+final class FailedSegments
 {
     private array $paths = [];
 

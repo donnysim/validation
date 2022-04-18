@@ -6,7 +6,7 @@ namespace DonnySim\Validation\Process;
 
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Data\DataWalker;
-use DonnySim\Validation\ErrorSegments;
+use DonnySim\Validation\FailedSegments;
 use DonnySim\Validation\Interfaces\CleanupStateInterface;
 use DonnySim\Validation\Interfaces\RuleSetGroupInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
@@ -18,7 +18,7 @@ use function spl_object_id;
 
 final class ValidationProcess
 {
-    private ErrorSegments $errorTracker;
+    private FailedSegments $errorTracker;
 
     /**
      * @var \DonnySim\Validation\Interfaces\RuleSetInterface[]
@@ -41,7 +41,7 @@ final class ValidationProcess
      */
     public function __construct(array $data, array $ruleSets)
     {
-        $this->errorTracker = new ErrorSegments();
+        $this->errorTracker = new FailedSegments();
         $this->result = new Result();
         $this->data = $data;
         $this->ruleSets = $ruleSets;

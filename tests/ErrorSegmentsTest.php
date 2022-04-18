@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Tests;
 
-use DonnySim\Validation\ErrorSegments;
+use DonnySim\Validation\FailedSegments;
 use PHPUnit\Framework\TestCase;
 
 final class ErrorSegmentsTest extends TestCase
@@ -14,7 +14,7 @@ final class ErrorSegmentsTest extends TestCase
      */
     public function it_checks_partial_path_failures(): void
     {
-        $tracker = new ErrorSegments();
+        $tracker = new FailedSegments();
 
         self::assertFalse($tracker->hasFailed('test'));
 
@@ -37,7 +37,7 @@ final class ErrorSegmentsTest extends TestCase
      */
     public function it_checks_partial_path_failures_with_wildcard(): void
     {
-        $tracker = new ErrorSegments();
+        $tracker = new FailedSegments();
 
         self::assertFalse($tracker->hasFailed('test'));
 
