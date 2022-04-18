@@ -6,9 +6,8 @@ namespace DonnySim\Validation\Exceptions;
 
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use DonnySim\Validation\Validator;
-use Exception;
 
-class ValidationException extends Exception
+final class ValidationException extends ValidatorException
 {
     private Validator $validator;
 
