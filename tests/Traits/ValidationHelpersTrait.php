@@ -7,6 +7,8 @@ namespace DonnySim\Validation\Tests\Traits;
 use DonnySim\Validation\Tests\Stubs\TranslationMessageResolverStub;
 use DonnySim\Validation\Validator;
 use function count;
+use function json_encode;
+use const JSON_THROW_ON_ERROR;
 
 trait ValidationHelpersTrait
 {
@@ -19,7 +21,7 @@ trait ValidationHelpersTrait
     {
         self::assertFalse($validator->passes(), 'Validation should fail but passed.');
         $validationMessages = $validator->resolveMessages($this->makeValidationMessageResolver());
-        self::assertCount(count($messages), $validationMessages);
+        self::assertCount(count($messages), $validationMessages, json_encode($validationMessages, JSON_THROW_ON_ERROR));
 
         foreach ($messages as $key => $message) {
             self::assertArrayHasKey($key, $validationMessages);

@@ -12,6 +12,7 @@ use DonnySim\Validation\Message;
 use DonnySim\Validation\Process\ValidationProcess;
 use DonnySim\Validation\RuleSet;
 use DonnySim\Validation\RuleSetGroup;
+use DonnySim\Validation\Tests\Stubs\NestedRule;
 use DonnySim\Validation\Tests\Traits\ValidationHelpersTrait;
 use DonnySim\Validation\Validator;
 use PHPUnit\Framework\TestCase;
@@ -378,5 +379,18 @@ final class ValidatorTest extends TestCase
                 }),
         ]);
         $this->assertValidationFail($v, ['bar' => ['bar must be boolean']]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_proxies_results(): void
+    {
+        $v = $this->makeValidator(['foo' => [['name' => 'test'], []]], [RuleSet::make('foo.*')->rule(new NestedRule())], [
+            'foo.1.NESTED_RULE' => 'nested rule failed',
+        ]);
+
+        $this->assertValidationFail($v, ['foo.1' => ['nested rule failed'], 'foo.1.name' => ['name is required']]);
+        self::assertSame(['foo' => [['name' => 'test']]], $v->getValidatedData());
     }
 }

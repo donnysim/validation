@@ -11,6 +11,7 @@ use DonnySim\Validation\Interfaces\MessageOverrideProviderInterface;
 use DonnySim\Validation\Interfaces\MessageResolverInterface;
 use DonnySim\Validation\Interfaces\RuleSetGroupInterface;
 use DonnySim\Validation\Interfaces\RuleSetInterface;
+use DonnySim\Validation\Process\Result;
 use DonnySim\Validation\Process\ValidationProcess;
 
 class Validator
@@ -28,11 +29,11 @@ class Validator
      */
     protected array $rules = [];
 
-    protected ?ValidationProcess $process = null;
-
     protected MessageResolverInterface $messageResolver;
 
     protected MessageOverrideProviderInterface $overrideProvider;
+
+    protected ?Result $result = null;
 
     /**
      * @param array<\DonnySim\Validation\Interfaces\RuleSetInterface|\DonnySim\Validation\Interfaces\RuleSetGroupInterface> $rules
@@ -122,7 +123,7 @@ class Validator
 
     public function getValidatedData(): array
     {
-        return $this->getProcess()->getValidatedData();
+        return $this->getResult()->getValidatedData();
     }
 
     public function passes(): bool
@@ -140,7 +141,7 @@ class Validator
      */
     public function getMessages(): array
     {
-        return $this->getProcess()->getMessages();
+        return $this->getResult()->getMessages();
     }
 
     public function resolveMessages(?MessageResolverInterface $messageResolver = null): mixed
@@ -150,22 +151,16 @@ class Validator
 
     public function reset(): void
     {
-        $this->process = null;
+        $this->result = null;
     }
 
-    protected function getProcess(): ValidationProcess
+    public function getResult(): Result
     {
-        if (!$this->process) {
-            $this->execute();
+        if (!$this->result) {
+            $this->result = (new ValidationProcess($this->data, $this->rules))->run()->getResult();
         }
 
-        return $this->process;
-    }
-
-    protected function execute(): void
-    {
-        $this->process = new ValidationProcess($this->data, $this->rules);
-        $this->process->run();
+        return $this->result;
     }
 
     /**

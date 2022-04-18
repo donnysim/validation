@@ -38,6 +38,15 @@ class Message implements JsonSerializable
         return new self($entry->getPattern(), $entry->getPath(), $entry->getKey(), $failingRuleName, $params);
     }
 
+    public function withPrefix(string $prefix): self
+    {
+        $instance = clone $this;
+        $instance->pattern = "{$prefix}{$instance->pattern}";
+        $instance->path = "{$prefix}{$instance->path}";
+
+        return $instance;
+    }
+
     public function getPattern(): string
     {
         return $this->pattern;

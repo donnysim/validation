@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DonnySim\Validation\Process;
 
-use DonnySim\Validation\Data\Arr;
 use DonnySim\Validation\Data\DataEntry;
 use DonnySim\Validation\Data\DataWalker;
 use DonnySim\Validation\ErrorSegments;
@@ -19,28 +18,23 @@ use function spl_object_id;
 
 final class ValidationProcess
 {
-    protected ErrorSegments $errorTracker;
+    private ErrorSegments $errorTracker;
 
     /**
      * @var \DonnySim\Validation\Interfaces\RuleSetInterface[]
      */
-    protected array $ruleSets;
+    private array $ruleSets;
 
-    protected array $data;
-
-    protected array $validatedData = [];
-
-    /**
-     * @var \DonnySim\Validation\Message[]
-     */
-    protected array $messages = [];
+    private array $data;
 
     /**
      * @var array<string, \DonnySim\Validation\Interfaces\CleanupStateInterface>
      */
-    protected array $rulesToCleanup = [];
+    private array $rulesToCleanup = [];
 
-    protected ?EntryProcess $currentEntryProcess = null;
+    private ?EntryProcess $currentEntryProcess = null;
+
+    private Result $result;
 
     /**
      * @param \DonnySim\Validation\Interfaces\RuleSetInterface[] $ruleSets
@@ -48,11 +42,12 @@ final class ValidationProcess
     public function __construct(array $data, array $ruleSets)
     {
         $this->errorTracker = new ErrorSegments();
+        $this->result = new Result();
         $this->data = $data;
         $this->ruleSets = $ruleSets;
     }
 
-    public function run(): void
+    public function run(): self
     {
         $ruleSet = $this->nextRuleSet();
 
@@ -63,11 +58,8 @@ final class ValidationProcess
         }
 
         $this->cleanup();
-    }
 
-    public function getValidatedData(): array
-    {
-        return $this->validatedData;
+        return $this;
     }
 
     public function getEntry(string $path): DataEntry
@@ -96,18 +88,14 @@ final class ValidationProcess
     public function addMessages(Message|array $message): void
     {
         foreach (is_array($message) ? $message : [$message] as $entry) {
-            $this->messages[] = $entry;
-
+            $this->result->addMessage($entry);
             $this->errorTracker->fail($entry->getPath());
         }
     }
 
-    /**
-     * @return \DonnySim\Validation\Message[]
-     */
-    public function getMessages(): array
+    public function getResult(): Result
     {
-        return $this->messages;
+        return $this->result;
     }
 
     public function getCurrent(): EntryProcess
@@ -129,7 +117,7 @@ final class ValidationProcess
         $this->rulesToCleanup[spl_object_id($rule)] = $rule;
     }
 
-    protected function handleRuleSet(RuleSetInterface $ruleSet): void
+    private function handleRuleSet(RuleSetInterface $ruleSet): void
     {
         if ($this->errorTracker->hasFailed($ruleSet->getPattern())) {
             return;
@@ -149,14 +137,14 @@ final class ValidationProcess
             }
 
             if ($this->currentEntryProcess->shouldExtractValue()) {
-                Arr::set($this->validatedData, $dataEntry->getPath(), $dataEntry->getValue());
+                $this->result->set($dataEntry->getPath(), $dataEntry->getValue());
             }
         }
 
         $this->currentEntryProcess = null;
     }
 
-    protected function nextRuleSet(): ?RuleSetInterface
+    private function nextRuleSet(): ?RuleSetInterface
     {
         if (empty($this->ruleSets)) {
             return null;
@@ -165,7 +153,7 @@ final class ValidationProcess
         return array_shift($this->ruleSets);
     }
 
-    protected function cleanup(): void
+    private function cleanup(): void
     {
         foreach ($this->rulesToCleanup as $rule) {
             $rule->cleanup();
