@@ -7,7 +7,7 @@ namespace DonnySim\Validation\Tests;
 use DonnySim\Validation\FailedSegments;
 use PHPUnit\Framework\TestCase;
 
-final class ErrorSegmentsTest extends TestCase
+final class FailedSegmentsTest extends TestCase
 {
     /**
      * @test
