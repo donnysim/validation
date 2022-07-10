@@ -11,8 +11,6 @@ TODO
 
 - [ ] fix keys with dots or asterisks possible problem?
 - [ ] rework rules to allow validating without process?
-- [ ] allow adding relative and absolute path rules based on entry?
-- [ ] ditch rules altogether if pattern contains failed path
 
 ## Validation
 
@@ -621,12 +619,12 @@ RuleSet::make('roles.*')
     ->arrayType()
     ->pipe(function (DataEntry $entry, ValidationProcess $process) {
         if (isset($entry->getValue()['temp_id'])) {
-            $process->getCurrent()->fork(RuleSet::make()->rule(CreateCustomRule::class));
+            $process->getCurrent()->replace(RuleSet::make()->rule(CreateCustomRule::class));
         } else {
-            $process->getCurrent()->fork(RuleSet::make()->rule(UpdateCustomRule::class));
+            $process->getCurrent()->replace(RuleSet::make()->rule(UpdateCustomRule::class));
         }
     })
-    // Will never be called, fork replaces further rules
+    // Will never be called, "replace" replaces further rules
     ->rule(FinalRule::class);
 ```
 

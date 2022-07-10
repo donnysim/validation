@@ -291,15 +291,15 @@ final class ValidatorTest extends TestCase
     /**
      * @test
      */
-    public function it_forks_process_with_different_rules(): void
+    public function it_replaces_process_with_different_rules(): void
     {
         $v = $this->makeValidator(['foo' => [5, -5]], [
             RuleSet::make('foo.*')
                 ->pipe(static function (DataEntry $entry, ValidationProcess $process): void {
                     if ($entry->getValue() > 0) {
-                        $process->getCurrent()->fork(RuleSet::make()->integerType());
+                        $process->getCurrent()->replace(RuleSet::make()->integerType());
                     } else {
-                        $process->getCurrent()->fork(RuleSet::make()->booleanType());
+                        $process->getCurrent()->replace(RuleSet::make()->booleanType());
                     }
                 })
                 // Should never be called

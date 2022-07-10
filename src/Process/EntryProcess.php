@@ -116,7 +116,7 @@ final class EntryProcess
      * Replace further rules to be process with the ones provided.
      * RuleSet name is ignored.
      */
-    public function fork(RuleSetInterface $ruleSet): void
+    public function replace(RuleSetInterface $ruleSet): void
     {
         $this->rules = [
             ...array_slice($this->rules, 0, $this->currentRuleIndex + 1),
