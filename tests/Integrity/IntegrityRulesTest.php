@@ -413,7 +413,7 @@ final class IntegrityRulesTest extends TestCase
         self::assertTrue($v->passes());
 
         $v = $this->makeValidator(['email' => 'foo@gmäil.com'], [RuleSet::make('email')->email()]);
-        self::assertTrue($v->passes());
+        self::assertFalse($v->passes());
 
         $v = $this->makeValidator(['email' => 'foo@bar '], [RuleSet::make('email')->email([Email::VALIDATE_STRICT])]);
         self::assertFalse($v->passes());

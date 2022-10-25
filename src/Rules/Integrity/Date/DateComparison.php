@@ -105,10 +105,10 @@ final class DateComparison implements RuleInterface
     {
         try {
             if ($format) {
-                return @Carbon::createFromFormat($format, Carbon::parse($value)->format($format));
+                return @Carbon::createFromFormat($format, Carbon::make($value)?->format($format));
             }
 
-            return Carbon::parse($value);
+            return Carbon::make($value);
         } catch (InvalidFormatException) {
             return null;
         }

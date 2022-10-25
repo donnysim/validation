@@ -169,7 +169,7 @@ final class EntryProcess
         $this->state = DataProcessStateEnum::FINISHED;
     }
 
-    private function getCurrentRule(): RuleInterface|null
+    private function getCurrentRule(): ?RuleInterface
     {
         return $this->rules[$this->currentRuleIndex] ?? null;
     }

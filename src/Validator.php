@@ -62,16 +62,20 @@ class Validator
 
     public static function makeMessageResolver(array $messageOverrides = [], array $attributeOverrides = []): MessageResolverInterface
     {
-        return self::$defaultMessageResolverFactory ?
-            (self::$defaultMessageResolverFactory)($messageOverrides, $attributeOverrides) :
-            new ArrayMessageResolver();
+        if (self::$defaultMessageResolverFactory) {
+            return (self::$defaultMessageResolverFactory)($messageOverrides, $attributeOverrides);
+        }
+
+        return new ArrayMessageResolver();
     }
 
     public static function makeOverrideProvider(array $messageOverrides = [], array $attributeOverrides = []): MessageOverrideProviderInterface
     {
-        return self::$defaultMessageProviderFactory ?
-            (self::$defaultMessageProviderFactory)($messageOverrides, $attributeOverrides) :
-            new MessageOverrideProvider($messageOverrides, $attributeOverrides);
+        if (self::$defaultMessageProviderFactory) {
+            return (self::$defaultMessageProviderFactory)($messageOverrides, $attributeOverrides);
+        }
+
+        return new MessageOverrideProvider($messageOverrides, $attributeOverrides);
     }
 
     public static function setFailureHandler(?Closure $handler): void

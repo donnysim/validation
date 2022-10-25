@@ -39,7 +39,7 @@ final class Result
         return $this->validatedData;
     }
 
-    public function merge(Result $result, string $prefix = ''): void
+    public function merge(self $result, string $prefix = ''): void
     {
         foreach ($result->getMessages() as $message) {
             if ($prefix) {
