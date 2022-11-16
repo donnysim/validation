@@ -59,7 +59,7 @@ final class Numeric implements RuleInterface
 
             if (
                 (!is_int($value) && !is_string($value))
-                || (is_string($value) && !preg_match('/^-?\d$/', $value))
+                || (is_string($value) && !preg_match('/^-?\d+$/', $value))
             ) {
                 $process->getCurrent()->fail(Message::forEntry($entry, self::NAME_INTEGER));
             }

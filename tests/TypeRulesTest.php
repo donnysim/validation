@@ -135,6 +135,12 @@ final class TypeRulesTest extends TestCase
         $v = $this->makeValidator(['foo' => 'asdad'], [RuleSet::make('foo')->numeric()]);
         $this->assertValidationFail($v, ['foo' => ['foo must be numeric']]);
 
+        $v = $this->makeValidator(['foo' => '11'], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
+        $v = $this->makeValidator(['foo' => '111'], [RuleSet::make('foo')->numeric()]);
+        self::assertTrue($v->passes());
+
         $v = $this->makeValidator(['foo' => '1.23'], [RuleSet::make('foo')->numeric()]);
         self::assertTrue($v->passes());
 
